@@ -9,7 +9,7 @@ A no-frills way to manage your responsive viewports in JavaScript.
 Configure with an `array` of viewport objects:
 
 ```js
-var myViewport = viewports([
+var myViewport = viewport([
     {
         name: 'small',
         mediaExp: '( min-width:480px )',
