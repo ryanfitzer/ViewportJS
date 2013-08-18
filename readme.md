@@ -6,9 +6,17 @@ A no-frills way to use your responsive viewports in JavaScript.
 
 ## Features ##
 
-- Stores your viewport configuration in one place for all your modules to use.
+ViewportJS exposes an API that answers the following questions:
 
-- If [Modernizr](http://modernizr.com/) available, the viewport tests are added via `Modernizr#addTest` for use in your CSS rules.
+- Is `name` the current viewport?
+
+- What's the current viewport?
+
+- Does `name` fall within the current viewport?
+
+- Can I get the media query expression for the `name` viewport?
+
+- Can I get [Modernizr](http://modernizr.com/) to add the state of each of my viewports to the `html` tag so I can use them in my stylesheets?
 
 
 
