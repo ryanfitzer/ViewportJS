@@ -1,6 +1,14 @@
 # ViewportJS #
 
-A no-frills way to manage your responsive viewports in JavaScript.
+A no-frills way to use your responsive viewports in JavaScript.
+
+
+
+## Features ##
+
+- Stores your viewport configuration in one place for all your modules to use.
+
+- If [Modernizr](http://modernizr.com/) available, the viewport tests are added via `Modernizr#addTest` for use in your CSS rules.
 
 
 
@@ -12,24 +20,15 @@ Configure with an `array` of viewport objects:
 var myViewport = viewport([
     {
         name: 'small',
-        mediaExp: '( min-width:480px )',
-        condition: function() {
-            return document.documentElement.clientWidth >= 480;
-        }
+        width: [ 0, 480 ] // ( min-width:0px ) and ( max-width:480px )
     },
     {
         name: 'medium',
-        mediaExp: '( min-width:768px )',
-        condition: function() {
-            return document.documentElement.clientWidth >= 768;
-        }
+        width: [ 481, 768 ] // ( min-width:480px ) and ( max-width:767px )
     },
     {
         name: 'large',
-        mediaExp: '( min-width:1024px )',
-        condition: function() {
-            return document.documentElement.clientWidth >= 1024;
-        }
+        width: [ 769 ] // ( min-width:769px )
     }
 ]);
 ```
@@ -37,65 +36,108 @@ var myViewport = viewport([
 Branch functionality based on the current viewport:
 
 ```js
-if ( myViewports.is( 'large' ) ) {
+if ( myViewport.is( 'large' ) ) {
     // do something
 } else {
     // do something else
 }
 ```
 
-Use the viewport's media expression with `window.matchMedia`:
 
-```js
-if ( window.matchMedia( myViewports.get( 'large' ).mediaExp ).matches ) {
-    // do something
-} else {
-    // do something else
-}
-```
 
 ## Viewport Object ##
 
-A viewport object has the following properties. Also, if Modernizr is available, the `name` and `condition` are used to add a new test via `Modernizr.addTest()`.
+A viewport object has the following properties:
 
-`name`
-: [String] The name given to the viewport.
+### `name (String)` ###
 
-`mediaExp`
-: [String] An optional media expression associated with the viewport. Helpful if you're using `window.matchMedia` and want a single place to store your media expressions.
+The name given to the viewport.
+    
 
-`condition`
-: [Function] A function to test the viewport. Must return a `boolean`.
+### `width (Array)` ###
 
+The min/max-width `Number` to test. Example:
+
+```js  
+width: [ 960 ]      // ( min-width:960px )
+width: [ 0, 960 ]   // ( max-width:960px )
+width: [ 480, 960 ] // ( min-width:480px ) and ( max-width:960px )
+```
+
+### `height (Array)` ###
+
+The min/max-height `Number` to test. Example:
+
+```js
+height: [ 960 ]      // ( min-height:960px )
+height: [ 0, 960 ]   // ( max-height:960px )
+height: [ 480, 960 ] // ( min-height:480px ) and ( max-height:960px )
+```
+
+### `condition (Function)` ###
+
+(Optional) Useful if your viewport test requires more than just width and/or height. Must return a `boolean`. Example:
+
+```js
+condition: function() {
+    return Modernizr.touch;
+}
+```
+
+### `mediaExp (String)` ###
+
+(Optional) The media expression associated with the viewport. Helpful if you're using `window.matchMedia` and want a single place to store your media expressions. Example:
+
+```js
+var smallMQ = myViewport.get( 'small' ).mediaExp;
+
+if ( window.matchMedia( smallMQ ).matches ) {
+    // do something
+}
+```
 
 
 ## Methods ##
 
+### `is( String name )` ###
 
-### `get` ###
-
-Returns a viewport `object`.
+Checks if the specified viewport is the current viewport. Returns a `boolean`.
 
 ```js
-myViewports.get( 'small' );
+var isSmallCurrentVP = myViewport.is( 'small' );
+
+if ( isSmallCurrentVP ) {
+    // do something
+}
+```
+
+### `current()` ###
+
+Checks each viewport condition (in the original configuration order) and returns the last matching viewport `object`.
+
+```js
+var currentVP = myViewport.current();
 ```
 
 
-### `is` ###
+### `get( String name )` ###
 
-Executes the viewport's `condition` function and returns a `boolean`.
+Returns the specified viewport `object`.
 
 ```js
-myViewports.is( 'small' );
+var smallVP = myViewport.get( 'small' );
 ```
 
+### `matches( String name )` ###
 
-### `current` ###
-
-Checks each viewport condition (in the original configuration order) and returns the current viewport `object`.
+Checks if the specified viewport is within the current viewport. The `matches` method differs from `is` by only testing the specified viewport. Returns a `boolean`.
 
 ```js
-myViewports.current();
+var isSmallWithinVP = myViewport.matches( 'small' );
+
+if ( isSmallWithinVP ) {
+    // do something
+}
 ```
 
 
@@ -103,11 +145,12 @@ myViewports.current();
 ## Properties ##
 
 
-### `viewports` ###
+### `viewports (Array)` ###
 
 The original `array` of viewports.
 
 
-### `vps` ###
+### `vps (Object)` ###
 
-An object keyed by the viewport names.
+An object keyed by the viewport names. Extends the original viewport objects with the `test` method, which is created from the `width`, `height` and `condition` members.
+

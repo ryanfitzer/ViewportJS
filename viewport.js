@@ -1,20 +1,58 @@
-/*! ViewportJS 0.0.1 | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
+/*! ViewportJS 0.0.2 | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
 !function() {
     
+    var toDebug = true
+        , html = document.documentElement
+        ;
+    
+    function debug( vp ) {
+        
+        console.log( 'Viewport: ', vp.name );
+        console.log( '  wmin:', vp.width && vp.width[0] );
+        console.log( '  wmax:', vp.width && vp.width[1] );
+        console.log( '  hmin:', vp.height && vp.height[0] );
+        console.log( '  hmax:', vp.height && vp.height[1] );
+        console.log( '  cond:', vp.condition );
+    }
     /**
      * Add viewport conditions to Modernizr.
      */
-    function modernize( vps ) {
+    function modernize( vp ) {
         
         var mdnzr = window.Modernizr;
         
         if ( !mdnzr || !mdnzr.addTest ) return;
         
-        for ( var i = 0; i < vps.length; i++ ) {
+        mdnzr.addTest( vp.name , vp.test );
+    }
+    
+    function createTest( vp ) {
+        
+        return function() {
             
-            var v = vps[i];
+            var wmin = true
+                , wmax = true
+                , hmin = true
+                , hmax = true
+                , test = true
+                ;
+
+            if ( vp.width ) {
             
-            mdnzr.addTest( v.name , v.condition );
+                wmin = html.clientWidth >= vp.width[0];
+                wmax = vp.width[1] ? html.clientWidth <= vp.width[1] : true;
+            }
+        
+            if ( vp.height ) {
+                hmin = html.clientHeight >= vp.height[0];
+                hmax = vp.height[1] ? html.clientHeight <= vp.height[1] : true;
+            }
+            
+            if ( vp.condition ) test = vp.condition();
+            
+            if ( toDebug ) console.log( '  ' + vp.name + ':', wmin, wmax, hmin, hmax, test );
+            
+            return wmin && wmax && hmin && hmax && test;
         }
     }
     
@@ -32,9 +70,13 @@
             var vp = this.viewports[i];
             
             this.vps[ vp.name ] = vp;
+            
+            this.vps[ vp.name ].test = createTest( vp );
+            
+            if ( toDebug ) debug( this.vps[ vp.name ] );
+            
+            modernize( this.vps[ vp.name ] );
         }
-        
-        modernize( this.vps );
         
         return this;
     }
@@ -42,21 +84,21 @@
     Viewport.prototype = {
         
         /**
-         * Returns a specific viewport object.
+         * Check a specific viewport.
          */
-        get: function( vp ) {
-
-            return this.vps[ vp ];
+        is: function( name ) {
+            
+            return this.current().name === name;
         },
         
         /**
-         * Check a specific viewport.
+         * Returns a specific viewport object.
          */
-        is: function( vp ) {
-            
-            return this.current().name === vp;
-        },
+        get: function( name ) {
 
+            return this.vps[ name ];
+        },
+        
         /**
          * Get the current viewport
          */
@@ -70,12 +112,20 @@
                     , name = v.name
                     ;
 
-                if ( !this.vps[ name ].condition() ) continue;
+                if ( !this.vps[ name ].test() ) continue;
             
                 current = v;
             }
 
             return current;
+        },
+        
+        /**
+         * Match a specific viewport.
+         */
+        matches: function( name ) {
+            
+            return this.vps[ name ].test();
         }
     };
     
