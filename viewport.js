@@ -1,7 +1,7 @@
 /*! ViewportJS 0.0.2 | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
 !function() {
     
-    var toDebug = true
+    var toDebug = false
         , html = document.documentElement
         ;
     

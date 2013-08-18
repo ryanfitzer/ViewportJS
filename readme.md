@@ -1,6 +1,6 @@
 # ViewportJS #
 
-A no-frills way to use your responsive viewports in JavaScript.
+A unassuming, no-frills tool to use your responsive viewports in JavaScript.
 
 
 
