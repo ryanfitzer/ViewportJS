@@ -2,7 +2,6 @@
 !function() {
     
     var getWidth
-        , toDebug = false
         , html = document.documentElement
         ;
     
@@ -119,10 +118,11 @@
     /**
      * ViewportJS constructor.
      */
-    function Viewport( viewports ) {
+    function Viewport( viewports, options ) {
         
         this.vps = {};
         this.viewports = viewports;
+        this.options = options || {};
         this.length = viewports.length;
 
         for ( var i = 0; i < this.length; i++ ) {
@@ -133,9 +133,9 @@
             
             this.vps[ vp.name ].test = createTest( vp );
             
-            if ( toDebug ) debug( this.vps[ vp.name ] );
+            if ( this.options.debug ) debug( this.vps[ vp.name ] );
             
-            modernize( this.vps[ vp.name ] );
+            if ( this.options.modernize ) modernize( this.vps[ vp.name ] );
         }
         
         return this;
@@ -197,9 +197,9 @@
     shimInnerWidth();
     
     // Release it!
-    window.viewport = function( viewports ) {
+    window.viewport = function( viewports, options ) {
         
-        return new Viewport( viewports );
+        return new Viewport( viewports, options );
     }
     
 }();
