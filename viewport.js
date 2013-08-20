@@ -81,7 +81,7 @@
     /**
      * Create the test functions that excute when querying a viewport.
      */
-    function createTest( vp ) {
+    function createTest( vp, debug ) {
         
         return function() {
             
@@ -109,7 +109,7 @@
             
             if ( vp.condition ) test = vp.condition();
             
-            if ( toDebug ) console.log( '  ' + vp.name + ':', wmin, wmax, hmin, hmax, test );
+            if ( debug ) console.log( '  ' + vp.name + ':', wmin, wmax, hmin, hmax, test );
             
             return wmin && wmax && hmin && hmax && test;
         }
@@ -131,7 +131,7 @@
             
             this.vps[ vp.name ] = vp;
             
-            this.vps[ vp.name ].test = createTest( vp );
+            this.vps[ vp.name ].test = createTest( vp, this.options.debug );
             
             if ( this.options.debug ) debug( this.vps[ vp.name ] );
             
