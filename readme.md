@@ -162,3 +162,16 @@ The original `array` of viewports.
 
 An object keyed by the viewport names. Extends the original viewport objects with the `test` method, which is created from the `width`, `height` and `condition` members.
 
+
+
+## Credits ##
+
+- [tysonmatanich/viewportSize](https://github.com/tysonmatanich/viewportSize) for the technique on which size property to use (`clientWidth` or `innerWidth`).
+
+
+
+## Roadmap ##
+
+- Cache queries if viewport hasn't changed since last query (would require a listener to invalidate cache).
+
+- Tests.
