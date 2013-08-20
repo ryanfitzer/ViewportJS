@@ -96,7 +96,6 @@
             if ( vp.width ) {
             
                 innerWidth = getWidth();
-                console.log('innerWidth:', innerWidth);
                 
                 wmin = innerWidth >= vp.width[0];
                 wmax = vp.width[1] ? innerWidth <= vp.width[1] : true;
