@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script src="lib/mocha.js"></script>
+    <script src="lib/chai.js"></script>
+    <script>
+      mocha.setup('bdd');
+      var assert = chai.assert;
+
+      window.onload = function() {
+        if (window.mochaPhantomJS) {
+          mochaPhantomJS.run();
+        } else {
+          mocha.run();
+        }
+      };
+    </script>
+    <script src="../viewport.js"></script>
+    <script src="tests/test.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
