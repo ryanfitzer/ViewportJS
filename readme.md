@@ -164,6 +164,14 @@ An object keyed by the viewport names. Extends the original viewport objects wit
 
 
 
+## Testing ##
+
+- Install phantomJS >= 1.9.1
+- Run `npm install` to install the required testing modules
+- Run the tests: `npm test`
+
+
+
 ## Credits ##
 
 - [tysonmatanich/viewportSize](https://github.com/tysonmatanich/viewportSize) for the technique on which size property to use (`clientWidth` or `innerWidth`).
@@ -173,5 +181,3 @@ An object keyed by the viewport names. Extends the original viewport objects wit
 ## Roadmap ##
 
 - Cache queries if viewport hasn't changed since last query (would require a listener to invalidate cache).
-
-- Tests.
