@@ -180,4 +180,7 @@ An object keyed by the viewport names. Extends the original viewport objects wit
 
 ## Roadmap ##
 
-- Cache queries if viewport hasn't changed since last query (would require a listener to invalidate cache).
+- Caching
+  - Cache queries if viewport hasn't changed since last query (event listeners to invalidate cache). 
+  - Cache the current width/height whenever the DOM is queried for all instances to use (event listeners to invalidate cache).
+    - Should all instances be updated at this time? The goal is to hit the DOM a little as possible. The `condition` function complicates this since it can't be depended upon if cached.
