@@ -14,5 +14,8 @@
     "mocha-phantomjs": "3.1.2"
   },
   "author": "Ryan Fitzer",
+  "contributors": [
+    "Derek Pittsinger (http://derekpitt.com)"
+  ],
   "readmeFilename": "readme.md"
 }
