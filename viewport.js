@@ -1,4 +1,4 @@
-/*! ViewportJS 0.1.0 | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
+/*! ViewportJS 0.1.0 | https://github.com/ryanfitzer/ViewportJS | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
 
 ;(function ( root, factory ) {
     
