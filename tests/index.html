@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>ViewportJS</title>
+  <script src="Modernizr.js"></script>
+</head>
+<body>
+<script src="../viewport.js"></script>
+<script>
+var myViewport = viewport([
+    {
+        name: 'xs',
+        width: [ 0 ],
+        mediaExp: '( min-width:0px )'
+    },
+    {
+        name: 's',
+        width: [ 480 ],
+        mediaExp: '( min-width:480px )',
+        condition: function() {
+          return !Modernizr.touch;
+        }
+    },
+    {
+        name: 's-m',
+        width: [ 480, 767 ],
+        mediaExp: '( min-width:480px ) and ( max-width:767px )'
+    },
+    {
+        name: 'm',
+        width: [ 768 ],
+        mediaExp: '( min-width:768px )'
+    },
+    {
+        name: 'l',
+        width: [ 1024 ],
+        height: [ 1085 ],
+        mediaExp: '( min-width:1024px ) and ( min-height:1085px )'
+    }
+]);
+</script>
+</body>
+</html>

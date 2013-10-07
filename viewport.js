@@ -1,22 +1,40 @@
-/*! ViewportJS 0.0.3 | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
-(function() {
+/*! ViewportJS 0.1.0 | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
+
+;(function ( root, factory ) {
+    
+    if ( typeof define === 'function' && define.amd ) {
+
+        // AMD. Register as an anonymous module.
+        define( factory );
+        
+    } else {
+        
+        // Browser global
+        root.viewport = factory();
+    }
+}( this, function() {
 
 	var getWidth
 		, html = document.documentElement
 		, docHead = document.head || document.getElementsByTagName( 'head' )[0]
 		;
-
+    
+    var defaults = {
+        debug: false,
+        modernize: false
+    }
+    
 	/**
 	 * Log info on a viewport object.
 	 */
 	function debug( vp ) {
 
-		console.log( 'Viewport: ', vp.name );
-		console.log( '  wmin:', vp.width && vp.width[0] );
-		console.log( '  wmax:', vp.width && vp.width[1] );
-		console.log( '  hmin:', vp.height && vp.height[0] );
-		console.log( '  hmax:', vp.height && vp.height[1] );
-		console.log( '  cond:', vp.condition );
+		console.log( '\nViewport:', vp.name );
+		console.log( '    wmin:', vp.width && vp.width[0] );
+		console.log( '    wmax:', vp.width && vp.width[1] );
+		console.log( '    hmin:', vp.height && vp.height[0] );
+		console.log( '    hmax:', vp.height && vp.height[1] );
+		console.log( '    cond:', vp.condition );
 	}
 
 	/**
@@ -52,11 +70,11 @@
 		tempDiv.style.cssText = 'position:absolute;top:-1000px;';
 		tempDiv.innerHTML = [
 			'<style>',
-			'@media( width:' + html.clientWidth + 'px ) {',
-			'body > #viewportjs-div-test-element {',
-			'width:10px !important',
-			'}',
-			'}',
+			    '@media( width:' + html.clientWidth + 'px ) {',
+			        'body > #viewportjs-div-test-element {',
+			            'width:10px !important',
+			        '}',
+			    '}',
 			'</style>'
 		].join( '' );
 
@@ -84,7 +102,7 @@
 			return;
 		}
 
-		mdnzr.addTest( vp.name , vp.test );
+		mdnzr.addTest( vp.name, vp.test );
 	}
 
 	/**
@@ -115,12 +133,19 @@
 				hmax = vp.height[1] ? html.clientHeight <= vp.height[1] : true;
 			}
 
-			if ( vp.condition ){
+			if ( vp.condition ) {
 				test = vp.condition();
 			}
 
-			if ( debug ){
-				console.log( '  ' + vp.name + ':', wmin, wmax, hmin, hmax, test );
+			if ( debug ) {
+
+        		console.log( '\nViewport:', vp.name );
+        		console.log( '    wmin:', wmin );
+        		console.log( '    wmax:', wmax );
+        		console.log( '    hmin:', hmin );
+        		console.log( '    hmax:', hmax );
+        		console.log( '    cond:', test );
+                
 			}
 
 			return wmin && wmax && hmin && hmax && test;
@@ -131,22 +156,33 @@
 	 * ViewportJS constructor.
 	 */
 	function Viewport( viewports, options ) {
-
+        
+        var value;
+        
 		this.vps = {};
 		this.viewports = viewports;
 		this.options = options || {};
 		this.length = viewports.length;
-
+        
+        for ( var key in defaults ) {
+            
+            if ( !this.options.hasOwnProperty( key ) ) {
+                
+                this.options[ key ] = defaults[ key ];
+            }
+        }
+        
+        if ( this.options.debug ) console.log( '\nOptions:', this.options );
+        
 		for ( var i = 0; i < this.length; i++ ) {
 
 			var vp = this.viewports[i];
 
 			this.vps[ vp.name ] = vp;
-
 			this.vps[ vp.name ].test = createTest( vp, this.options.debug );
 
 			if ( this.options.debug ) {
-				debug( this.vps[ vp.name ] );
+                debug( this.vps[ vp.name ] );
 			}
 
 			if ( this.options.modernize ) {
@@ -213,9 +249,9 @@
 	shimInnerWidth();
 
 	// Release it!
-	window.viewport = function( viewports, options ) {
+	return function( viewports, options ) {
 
 		return new Viewport( viewports, options );
 	};
 
-}());
+}));

@@ -1,6 +1,9 @@
 # ViewportJS #
 
-A unassuming, no-frills tool to use your responsive viewports in JavaScript.
+An unassuming, no-frills tool to use your responsive viewports in your JavaScript.
+
+- Uses [UMD](https://github.com/umdjs/umd).
+- No dependency on `window.matchMedia`
 
 
 
@@ -9,20 +12,54 @@ A unassuming, no-frills tool to use your responsive viewports in JavaScript.
 ViewportJS exposes an API that answers the following questions:
 
 - Is `name` the current viewport?
+  
+  ```js
+  myViewport.is( 'name' );
+  ```
 
-- What's the current viewport?
+- Which viewport is the current viewport?
+
+  ```js
+  myViewport.current();
+  ```
 
 - Does `name` fall within the current viewport?
 
+  ```js
+  myViewport.matches( 'name' );
+  ```
+
 - Can I get the media query expression for the `name` viewport?
 
+  ```js
+  myViewport.get( 'name' ).mediaExp;
+  ```
+
 - Can I get [Modernizr](http://modernizr.com/) to add the state of each of my viewports to the `html` tag so I can use them in my stylesheets?
+
+  ```js
+  var myViewport = viewport( vpsArray, { modernize: true } );
+  ```
 
 
 
 ## Usage ##
 
-Configure with an `array` of viewport objects:
+The `viewport` function takes two arguments and returns a new instance of the `Viewport` constructor:
+
+```js
+var myViewport = viewport( vps, options );
+```
+
+- `vps` (`Array`) An array of viewport definition objects.
+
+- `options` (`Object`)
+    - `debug` (`Boolean`): log to the console information on each viewport. Defaults to `false`.
+    - `modernize` (`Boolean`): Add each viewport as a test in Modernizr (if available). Defaults to `false`.
+
+---
+
+The `vps` argument is an `Array` of viewports:
 
 ```js
 var myViewport = viewport([
@@ -41,7 +78,7 @@ var myViewport = viewport([
 ]);
 ```
 
-Branch functionality based on the current viewport:
+And then branch your functionality based on the current viewport:
 
 ```js
 if ( myViewport.is( 'large' ) ) {
@@ -56,6 +93,7 @@ if ( myViewport.is( 'large' ) ) {
 ## Viewport Object ##
 
 A viewport object has the following properties:
+
 
 ### `name (String)` ###
 
@@ -103,6 +141,7 @@ if ( window.matchMedia( smallMQ ).matches ) {
     // do something
 }
 ```
+
 
 
 ## Methods ##
@@ -180,7 +219,10 @@ An object keyed by the viewport names. Extends the original viewport objects wit
 
 ## Roadmap ##
 
-- Caching
-  - Cache queries if viewport hasn't changed since last query (event listeners to invalidate cache). 
-  - Cache the current width/height whenever the DOM is queried for all instances to use (event listeners to invalidate cache).
-    - Should all instances be updated at this time? The goal is to hit the DOM a little as possible. The `condition` function complicates this since it can't be depended upon if cached.
+- Batch DOM reads using [`window.requestAnimationFrame`](https://github.com/wilsonpage/fastdom).
+
+- Cache values to lessen DOM reads.
+
+    - Cache the current width/height whenever the DOM is queried for all instances (event listeners to invalidate cache).
+      
+        Should all instances be updated at this time? The goal is to hit the DOM a little as possible. The `condition` function complicates this since it can't be depended upon if cached.
