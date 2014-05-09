@@ -53,7 +53,7 @@ var myViewport = viewport( options, flags );
 
 - `options Array` An array of viewport definition objects.
 
-- `flags `Object`  
+- `flags Object`  
     - `debug` (`Boolean`): log to the console information on each viewport. Defaults to `false`.
     - `modernize` (`Boolean`): Add each viewport as a test in Modernizr (if available). Defaults to `false`.
 
