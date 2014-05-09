@@ -78,7 +78,7 @@ var myViewport = viewport([
 ]);
 ```
 
-And then branch your functionality based on the current viewport:
+The object returned to `myViewport` can now be used to branch functionality based on the current viewport:
 
 ```js
 if ( myViewport.is( 'large' ) ) {
