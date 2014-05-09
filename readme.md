@@ -51,9 +51,9 @@ The `viewport` function takes two arguments and returns a new instance of the `V
 var myViewport = viewport( options, flags );
 ```
 
-- `options` (`Array`) An array of viewport definition objects.
+- `options Array` An array of viewport definition objects.
 
-- `flags` (`Object`)
+- `flags `Object`  
     - `debug` (`Boolean`): log to the console information on each viewport. Defaults to `false`.
     - `modernize` (`Boolean`): Add each viewport as a test in Modernizr (if available). Defaults to `false`.
 
@@ -100,7 +100,7 @@ The `options` are made up from an `Array` of 1 or more viewport objects. A viewp
 The name given to the viewport.
     
 
-### `width (Array)` ###
+### `width Array` ###
 
 The min/max-width `Number` to test. Example:
 
@@ -110,7 +110,7 @@ width: [ 0, 960 ]   // ( max-width:960px )
 width: [ 480, 960 ] // ( min-width:480px ) and ( max-width:960px )
 ```
 
-### `height (Array)` ###
+### `height Array` ###
 
 The min/max-height `Number` to test. Example:
 
@@ -120,7 +120,7 @@ height: [ 0, 960 ]   // ( max-height:960px )
 height: [ 480, 960 ] // ( min-height:480px ) and ( max-height:960px )
 ```
 
-### `condition (Function)` ###
+### `condition Function` ###
 
 (Optional) Useful if your viewport test requires more than just width and/or height. Must return a `boolean`. Example:
 
@@ -130,7 +130,7 @@ condition: function() {
 }
 ```
 
-### `mediaExp (String)` ###
+### `mediaExp String` ###
 
 (Optional) The media expression associated with the viewport. Helpful if you're using `window.matchMedia` and want a single place to store your media expressions. Example:
 
@@ -146,7 +146,7 @@ if ( window.matchMedia( smallMQ ).matches ) {
 
 ## Methods ##
 
-### `is( String name )` ###
+### `is( name String )` ###
 
 Checks if the specified viewport is the current viewport. Returns a `boolean`.
 
@@ -167,7 +167,7 @@ var currentVP = myViewport.current();
 ```
 
 
-### `get( String name )` ###
+### `get( name String )` ###
 
 Returns the specified viewport `object`.
 
@@ -192,12 +192,12 @@ if ( isSmallWithinVP ) {
 ## Properties ##
 
 
-### `viewports (Array)` ###
+### `viewports Array` ###
 
 The original `array` of viewports.
 
 
-### `vps (Object)` ###
+### `vps Object` ###
 
 An object keyed by the viewport names. Extends the original viewport objects with the `test` method, which is created from the `width`, `height` and `condition` members.
 
