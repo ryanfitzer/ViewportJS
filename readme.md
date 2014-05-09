@@ -48,18 +48,18 @@ ViewportJS exposes an API that answers the following questions:
 The `viewport` function takes two arguments and returns a new instance of the `Viewport` constructor:
 
 ```js
-var myViewport = viewport( vps, options );
+var myViewport = viewport( options, flags );
 ```
 
-- `vps` (`Array`) An array of viewport definition objects.
+- `options` (`Array`) An array of viewport definition objects.
 
-- `options` (`Object`)
+- `flags` (`Object`)
     - `debug` (`Boolean`): log to the console information on each viewport. Defaults to `false`.
     - `modernize` (`Boolean`): Add each viewport as a test in Modernizr (if available). Defaults to `false`.
 
 ---
 
-The `vps` argument is an `Array` of viewports:
+The `options` argument is an `Array` of viewports:
 
 ```js
 var myViewport = viewport([
@@ -90,12 +90,12 @@ if ( myViewport.is( 'large' ) ) {
 
 
 
-## Viewport Object ##
+## Options ##
 
-A viewport object has the following properties:
+The `options` are made up from an `Array` of 1 or more viewport objects. A viewport object has the following possible properties:
 
 
-### `name (String)` ###
+### `name String` ###
 
 The name given to the viewport.
     
