@@ -1,9 +1,9 @@
 # ViewportJS #
 
-An unassuming, no-frills tool to use your responsive viewports in your JavaScript.
+An unassuming, no-frills tool to use your responsive viewports in JavaScript. Unlike `window.matchMedia`, ViewportJS does not expose an API for subscribing to viewport changes (currently in the works). Instead, ViewportJS provides a simple tool for querying info on your viewports by name.
 
 - Uses [UMD](https://github.com/umdjs/umd).
-- No dependency on `window.matchMedia`
+- No dependency on `window.matchMedia`.
 
 
 
@@ -29,7 +29,7 @@ ViewportJS exposes an API that answers the following questions:
   myViewport.matches( 'name' );
   ```
 
-- Can I get the media query expression for the `name` viewport?
+- Can I store and retrieve the media query expression for the `name` viewport?
 
   ```js
   myViewport.get( 'name' ).mediaExp;
@@ -48,18 +48,18 @@ ViewportJS exposes an API that answers the following questions:
 The `viewport` function takes two arguments and returns a new instance of the `Viewport` constructor:
 
 ```js
-var myViewport = viewport( options, flags );
+var myViewport = viewport( viewports, options );
 ```
 
-- `options Array` An array of viewport definition objects.
+- `viewports Array` An array of viewport definition objects.
 
-- `flags Object`  
+- `options Object`  
     - `debug Boolean`: log to the console information on each viewport. Defaults to `false`.
     - `modernize Boolean`: Add each viewport as a test in Modernizr (if available). Defaults to `false`.
 
 ---
 
-The `options` argument is an `Array` of viewports:
+The `viewports` argument is an `Array` of viewports:
 
 ```js
 var myViewport = viewport([
@@ -90,9 +90,9 @@ if ( myViewport.is( 'large' ) ) {
 
 
 
-## Options ##
+## Viewport Object Properties ##
 
-The `options` are made up from an `Array` of 1 or more viewport objects. A viewport object has the following possible properties:
+The `viewports` are made up from an `Array` of 1 or more viewport objects. A viewport object has the following possible properties:
 
 
 ### `name String` ###
@@ -148,7 +148,7 @@ if ( window.matchMedia( smallMQ ).matches ) {
 
 ### `is( name String )` ###
 
-Checks if the specified viewport is the current viewport. Returns a `boolean`.
+Checks if the specified viewport is the current viewport. Returns a `boolean`. See the `current` method for more info on how this is determined.
 
 ```js
 var isSmallCurrentVP = myViewport.is( 'small' );
@@ -160,7 +160,7 @@ if ( isSmallCurrentVP ) {
 
 ### `current()` ###
 
-Checks each viewport condition (in the original configuration order) and returns the last matching viewport `object`.
+Checks each viewport condition and returns the first matching viewport `object` based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest viewport to the largest.
 
 ```js
 var currentVP = myViewport.current();
@@ -219,10 +219,4 @@ An object keyed by the viewport names. Extends the original viewport objects wit
 
 ## Roadmap ##
 
-- Batch DOM reads using [`window.requestAnimationFrame`](https://github.com/wilsonpage/fastdom).
-
-- Cache values to lessen DOM reads.
-
-    - Cache the current width/height whenever the DOM is queried for all instances (event listeners to invalidate cache).
-      
-        Should all instances be updated at this time? The goal is to hit the DOM a little as possible. The `condition` function complicates this since it can't be depended upon if cached.
+- Create an API for subscribing to a viewport channel that publishes when a viewport goes in/out of a matching/current state.

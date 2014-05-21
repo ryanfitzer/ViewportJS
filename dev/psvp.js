@@ -35,9 +35,9 @@
         matches: {}
     }
     
-    function setup( options ) {
+    function setup( viewports, options ) {
         
-        var vpObj = viewport( options )
+        var vpObj = viewport( viewports, options )
             , psObj = pubsub()
             ;
         
@@ -101,9 +101,9 @@
         }
     }
     
-    return function( options ) {
+    return function( viewports, options ) {
         
-        return setup( options );
+        return setup( viewports, options );
     }
 
 }));

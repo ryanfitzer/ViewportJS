@@ -11,7 +11,7 @@ var test = psvp([
         name: 'large',
         width: [ 769 ] // ( min-width:769px )
     }
-]);
+], { debug: true } );
 
-console.log( JSON.stringify( test, true, 2 ) );
+// console.log( JSON.stringify( test, true, 2 ) );
 // console.log( test );
