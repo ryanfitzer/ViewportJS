@@ -1,4 +1,4 @@
-/*! ViewportJS 0.2.0 | https://github.com/ryanfitzer/ViewportJS | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
+/*! ViewportJS 0.3.0 | https://github.com/ryanfitzer/ViewportJS | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
 
 ;(function ( root, factory ) {
     
@@ -17,6 +17,7 @@
 
 	var timer
         , html = document.documentElement
+        , hasVPChanged = false
 		;
     
     var vpSize = {
@@ -28,6 +29,16 @@
         debug: false,
         modernize: false
     };
+    
+    var vpEmpty = {
+        name: '',
+        width: [],
+        height: [],
+        condition: function() {},
+        mediaExp: ''
+    }
+    
+    var instances = [];
 
 	/**
 	 * Set up the `getWidth` function to use the correct width property.
@@ -118,6 +129,8 @@
             width: size.width,
             height: size.height
         }
+        
+        notifyInstances();
     }
     
     /**
@@ -127,8 +140,31 @@
 
         clearTimeout( timer );
         
-        timer = setTimeout( updateVPSize, 100 );
+        timer = setTimeout( function() {
+            
+            // The `throttleVPSize` function is only called when the `resize` or
+            // `orientationchange` events fire. Until then, the browser window is
+            // at its default state. This var enables subscribers whose viewport's
+            // match when first subscribed to have their listeners to be called.
+            if ( !hasVPChanged ) hasVPChanged = true;
+            
+            updateVPSize();
+            
+        }, 100 );
+    }
+    
+    /**
+     * Notify all instances that `vpSize` has changed. 
+     */
+    function notifyInstances() {
         
+        for ( var i = 0, len = instances.length; i < len; i++ ) {
+            
+            // Only notify instances if they have subscribers
+            if ( !instances[ i ].state.subscribers ) continue;
+
+            instances[ i ].update.call( instances[ i ] );
+        }
     }
     
 	/**
@@ -158,7 +194,17 @@
 
 		mdnzr.addTest( vp.name, vp.test );
 	}
-
+    
+    /**
+     * Poor man's `bind()`
+     */
+    function proxy( context, fn ) {
+        
+        return function() {
+            return fn.apply( context, arguments );
+        }
+    }
+    
 	/**
 	 * Create the test functions that excute when querying a viewport.
 	 */
@@ -198,15 +244,22 @@
 	}
 
 	/**
-	 * ViewportJS constructor.
+	 * Viewport constructor.
 	 */
 	function Viewport( viewports, options ) {
         
         this.vps = {};
 		this.viewports = viewports;
 		this.options = options || {};
-		this.length = viewports.length;
+        this.state = {};
+        this.state.channels = {};
+        this.state.tokenUid = -1;
+        this.state.subscribers = {};
+        this.state.previous = vpEmpty;
+        this.state.present = vpEmpty;
+        this.state.initialUpdate = true;
 
+        // Merge options with defaults.
         for ( var key in defaults ) {
             
             if ( !this.options.hasOwnProperty( key ) ) {
@@ -218,8 +271,9 @@
         if ( this.options.debug ) {
             console.log( '\nOptions:', this.options );
         }
-
-		for ( var i = 0; i < this.length; i++ ) {
+        
+        // Setup the `vps` object and add tests to Modernizr.
+		for ( var i = 0, len = this.viewports.length; i < len; i++ ) {
 
 			var vp = this.viewports[i];
 
@@ -235,7 +289,7 @@
 	}
 
 	/**
-	 * ViewportJS prototype.
+	 * Viewport prototype.
 	 */
 	Viewport.prototype = {
 
@@ -246,47 +300,45 @@
             
             var current = this.current();
             
-            if ( !name ) return current;
-            
 			return current.name === name;
 		},
 
 		/**
-		 * Get the current viewport
+		 * Get the current viewport.
 		 */
 		current: function() {
 
-			var current;
-            
+			var current = vpEmpty;
+
             // Reverse the array to check from
             // least important to most important
             this.viewports.reverse();
 
-			for ( var i = 0; i < this.viewports.length; i++ ) {
+			for ( var i = 0, len = this.viewports.length; i < len; i++ ) {
 
 				var v = this.viewports[i]
 					, name = v.name
 					;
-
-				if ( !this.vps[ name ].test() ) {
-					continue;
-				}
+                
+                if ( !this.vps[ name ] ) continue;
+                
+				if ( !this.vps[ name ].test() ) continue;
 
 				current = v;
 			}
             
             // Reset
             this.viewports.reverse();
-            
+
 			return current;
 		},
 
 		/**
-		 * Match a specific viewport.
+		 * Check if a specific viewport matches.
 		 */
 		matches: function( name ) {
 
-			return this.vps[ name ].test();
+			return this.vps[ name ] && this.vps[ name ].test();
 		},
         
 		/**
@@ -295,7 +347,96 @@
 		get: function( name ) {
 
 			return this.vps[ name ];
-		}
+		},
+        
+        /**
+         * Subscribe to a particular viewport.
+         */
+        subscribe: function( name, method ) {
+            
+            var subscribers;
+
+            this.state.tokenUid = this.state.tokenUid + 1;
+
+            if ( !this.state.channels[ name ] ) {
+                this.state.channels[ name ] = [];
+            }
+
+            subscribers = this.state.channels[ name ];
+
+            subscribers.push({
+                token: this.state.tokenUid,
+                method: method
+            });
+            
+            // Execute initial matches until the the viewport has changed.
+            if ( !hasVPChanged && this.state.present.name === name ) {
+                method( true, this.state.present );
+            }
+            
+            return this.state.tokenUid;
+        },
+        
+        /**
+         * Unsubscribe from a particular viewport.
+         */
+        unsubscribe: function( token ) {
+            
+            var subscribers;
+
+            for ( var name in this.state.channels ) {
+
+                subscribers = this.state.channels[ name ];
+
+                if ( !subscribers ) continue;
+
+                for ( var i = 0, len = subscribers.length; i < len; i++ ) {
+
+                    if ( !( subscribers[i].token === token ) ) continue;
+
+                    subscribers.splice( i, 1 );
+                }
+            }
+        },
+        
+        /**
+         * Publish that a particular viewport has become valid/invalid.
+         */
+        publish: function( name, matches ) {
+            
+            var subscribers = this.state.channels[ name ]
+                , subsLength = subscribers ? subscribers.length : 0
+                ;
+
+            if ( !subscribers ) return;
+
+            while ( subsLength-- ) {
+                subscribers[ subsLength ].method( matches, this.vps[ name ] );
+            }
+        },
+        
+        /**
+         * Update the state.
+         */
+        update: function() {
+            
+            // Only update the state if:
+            //  - this is the initial update
+            //  - the viewport has changed from its original state
+            if ( this.state.initialUpdate || hasVPChanged ) {
+                
+                if ( this.state.initialUpdate ) this.state.initialUpdate = false;
+                
+                this.state.previous = this.state.present;
+                this.state.present = this.current();   
+            }
+            
+            // Only publish when a viewport becomes valid/invalid
+            if ( this.state.present === this.state.previous ) return;
+
+            this.publish( this.state.previous.name, false );
+            this.publish( this.state.present.name, true );
+        }
 	};
     
     if ( 'addEventListener' in window ) {
@@ -313,7 +454,24 @@
 
     // Export it!
 	return function( viewports, options ) {
-
-		return new Viewport( viewports, options );
+        
+        var inst = new Viewport( viewports, options );
+        
+        instances.push( inst );
+        
+        // Set the initial viewport state.
+        inst.update();
+        
+        // Provide public API
+        return {
+            vps: inst.vps,
+            viewports: inst.viewports,
+            is: proxy( inst, inst.is ),
+            current: proxy( inst, inst.current ),
+            matches: proxy( inst, inst.matches ),
+            get: proxy( inst, inst.get ),
+            subscribe: proxy( inst, inst.subscribe ),
+            unsubscribe: proxy( inst, inst.unsubscribe )
+        }
 	};
 }));
