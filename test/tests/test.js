@@ -99,7 +99,7 @@ describe('viewport tests', function() {
     });
     
     
-    it( 'should return the first matching viewport object when multiple match', function() {
+    it( 'should return the last matching viewport object when multiple match', function() {
       
       var vp = viewport([
         {
@@ -119,9 +119,9 @@ describe('viewport tests', function() {
         }
       ]);
     
-      assert.equal(vp.current(), vp.get('first'));
-      assert.equal(vp.matches('first'), true);
-      assert.equal(vp.is('first'), true);
+      assert.equal(vp.current(), vp.get('third'));
+      assert.equal(vp.matches('third'), true);
+      assert.equal(vp.is('third'), true);
     
     });
 });

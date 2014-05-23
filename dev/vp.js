@@ -63,8 +63,8 @@
 
 		// IE6 & IE7 do not support window.innerWidth
 		if ( window.innerWidth === undefined ) {
-		
-        	getWidth = getClientWidth;
+
+        	shim = getClientWidth;
             
 		}
         // WebKit browsers change the size of their CSS viewport when scroll bars
@@ -100,10 +100,10 @@
             // CSS viewport is affected by scrollbar visibility.
             if ( tempDiv.offsetWidth === 10 ) shim = getClientWidth;
             else shim = getInnerWidth;
+            
+            html.removeChild( tempBody );
         }
-        
-        html.removeChild( tempBody );
-        
+                
         return shim;
 	})();
     
@@ -312,7 +312,7 @@
 
             // Reverse the array to check from
             // least important to most important
-            this.viewports.reverse();
+            // this.viewports.reverse();
 
 			for ( var i = 0, len = this.viewports.length; i < len; i++ ) {
 
@@ -328,7 +328,7 @@
 			}
             
             // Reset
-            this.viewports.reverse();
+            // this.viewports.reverse();
 
 			return current;
 		},

@@ -1,9 +1,10 @@
 # ViewportJS #
 
-An unassuming, no-frills tool to use your responsive viewports in JavaScript. Unlike `window.matchMedia`, ViewportJS does not expose an API for subscribing to viewport changes (currently in the works). Instead, ViewportJS provides a simple tool for querying info on your viewports by name.
+An unassuming, no-frills tool to use your responsive viewports in JavaScript. ViewportJS exposes an API for querying and/or subscribing to viewport changes.
 
 - Uses [UMD](https://github.com/umdjs/umd).
 - No dependency on `window.matchMedia`.
+- Tested in IE7-11, Safari, Firefox, Chrome, Mobile Safari, Chrome Android (4.2.2)
 
 
 
@@ -29,18 +30,14 @@ ViewportJS exposes an API that answers the following questions:
   myViewport.matches( 'name' );
   ```
 
-- Can I store and retrieve the media query expression for the `name` viewport?
+- Can I subscribe/unsubscribe to the `name` viewport to receive updates when `name` becomes valid/invalid?
 
   ```js
-  myViewport.get( 'name' ).mediaExp;
+  var myToken = myViewport.subscribe( 'name', function( matches ) {
+      // do something
+  });
+  myViewport.unsubscribe( myToken );
   ```
-
-- Can I get [Modernizr](http://modernizr.com/) to add the state of each of my viewports to the `html` tag so I can use them in my stylesheets?
-
-  ```js
-  var myViewport = viewport( vpsArray, { modernize: true } );
-  ```
-
 
 
 ## Usage ##
@@ -48,14 +45,10 @@ ViewportJS exposes an API that answers the following questions:
 The `viewport` function takes two arguments and returns a new instance of the `Viewport` constructor:
 
 ```js
-var myViewport = viewport( viewports, options );
+var myViewport = viewport( viewports );
 ```
 
 - `viewports Array` An array of viewport definition objects.
-
-- `options Object`  
-    - `debug Boolean`: log to the console information on each viewport. Defaults to `false`.
-    - `modernize Boolean`: Add each viewport as a test in Modernizr (if available). Defaults to `false`.
 
 ---
 
@@ -86,6 +79,16 @@ if ( myViewport.is( 'large' ) ) {
 } else {
     // do something else
 }
+```
+
+You can also subscribe/unsubscribe to a specific for updates when it becomes valid/invalid.
+
+```js
+var largeVPToken = myViewport.subscribe( 'large', function( isCurrent ) {
+    // do something
+});
+
+myViewport.unsubscribe( largeVPToken );
 ```
 
 
@@ -120,28 +123,6 @@ height: [ 0, 960 ]   // ( max-height:960px )
 height: [ 480, 960 ] // ( min-height:480px ) and ( max-height:960px )
 ```
 
-### `condition Function` ###
-
-(Optional) Useful if your viewport test requires more than just width and/or height. Must return a `boolean`. Example:
-
-```js
-condition: function() {
-    return Modernizr.touch;
-}
-```
-
-### `mediaExp String` ###
-
-(Optional) The media expression associated with the viewport. Helpful if you're using `window.matchMedia` and want a single place to store your media expressions. Example:
-
-```js
-var smallMQ = myViewport.get( 'small' ).mediaExp;
-
-if ( window.matchMedia( smallMQ ).matches ) {
-    // do something
-}
-```
-
 
 
 ## Methods ##
@@ -160,7 +141,7 @@ if ( isSmallCurrentVP ) {
 
 ### `current()` ###
 
-Checks each viewport condition and returns the first matching viewport `object` based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest viewport to the largest.
+Checks each viewport condition and returns the last matching viewport `object` based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest viewport to the largest.
 
 ```js
 var currentVP = myViewport.current();
@@ -185,6 +166,33 @@ var isSmallWithinVP = myViewport.matches( 'small' );
 if ( isSmallWithinVP ) {
     // do something
 }
+```
+
+### `subscribe( String name, Function handler )` ###
+
+Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed a `isCurrent` boolean for checking if the viewport has become valid/invalid. The `subscribe` method returns a token for unsubscribing.
+
+```js
+var smallVPToken = myViewport.subscribe( 'small', function( isCurrent ) {
+    
+    if ( isCurrent ) {
+        // do something
+    } else {
+        // do another thing
+    }
+});
+```
+
+### `unsubscribe( Number token )` ###
+
+Unsubscribe from updates to a specific viewport. Requires the `token` returned from the original subscription.
+
+```js
+var smallVPToken = myViewport.subscribe( 'small', function( matches ) {
+    // do something
+});
+
+myViewport.unsubscribe( smallVP );
 ```
 
 
@@ -219,4 +227,5 @@ An object keyed by the viewport names. Extends the original viewport objects wit
 
 ## Roadmap ##
 
-- Create an API for subscribing to a viewport channel that publishes when a viewport goes in/out of a matching/current state.
+- Testing on more devices.
+- Enhanced unit testing. Unit tests need to be done for all browsers, not just WebKit. Subscribe feature needs the window size to be manipulated. PhantomJS does not offer this. 
