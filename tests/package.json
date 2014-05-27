@@ -1,8 +1,0 @@
-{
-  "volo": {
-    "dependencies": {
-      "Modernizr": "github:Modernizr/Modernizr/v2.6.2",
-      "require": "github:jrburke/requirejs/2.1.8"
-    }
-  }
-}
