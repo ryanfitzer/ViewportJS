@@ -1,5 +1,4 @@
-/*! ViewportJS 0.3.0 | https://github.com/ryanfitzer/ViewportJS | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
-
+/*! ViewportJS 0.4.0 | https://github.com/ryanfitzer/ViewportJS | Copyright (c) 2012 Ryan Fitzer | License: (http://www.opensource.org/licenses/mit-license.php) */
 ;(function ( root, factory ) {
     
     if ( typeof define === 'function' && define.amd ) {
@@ -20,24 +19,20 @@
         , hasVPChanged = false
 		;
     
+    // Cache viewport dimensions for all to use.
     var vpSize = {
         width: 0,
         height: 0
     };
     
-    var defaults = {
-        debug: false,
-        modernize: false
-    };
-    
+    // Default viewport object.
     var vpEmpty = {
         name: '',
         width: [],
-        height: [],
-        condition: function() {},
-        mediaExp: ''
+        height: []
     }
     
+    // Save all created instances for later access.
     var instances = [];
 
 	/**
@@ -61,7 +56,7 @@
 			return html.clientWidth;
 		};
 
-		// IE6 & IE7 do not support window.innerWidth
+		// IE < 8 do not support window.innerWidth
 		if ( window.innerWidth === undefined ) {
 
         	shim = getClientWidth;
@@ -167,34 +162,6 @@
         }
     }
     
-	/**
-	 * Log info on a viewport object.
-	 */
-	function debug( vp ) {
-        
-        // Use string concat for older IE
-		console.log( '\n' + vp.name + '\n--------------' );
-		console.log( '  wmin: ' + ( vp.width && vp.width[0] >= 0 ? vp.width[0] : '' ) );
-		console.log( '  wmax: ' + ( vp.width && vp.width[1] >= 0 ? vp.width[1] : '' ) );
-		console.log( '  hmin: ' + ( vp.height && vp.height[0] >= 0 ? vp.height[0] : '' ) );
-		console.log( '  hmax: ' + ( vp.height && vp.height[1] >= 0 ? vp.height[1] : '' ) );
-		console.log( '  cond: ' + ( vp.condition ? vp.condition : '' ) );
-	}
-    
-	/**
-	 * Add viewport conditions to Modernizr.
-	 */
-	function modernize( vp ) {
-
-		var mdnzr = window.Modernizr;
-
-		if ( !mdnzr || !mdnzr.addTest ){
-			return;
-		}
-
-		mdnzr.addTest( vp.name, vp.test );
-	}
-    
     /**
      * Poor man's `bind()`
      */
@@ -208,7 +175,7 @@
 	/**
 	 * Create the test functions that excute when querying a viewport.
 	 */
-	function createTest( vp, isDebug ) {
+	function createTest( vp ) {
 
 		return function() {
 
@@ -232,13 +199,6 @@
 				hmax = vp.height[1] ? size.height <= vp.height[1] : true;
 			}
 
-			if ( vp.condition ) {
-                
-				test = vp.condition();
-			}
-
-			if ( isDebug ) debug( vp );
-
 			return wmin && wmax && hmin && hmax && test;
 		};
 	}
@@ -246,11 +206,10 @@
 	/**
 	 * Viewport constructor.
 	 */
-	function Viewport( viewports, options ) {
+	function Viewport( viewports ) {
         
         this.vps = {};
 		this.viewports = viewports;
-		this.options = options || {};
         this.state = {};
         this.state.channels = {};
         this.state.tokenUid = -1;
@@ -258,31 +217,14 @@
         this.state.previous = vpEmpty;
         this.state.present = vpEmpty;
         this.state.initialUpdate = true;
-
-        // Merge options with defaults.
-        for ( var key in defaults ) {
-            
-            if ( !this.options.hasOwnProperty( key ) ) {
-                
-                this.options[ key ] = defaults[ key ];
-            }
-        }
         
-        if ( this.options.debug ) {
-            console.log( '\nOptions:', this.options );
-        }
-        
-        // Setup the `vps` object and add tests to Modernizr.
+        // Setup the `vps` object.
 		for ( var i = 0, len = this.viewports.length; i < len; i++ ) {
 
 			var vp = this.viewports[i];
 
 			this.vps[ vp.name ] = vp;
-			this.vps[ vp.name ].test = createTest( vp, this.options.debug );
-
-			if ( this.options.modernize ) {
-				modernize( this.vps[ vp.name ] );
-			}
+			this.vps[ vp.name ].test = createTest( vp );
 		}
 
 		return this;
@@ -341,14 +283,6 @@
 			return this.vps[ name ] && this.vps[ name ].test();
 		},
         
-		/**
-		 * Returns a specific viewport object.
-		 */
-		get: function( name ) {
-
-			return this.vps[ name ];
-		},
-        
         /**
          * Subscribe to a particular viewport.
          */
@@ -369,8 +303,8 @@
                 method: method
             });
             
-            // Execute initial matches until the the viewport has changed.
-            if ( !hasVPChanged && this.state.present.name === name ) {
+            // Execute matches immediately to enable lazy subscribers.
+            if ( this.state.present.name === name ) {
                 method( true, this.state.present );
             }
             
@@ -401,6 +335,8 @@
         
         /**
          * Publish that a particular viewport has become valid/invalid.
+         * 
+         * @private
          */
         publish: function( name, matches ) {
             
@@ -417,6 +353,8 @@
         
         /**
          * Update the state.
+         * 
+         * @private
          */
         update: function() {
             
@@ -453,9 +391,9 @@
     updateVPSize();
 
     // Export it!
-	return function( viewports, options ) {
+	return function( viewports ) {
         
-        var inst = new Viewport( viewports, options );
+        var inst = new Viewport( viewports );
         
         instances.push( inst );
         
@@ -469,7 +407,6 @@
             is: proxy( inst, inst.is ),
             current: proxy( inst, inst.current ),
             matches: proxy( inst, inst.matches ),
-            get: proxy( inst, inst.get ),
             subscribe: proxy( inst, inst.subscribe ),
             unsubscribe: proxy( inst, inst.unsubscribe )
         }

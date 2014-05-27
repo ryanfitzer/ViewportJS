@@ -2,9 +2,10 @@
 
 An unassuming, no-frills tool to use your responsive viewports in JavaScript. ViewportJS exposes an API for querying and/or subscribing to viewport changes.
 
-- Uses [UMD](https://github.com/umdjs/umd).
-- No dependency on `window.matchMedia`.
-- Tested in IE7-11, Safari, Firefox, Chrome, Mobile Safari, Chrome Android (4.2.2)
+- 1.6 KB minified & gzipped.
+- Since ViewportJS is only concerned about the width and height of your viewport, it does not depend `window.matchMedia`.
+- [UMD](https://github.com/umdjs/umd) compatible.
+- Tested in IE7-11, Safari, Firefox, Chrome, Mobile Safari, Chrome Android (4.2.2).
 
 
 
@@ -12,47 +13,45 @@ An unassuming, no-frills tool to use your responsive viewports in JavaScript. Vi
 
 ViewportJS exposes an API that answers the following questions:
 
-- Is `name` the current viewport?
+Can I subscribe/unsubscribe to the `name` viewport to receive updates when `name` becomes valid/invalid?
+
+```js
+var myToken = myViewport.subscribe( 'name', function( matches ) {
+    // do something
+});
+
+myViewport.unsubscribe( myToken );
+```
+
+Is `name` the current viewport?
   
-  ```js
-  myViewport.is( 'name' );
-  ```
+```js
+myViewport.is( 'name' );
+```
 
-- Which viewport is the current viewport?
+Which viewport is the current viewport?
 
-  ```js
-  myViewport.current();
-  ```
+```js
+myViewport.current();
+```
 
-- Does `name` fall within the current viewport?
+Does `name` fall within the current viewport?
 
-  ```js
-  myViewport.matches( 'name' );
-  ```
+```js
+myViewport.matches( 'name' );
+```
 
-- Can I subscribe/unsubscribe to the `name` viewport to receive updates when `name` becomes valid/invalid?
-
-  ```js
-  var myToken = myViewport.subscribe( 'name', function( matches ) {
-      // do something
-  });
-  myViewport.unsubscribe( myToken );
-  ```
 
 
 ## Usage ##
 
-The `viewport` function takes two arguments and returns a new instance of the `Viewport` constructor:
+The `viewport` function takes an array of viewport objects and returns a new instance of the `Viewport` constructor:
 
 ```js
 var myViewport = viewport( viewports );
 ```
 
-- `viewports Array` An array of viewport definition objects.
-
----
-
-The `viewports` argument is an `Array` of viewports:
+The `viewports` argument is an `Array` of viewport objects:
 
 ```js
 var myViewport = viewport([
@@ -129,7 +128,7 @@ height: [ 480, 960 ] // ( min-height:480px ) and ( max-height:960px )
 
 ### `is( name String )` ###
 
-Checks if the specified viewport is the current viewport. Returns a `boolean`. See the `current` method for more info on how this is determined.
+Checks if the specified viewport is the current viewport. Returns a `boolean`. (See the `current` method for more info on how this is determined.)
 
 ```js
 var isSmallCurrentVP = myViewport.is( 'small' );
@@ -141,24 +140,15 @@ if ( isSmallCurrentVP ) {
 
 ### `current()` ###
 
-Checks each viewport condition and returns the last matching viewport `object` based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest viewport to the largest.
+Checks each viewport and returns the last matching viewport `object` based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest. Returns the current `viewport` object.
 
 ```js
 var currentVP = myViewport.current();
 ```
 
-
-### `get( name String )` ###
-
-Returns the specified viewport `object`.
-
-```js
-var smallVP = myViewport.get( 'small' );
-```
-
 ### `matches( String name )` ###
 
-Checks if the specified viewport is within the current viewport. The `matches` method differs from `is` by only testing the specified viewport. Returns a `boolean`.
+Checks if the specified viewport is within the current viewport. Returns a `boolean`.
 
 ```js
 var isSmallWithinVP = myViewport.matches( 'small' );
@@ -170,7 +160,7 @@ if ( isSmallWithinVP ) {
 
 ### `subscribe( String name, Function handler )` ###
 
-Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed a `isCurrent` boolean for checking if the viewport has become valid/invalid. The `subscribe` method returns a token for unsubscribing.
+Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed the `isCurrent` boolean for checking if the viewport has become valid/invalid. All subscribers are checked for validity when first subscribed to allow for lazy subscribers. The `subscribe` method returns a token for use on the `unsubscribe` method.
 
 ```js
 var smallVPToken = myViewport.subscribe( 'small', function( isCurrent ) {
@@ -207,7 +197,7 @@ The original `array` of viewports.
 
 ### `vps Object` ###
 
-An object keyed by the viewport names. Extends the original viewport objects with the `test` method, which is created from the `width`, `height` and `condition` members.
+An object keyed by the viewport names. Extends the original viewport objects with the `test` method, which is created from the `width` and `height` members.
 
 
 
@@ -227,5 +217,4 @@ An object keyed by the viewport names. Extends the original viewport objects wit
 
 ## Roadmap ##
 
-- Testing on more devices.
-- Enhanced unit testing. Unit tests need to be done for all browsers, not just WebKit. Subscribe feature needs the window size to be manipulated. PhantomJS does not offer this. 
+- Functional testing. Subscribe feature needs the window size to be manipulated.

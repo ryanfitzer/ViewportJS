@@ -10,7 +10,7 @@ describe( 'viewport setup', function() {
         ]);
         
         assert.equal( vp.is( 'first' ), true );
-        assert.equal( vp.current(), vp.get( 'first' ) );
+        assert.equal( vp.current(), vp.vps[ 'first' ] );
         assert.equal( vp.matches( 'first' ), true );
     });
 });
@@ -36,7 +36,7 @@ describe('viewport tests', function() {
             }
         ]);
         
-        assert.equal( vp.current(), vp.get( 'second' ) );
+        assert.equal( vp.current(), vp.vps[ 'second' ] );
         assert.equal( vp.matches( 'second' ), true );
         assert.equal( vp.is( 'second' ), true );
     });
@@ -55,7 +55,7 @@ describe('viewport tests', function() {
             }
         ]);
         
-        assert.equal( vp.current(), vp.get( 'second' ) );
+        assert.equal( vp.current(), vp.vps[ 'second' ] );
         assert.equal( vp.matches( 'second' ), true );
         assert.equal( vp.is( 'second' ), true );
     });
@@ -76,28 +76,10 @@ describe('viewport tests', function() {
             }
         ]);
         
-        assert.equal( vp.current(), vp.get( 'second' ) );
+        assert.equal( vp.current(), vp.vps[ 'second' ] );
         assert.equal( vp.matches( 'second' ), true );
         assert.equal( vp.is( 'second' ), true );
     });
-    
-    
-    it( 'should override when a condition function is provided', function() {
-        
-        var vp = viewport([
-            {
-                name: 'first',
-                height: [ height - 1 ],
-                width: [ width - 1 ],
-                condition: function() { return true; }
-            }
-        ]);
-        
-        assert.equal( vp.current(), vp.get( 'first' ) );
-        assert.equal( vp.matches( 'first' ), true );
-        assert.equal( vp.is( 'first' ), true );
-    });
-    
     
     it( 'should return the last matching viewport object when multiple match', function() {
       
@@ -119,9 +101,9 @@ describe('viewport tests', function() {
         }
       ]);
     
-      assert.equal(vp.current(), vp.get('third'));
-      assert.equal(vp.matches('third'), true);
-      assert.equal(vp.is('third'), true);
+      assert.equal( vp.current(), vp.vps[ 'third' ] );
+      assert.equal( vp.matches( 'third' ), true );
+      assert.equal( vp.is( 'third' ), true );
     
     });
 });
