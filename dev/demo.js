@@ -1,3 +1,25 @@
+var logger = function( name, isCurrent ) {
+    
+    var results
+        , msg
+        ;
+    
+    if ( console && console.log ) {
+        return console.log( '=> ' + name + ': ' + isCurrent );
+    }
+    
+    // IE7 logging
+    results = document.getElementById( 'breakpoints' );
+    msg = '<p>' + name + ': ' + isCurrent + '</p>';
+    
+    results.innerHTML = results.innerHTML + msg;
+}
+
+var handler = function( isCurrent, vp ) {
+
+    logger( vp.name, isCurrent );
+};
+
 var myVPOne = viewport([
     {
         name: 'small',
@@ -12,6 +34,20 @@ var myVPOne = viewport([
         width: [ 769 ]
     }
 ]);
+
+var myVPOneAll = myVPOne.subscribe( '*', function( vp ) {
+    logger( vp.name, '*' );
+});
+var myVPOne1 = myVPOne.subscribe( 'small', function( isCurrent, vp ) {
+    
+    logger( vp.name, isCurrent );
+    
+    if ( isNaN( myVPOne1 ) ) return;
+    
+    myVPOne.unsubscribe( myVPOne1 );
+});
+var myVPOne2 = myVPOne.subscribe( 'medium', handler );
+var myVPOne3 = myVPOne.subscribe( 'large', handler );
 
 var myVPTwo = viewport([
     {
@@ -28,44 +64,6 @@ var myVPTwo = viewport([
         height: [ 600 ]
     }
 ]);
-
-var handler = function( isCurrent, vp ) {
-
-    console.log( vp.name + ': ' + isCurrent );
-    
-    // IE7 logging
-    // var results = document.getElementById( 'breakpoints' )
-    //     , msg = vp.name + ': ' + isCurrent
-    //     ;
-    // 
-    // results.innerHTML = results.innerHTML + '<p>' + vp.name + ': ' + isCurrent + '</p>';
-};
-
-var isLazy
-    , myVPOne1a
-    ;
-
-var myVPOne1 = myVPOne.subscribe( 'small', function( isCurrent, vp ) {
-    
-    console.log( vp.name + ': ' + isCurrent );
-    
-    if ( !isCurrent || isLazy ) return;
-    
-    isLazy = true;
-    
-    myVPOne1a = myVPOne.subscribe( 'small', function( isCurrent ) {
-        
-        console.log('I be a lazy subscriber, YO!');
-
-        myVPOne.unsubscribe( myVPOne1a );
-    });
-});
-
-var myVPOne2 = myVPOne.subscribe( 'medium', handler );
-var myVPOne3 = myVPOne.subscribe( 'large', handler );
-
 var myVPTwo1 = myVPTwo.subscribe( 'small-one', handler );
 var myVPTwo2 = myVPTwo.subscribe( 'medium-one', handler );
 var myVPTwo3 = myVPTwo.subscribe( 'height-one', handler );
-
-

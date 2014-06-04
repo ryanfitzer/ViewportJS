@@ -124,7 +124,7 @@
             width: size.width,
             height: size.height
         }
-        
+
         notifyInstances();
     }
     
@@ -289,9 +289,13 @@
         subscribe: function( name, method ) {
             
             var subscribers;
-
+            
+            if ( !( name in this.vps ) && name !== '*' ) {
+                throw new Error( 'The viewport "' + name + '" does not match any configured viewports.' );
+            }
+            
             this.state.tokenUid = this.state.tokenUid + 1;
-
+            
             if ( !this.state.channels[ name ] ) {
                 this.state.channels[ name ] = [];
             }
@@ -304,10 +308,11 @@
             });
             
             // Execute matches immediately to enable lazy subscribers.
-            if ( this.state.present.name === name ) {
-                method( true, this.state.present );
-            }
+            if ( name === this.state.present.name ) method( true, this.state.present );
             
+            // The "*" channel is always fired.
+            if ( name === '*' ) method( this.state.present );
+
             return this.state.tokenUid;
         },
         
@@ -347,7 +352,9 @@
             if ( !subscribers ) return;
 
             while ( subsLength-- ) {
-                subscribers[ subsLength ].method( matches, this.vps[ name ] );
+                
+                if ( name === '*' ) subscribers[ subsLength ].method( this.state.present );
+                else subscribers[ subsLength ].method( matches, this.vps[ name ] );
             }
         },
         
@@ -374,6 +381,7 @@
 
             this.publish( this.state.previous.name, false );
             this.publish( this.state.present.name, true );
+            this.publish( '*' );
         }
 	};
     

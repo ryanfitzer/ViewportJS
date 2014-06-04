@@ -41,7 +41,6 @@ describe('viewport tests', function() {
         assert.equal( vp.is( 'second' ), true );
     });
 
-
     it( 'should return the correct viewport object based on height', function() {
         
         var vp = viewport([
@@ -59,7 +58,6 @@ describe('viewport tests', function() {
         assert.equal( vp.matches( 'second' ), true );
         assert.equal( vp.is( 'second' ), true );
     });
-    
     
     it( 'should return the correct viewport object based on width and height', function() {
         

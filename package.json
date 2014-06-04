@@ -1,6 +1,6 @@
 {
   "name": "ViewportJS",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "description": "A unassuming, no-frills tool to use your responsive viewports in JavaScript.",
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
@@ -16,6 +16,7 @@
     "test": "./node_modules/.bin/mocha-phantomjs test/index.html --view 320x480; ./node_modules/.bin/mocha-phantomjs test/index.html --view 768x1024"
   },
   "devDependencies": {
-    "mocha-phantomjs": "3.1.2"
+    "mocha-phantomjs": "3.1.2",
+    "intern": "~1.7.0"
   }
 }
