@@ -16,11 +16,19 @@ ViewportJS exposes an API that answers the following questions:
 Can I subscribe/unsubscribe to the `name` viewport to receive updates when `name` becomes valid/invalid?
 
 ```js
-var myToken = myViewport.subscribe( 'name', function( matches ) {
+var myToken = myViewport.subscribe( 'name', function( matches, viewport ) {
     // do something
 });
 
 myViewport.unsubscribe( myToken );
+```
+
+Can I subscribe to all viewports at once?
+
+```js
+myViewport.subscribe( '*', function( viewport ) {
+    // do something
+});
 ```
 
 Is `name` the current viewport?
@@ -68,26 +76,6 @@ var myViewport = viewport([
         width: [ 769 ] // ( min-width:769px )
     }
 ]);
-```
-
-The object returned to `myViewport` can now be used to branch functionality based on the current viewport:
-
-```js
-if ( myViewport.is( 'large' ) ) {
-    // do something
-} else {
-    // do something else
-}
-```
-
-You can also subscribe/unsubscribe to a specific for updates when it becomes valid/invalid.
-
-```js
-var largeVPToken = myViewport.subscribe( 'large', function( isCurrent ) {
-    // do something
-});
-
-myViewport.unsubscribe( largeVPToken );
 ```
 
 
@@ -160,10 +148,12 @@ if ( isSmallWithinVP ) {
 
 ### `subscribe( String name, Function handler )` ###
 
-Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed the `isCurrent` boolean for checking if the viewport has become valid/invalid. All subscribers are checked for validity when first subscribed to allow for lazy subscribers. The `subscribe` method returns a token for use on the `unsubscribe` method.
+Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed the `isCurrent` boolean for checking if the viewport has become valid/invalid, as well as the current viewport's object. All subscribers are checked for validity when first subscribed to allow for lazy subscribers. The `subscribe` method returns a token for use on the `unsubscribe` method.
+
+There is also a reserved viewport name "*" to allow for subscribing to all viewports at once. It's handler only receives the current viewport's object.
 
 ```js
-var smallVPToken = myViewport.subscribe( 'small', function( isCurrent ) {
+var smallVPToken = myViewport.subscribe( 'small', function( isCurrent, viewport ) {
     
     if ( isCurrent ) {
         // do something
