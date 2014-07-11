@@ -15,8 +15,8 @@
 }( this, function() {
 
 	var timer
-        , html = document.documentElement
         , hasVPChanged = false
+        , html = document.documentElement
 		;
     
     // Cache viewport dimensions for all to use.
@@ -124,7 +124,7 @@
             width: size.width,
             height: size.height
         }
-
+        
         notifyInstances();
     }
     
@@ -149,16 +149,18 @@
     }
     
     /**
-     * Notify all instances that `vpSize` has changed. 
+     * Notify all instances and APIs that `vpSize` has changed. 
      */
     function notifyInstances() {
+
+        var inst;
         
         for ( var i = 0, len = instances.length; i < len; i++ ) {
             
-            // Only notify instances if they have subscribers
-            if ( !instances[ i ].state.subscribers ) continue;
-
-            instances[ i ].update.call( instances[ i ] );
+            inst = instances[ i ];
+            
+            inst[0].update.call( inst[0] );
+            inst[1].size = vpSize;
         }
     }
     
@@ -365,6 +367,8 @@
          */
         update: function() {
             
+            if ( !this.state.subscribers ) return;
+            
             // Only update the state if:
             //  - this is the initial update
             //  - the viewport has changed from its original state
@@ -401,22 +405,28 @@
     // Export it!
 	return function( viewports ) {
         
-        var inst = new Viewport( viewports );
-        
-        instances.push( inst );
+        var api
+            , inst = new Viewport( viewports )
+            ;
         
         // Set the initial viewport state.
         inst.update();
         
         // Provide public API
-        return {
+        api = {
+            size: vpSize,
             vps: inst.vps,
             viewports: inst.viewports,
             is: proxy( inst, inst.is ),
             current: proxy( inst, inst.current ),
             matches: proxy( inst, inst.matches ),
             subscribe: proxy( inst, inst.subscribe ),
-            unsubscribe: proxy( inst, inst.unsubscribe )
+            unsubscribe: proxy( inst, inst.unsubscribe ),
         }
+        
+        // Save the instance and api object for later.
+        instances.push( [ inst, api ] );
+        
+        return api;
 	};
 }));
