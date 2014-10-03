@@ -1,16 +1,16 @@
-var logger = function( name, isCurrent ) {
+var logger = function() {
     
     var results
         , msg
         ;
     
     if ( console && console.log ) {
-        return console.log( '=> ' + name + ': ' + isCurrent );
+        return console.log( '=> ', arguments );
     }
     
     // IE7 logging
     results = document.getElementById( 'breakpoints' );
-    msg = '<p>' + name + ': ' + isCurrent + '</p>';
+    msg = '<p>' + Array.prototype.slice.call( arguments ).join( ', ' ) + '</p>';
     
     results.innerHTML = results.innerHTML + msg;
 }
@@ -35,8 +35,9 @@ var myVPOne = viewport([
     }
 ]);
 
-var myVPOneAll = myVPOne.subscribe( '*', function( vp ) {
-    logger( vp.name, '*' );
+var myVPOneAll = myVPOne.subscribe( '*', function( vpPresent, vpPrevious ) {
+    logger( 'viewport dimensions: ' + myVPOne.size.width + ' x ' + myVPOne.size.height );
+    logger( 'name: *', 'present: ' + vpPresent.name, 'previous: ' + vpPrevious.name );
 });
 var myVPOne1 = myVPOne.subscribe( 'small', function( isCurrent, vp ) {
     

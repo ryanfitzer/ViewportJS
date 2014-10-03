@@ -16,7 +16,9 @@
     "test": "./node_modules/.bin/mocha-phantomjs test/index.html --view 320x480; ./node_modules/.bin/mocha-phantomjs test/index.html --view 768x1024"
   },
   "devDependencies": {
-    "mocha-phantomjs": "3.1.2",
-    "intern": "~1.7.0"
+    "grunt": "^0.4.5",
+    "grunt-contrib-uglify": "^0.6.0",
+    "intern": "~1.7.0",
+    "mocha-phantomjs": "3.1.2"
   }
 }

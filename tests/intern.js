@@ -63,8 +63,8 @@ define({
 
     // Non-functional test suite(s) to run in each browser
     suites: [
-        // 'tests/viewport',
-        'tests/viewport-old-ie'
+        'tests/viewport',
+        // 'tests/viewport-old-ie'
     ],
 
     // Functional test suite(s) to run in each browser once non-functional tests are completed
