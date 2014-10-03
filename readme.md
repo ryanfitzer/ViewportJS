@@ -2,7 +2,7 @@
 
 An unassuming, no-frills tool to use your responsive viewports in JavaScript. ViewportJS exposes an API for querying and/or subscribing to viewport changes.
 
-- 1.6 KB minified & gzipped.
+- 1.49 KB minified & gzipped.
 - Since ViewportJS is only concerned about the width and height of your viewport, it does not depend `window.matchMedia`.
 - [UMD](https://github.com/umdjs/umd) compatible.
 - Tested in IE7-11, Safari, Firefox, Chrome, Mobile Safari, Chrome Android (4.2.2).
@@ -13,33 +13,41 @@ An unassuming, no-frills tool to use your responsive viewports in JavaScript. Vi
 
 ViewportJS exposes an API that answers the following questions:
 
-Can I subscribe/unsubscribe to the `name` viewport to receive updates when `name` becomes valid/invalid?
+1. Can I subscribe/unsubscribe to the `name` viewport to receive updates when `name` becomes valid/invalid?
 
-```js
-var myToken = myViewport.subscribe( 'name', function( matches ) {
-    // do something
-});
+    ```js
+    var myToken = myViewport.subscribe( 'name', function( matches, viewport ) {
+        // do something
+    });
+    
+    myViewport.unsubscribe( myToken );
+    ```
 
-myViewport.unsubscribe( myToken );
-```
+2. Can I subscribe to all viewports at once?
 
-Is `name` the current viewport?
-  
-```js
-myViewport.is( 'name' );
-```
+    ```js
+    myViewport.subscribe( '*', function( viewport ) {
+        // do something
+    });
+    ```
 
-Which viewport is the current viewport?
+3. Is `name` the current viewport?
 
-```js
-myViewport.current();
-```
+    ```js
+    myViewport.is( 'name' );
+    ```
 
-Does `name` fall within the current viewport?
+4. Which viewport is the current viewport?
 
-```js
-myViewport.matches( 'name' );
-```
+    ```js
+    myViewport.current();
+    ```
+
+5. Does `name` fall within the current viewport?
+
+    ```js
+    myViewport.matches( 'name' );
+    ```
 
 
 
@@ -68,26 +76,6 @@ var myViewport = viewport([
         width: [ 769 ] // ( min-width:769px )
     }
 ]);
-```
-
-The object returned to `myViewport` can now be used to branch functionality based on the current viewport:
-
-```js
-if ( myViewport.is( 'large' ) ) {
-    // do something
-} else {
-    // do something else
-}
-```
-
-You can also subscribe/unsubscribe to a specific for updates when it becomes valid/invalid.
-
-```js
-var largeVPToken = myViewport.subscribe( 'large', function( isCurrent ) {
-    // do something
-});
-
-myViewport.unsubscribe( largeVPToken );
 ```
 
 
@@ -160,10 +148,12 @@ if ( isSmallWithinVP ) {
 
 ### `subscribe( String name, Function handler )` ###
 
-Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed the `isCurrent` boolean for checking if the viewport has become valid/invalid. All subscribers are checked for validity when first subscribed to allow for lazy subscribers. The `subscribe` method returns a token for use on the `unsubscribe` method.
+Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed the `isCurrent` boolean for checking if the viewport has become valid/invalid, as well as the current viewport's object. All subscribers are checked for validity when first subscribed in order to allow for lazy subscribers. The `subscribe` method returns a token for use on the `unsubscribe` method.
+
+There is also a reserved viewport name `*` to allow for subscribing to all viewports at once. It's handler only receives the current viewport's object.
 
 ```js
-var smallVPToken = myViewport.subscribe( 'small', function( isCurrent ) {
+var smallVPToken = myViewport.subscribe( 'small', function( isCurrent, viewport ) {
     
     if ( isCurrent ) {
         // do something
@@ -188,6 +178,11 @@ myViewport.unsubscribe( smallVP );
 
 
 ## Properties ##
+
+
+### `size Object` ###
+
+An object containing the `width` and `height` of the current viewport.
 
 
 ### `viewports Array` ###
@@ -217,4 +212,4 @@ An object keyed by the viewport names. Extends the original viewport objects wit
 
 ## Roadmap ##
 
-- Functional testing. Subscribe feature needs the window size to be manipulated.
+- Functional testing. Testing the subscribe feature requires the window size to be manipulated.
