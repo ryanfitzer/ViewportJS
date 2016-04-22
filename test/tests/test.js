@@ -1,14 +1,14 @@
 describe( 'viewport setup', function() {
 
     it( 'should set up a viewport', function() {
-      
+
         var vp = viewport([
             {
                 name: 'first',
                 width: [ 1 ]
             }
         ]);
-        
+
         assert.equal( vp.is( 'first' ), true );
         assert.equal( vp.current(), vp.vps[ 'first' ] );
         assert.equal( vp.matches( 'first' ), true );
@@ -24,7 +24,7 @@ describe('viewport tests', function() {
         ;
 
     it( 'should return the correct viewport object based on width', function() {
-      
+
         var vp = viewport([
             {
                 name: 'first',
@@ -35,14 +35,14 @@ describe('viewport tests', function() {
                 width: [ width ]
             }
         ]);
-        
+
         assert.equal( vp.current(), vp.vps[ 'second' ] );
         assert.equal( vp.matches( 'second' ), true );
         assert.equal( vp.is( 'second' ), true );
     });
 
     it( 'should return the correct viewport object based on height', function() {
-        
+
         var vp = viewport([
             {
                 name: 'first',
@@ -53,14 +53,14 @@ describe('viewport tests', function() {
                 height: [ height ]
             }
         ]);
-        
+
         assert.equal( vp.current(), vp.vps[ 'second' ] );
         assert.equal( vp.matches( 'second' ), true );
         assert.equal( vp.is( 'second' ), true );
     });
-    
+
     it( 'should return the correct viewport object based on width and height', function() {
-        
+
         var vp = viewport([
             {
                 name: 'first',
@@ -73,14 +73,14 @@ describe('viewport tests', function() {
                 width: [ width ]
             }
         ]);
-        
+
         assert.equal( vp.current(), vp.vps[ 'second' ] );
         assert.equal( vp.matches( 'second' ), true );
         assert.equal( vp.is( 'second' ), true );
     });
-    
+
     it( 'should return the last matching viewport object when multiple match', function() {
-      
+
       var vp = viewport([
         {
           name: 'first',
@@ -98,10 +98,10 @@ describe('viewport tests', function() {
           width: [ width ]
         }
       ]);
-    
+
       assert.equal( vp.current(), vp.vps[ 'third' ] );
       assert.equal( vp.matches( 'third' ), true );
       assert.equal( vp.is( 'third' ), true );
-    
+
     });
 });

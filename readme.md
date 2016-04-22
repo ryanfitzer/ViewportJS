@@ -3,9 +3,8 @@
 An unassuming, no-frills tool to use your responsive viewports in JavaScript. ViewportJS exposes an API for querying and/or subscribing to viewport changes.
 
 - 1.49 KB minified & gzipped.
-- Since ViewportJS is only concerned about the width and height of your viewport, it does not depend `window.matchMedia`.
-- [UMD](https://github.com/umdjs/umd) compatible.
-- Tested in IE7-11, Safari, Firefox, Chrome, Mobile Safari, Chrome Android (4.2.2).
+- Supports all modern browsers, including Internet Explorer >= 9.
+- Supports [UMD](https://github.com/umdjs/umd).
 
 
 
@@ -87,7 +86,7 @@ The `viewports` are made up from an `Array` of 1 or more viewport objects. A vie
 
 ### `name String` ###
 
-The name given to the viewport.
+The viewport nickname.
     
 
 ### `width Array` ###
@@ -114,6 +113,15 @@ height: [ 480, 960 ] // ( min-height:480px ) and ( max-height:960px )
 
 ## Methods ##
 
+
+### `current()` ###
+
+Checks each viewport and returns the last matching viewport `object` based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest. Returns the current `viewport` object.
+
+```js
+var currentVP = myViewport.current();
+```
+
 ### `is( name String )` ###
 
 Checks if the specified viewport is the current viewport. Returns a `boolean`. (See the `current` method for more info on how this is determined.)
@@ -126,17 +134,9 @@ if ( isSmallCurrentVP ) {
 }
 ```
 
-### `current()` ###
-
-Checks each viewport and returns the last matching viewport `object` based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest. Returns the current `viewport` object.
-
-```js
-var currentVP = myViewport.current();
-```
-
 ### `matches( String name )` ###
 
-Checks if the specified viewport is within the current viewport. Returns a `boolean`.
+Checks if the specified viewport matches the current viewport dimensions. Returns a `boolean`.
 
 ```js
 var isSmallWithinVP = myViewport.matches( 'small' );
@@ -180,33 +180,47 @@ myViewport.unsubscribe( smallVP );
 ## Properties ##
 
 
-### `size Object` ###
-
-An object containing the `width` and `height` of the current viewport.
-
-
 ### `viewports Array` ###
 
-The original `array` of viewports.
+The original `array` of viewport objects.
 
 
 ### `vps Object` ###
 
-An object keyed by the viewport names. Extends the original viewport objects with the `test` method, which is created from the `width` and `height` members.
+An object keyed by the viewport names containing its `MediaQueryList` object.
 
+```js
+{
+    'small': {
+        name: 'small',
+        mql: {MediaQueryList}
+    },
+    'medium': {...},
+    'large': {...},
+}
+```
+
+If `window.matchMedia` is not supported (IE9), this object only contains the `matches` property.
+
+```js
+{
+    'small': {
+        name: 'small',
+        mql: {
+          matches: {Boolean}
+        }
+    },
+    'medium': {...},
+    'large': {...},
+}
+```
 
 
 ## Testing ##
 
 - Install phantomJS >= 1.9.1
-- Run `npm install` to install the required testing modules
+- Run `npm install` to install the required modules
 - Run the tests: `npm test`
-
-
-
-## Credits ##
-
-- [tysonmatanich/viewportSize](https://github.com/tysonmatanich/viewportSize) for the technique on which size property to use (`clientWidth` or `innerWidth`).
 
 
 

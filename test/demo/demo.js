@@ -1,21 +1,10 @@
-var logger = function() {
-    
-    var results
-        , msg
-        ;
-    
-    if ( console && console.log ) {
-        return console.log( '=> ', arguments );
-    }
-    
-    // IE7 logging
-    results = document.getElementById( 'breakpoints' );
-    msg = '<p>' + Array.prototype.slice.call( arguments ).join( ', ' ) + '</p>';
-    
-    results.innerHTML = results.innerHTML + msg;
+// Shim console.log for IE9
+function logger() {
+
+    return console.log( '=> ',  Array.prototype.slice.call( arguments ).join( ' ' ) );
 }
 
-var handler = function( isCurrent, vp ) {
+function handler( isCurrent, vp ) {
 
     logger( vp.name, isCurrent );
 };
@@ -31,20 +20,20 @@ var myVPOne = viewport([
     },
     {
         name: 'large',
-        width: [ 769 ]
+        width: [ 925 ]
     }
 ]);
-
 var myVPOneAll = myVPOne.subscribe( '*', function( vpPresent, vpPrevious ) {
-    logger( 'viewport dimensions: ' + myVPOne.size.width + ' x ' + myVPOne.size.height );
     logger( 'name: *', 'present: ' + vpPresent.name, 'previous: ' + vpPrevious.name );
 });
 var myVPOne1 = myVPOne.subscribe( 'small', function( isCurrent, vp ) {
-    
+
     logger( vp.name, isCurrent );
-    
+
     if ( isNaN( myVPOne1 ) ) return;
-    
+
+    logger( 'myVPOne: "small" listener has been unsubscribed' );
+
     myVPOne.unsubscribe( myVPOne1 );
 });
 var myVPOne2 = myVPOne.subscribe( 'medium', handler );
