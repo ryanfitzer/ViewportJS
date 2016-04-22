@@ -1,3 +1,4 @@
+/*! ViewportJS 1.0.0 | github.com/ryanfitzer/ViewportJS/blob/master/LICENSE */
 ;(function ( root, factory ) {
 
     if ( typeof define === 'function' && define.amd ) {

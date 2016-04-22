@@ -1,6 +1,8 @@
 # ViewportJS #
 
-An unassuming, no-frills tool to use your responsive viewports in JavaScript. ViewportJS exposes an API for querying and/or subscribing to viewport changes.
+[![NPM version](https://badge.fury.io/js/viewportjs.svg)](https://www.npmjs.com/package/viewportjs)
+
+ViewportJS exposes an API for querying and subscribing to the browser's viewport changes.
 
 - 1.49 KB minified & gzipped.
 - Supports all modern browsers, including Internet Explorer >= 9.
