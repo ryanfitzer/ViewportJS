@@ -4,7 +4,7 @@
 
 ViewportJS exposes an API for querying and subscribing to the browser's viewport changes.
 
-- 1.49 KB minified & gzipped.
+- 1.32 kB minified & gzipped.
 - Supports all modern browsers, including Internet Explorer >= 9.
 - Supports [UMD](https://github.com/umdjs/umd).
 
