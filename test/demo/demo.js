@@ -1,15 +1,22 @@
-// Shim console.log for IE9
-function logger() {
-
-    return console.log( '=> ',  Array.prototype.slice.call( arguments ).join( ' ' ) );
+function setState( id, isCurrent, vp ) {
+    
+    var element = document.getElementById( id );
+    
+    if ( isCurrent ) {
+      
+        element.setAttribute( 'data-state', 'current' );
+    }
+    else if ( vp.mql.matches ) {
+      
+        element.setAttribute( 'data-state', 'matches' );
+    }
+    else {
+      
+        element.setAttribute( 'data-state', '' );
+    }
 }
 
-function handler( isCurrent, vp ) {
-
-    logger( vp.name, isCurrent );
-};
-
-var myVPOne = viewport([
+var vp = viewport([
     {
         name: 'small',
         width: [ 0, 480 ]
@@ -19,41 +26,42 @@ var myVPOne = viewport([
         width: [ 481, 768 ]
     },
     {
+        name: 'medium-alt',
+        width: [ 0, 600 ],
+        height: [ 600 ]
+    },
+    {
         name: 'large',
         width: [ 925 ]
     }
 ]);
-var myVPOneAll = myVPOne.subscribe( '*', function( vpPresent, vpPrevious ) {
-    logger( 'name: *', 'present: ' + vpPresent.name, 'previous: ' + vpPrevious.name );
+
+vp.subscribe( 'small', function( isCurrent, vp ) {
+    setState( 'vps-small', isCurrent, vp );
 });
-var myVPOne1 = myVPOne.subscribe( 'small', function( isCurrent, vp ) {
 
-    logger( vp.name, isCurrent );
+vp.subscribe( 'medium', function( isCurrent, vp ) {
+    setState( 'vps-medium', isCurrent, vp );
 
-    if ( isNaN( myVPOne1 ) ) return;
-
-    logger( 'myVPOne: "small" listener has been unsubscribed' );
-
-    myVPOne.unsubscribe( myVPOne1 );
 });
-var myVPOne2 = myVPOne.subscribe( 'medium', handler );
-var myVPOne3 = myVPOne.subscribe( 'large', handler );
 
-var myVPTwo = viewport([
-    {
-        name: 'small-one',
-        width: [ 320 ]
-    },
-    {
-        name: 'medium-one',
-        width: [ 1250 ]
-    },
-    {
-        name: 'height-one',
-        width: [ 600 ],
-        height: [ 600 ]
-    }
-]);
-var myVPTwo1 = myVPTwo.subscribe( 'small-one', handler );
-var myVPTwo2 = myVPTwo.subscribe( 'medium-one', handler );
-var myVPTwo3 = myVPTwo.subscribe( 'height-one', handler );
+vp.subscribe( 'medium-alt', function( isCurrent, vp ) {
+    setState( 'vps-medium-alt', isCurrent, vp );
+});
+
+vp.subscribe( 'large', function( isCurrent, vp ) {
+    setState( 'vps-large', isCurrent, vp );
+});
+
+vp.subscribe( '*', function( current, previous ) {
+
+    vp.viewports.forEach( function ( viewport ) {
+
+        viewport = vp.vps[ viewport.name ];
+
+        if ( viewport.name !== current.name ) {
+            viewport.mql.matches && console.log( viewport.name );
+            setState( 'vps-' + viewport.name, false, viewport );
+        }
+    });
+});

@@ -152,7 +152,7 @@ if ( isSmallWithinVP ) {
 
 Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed the `isCurrent` boolean for checking if the viewport has become valid/invalid, as well as the current viewport's object. All subscribers are checked for validity when first subscribed in order to allow for lazy subscribers. The `subscribe` method returns a token for use on the `unsubscribe` method.
 
-There is also a reserved viewport name `*` to allow for subscribing to all viewports at once. It's handler only receives the current viewport's object.
+There is also a reserved viewport name `*` to allow for subscribing to all viewports at once. Its handler only receives the current viewport's object.
 
 ```js
 var smallVPToken = myViewport.subscribe( 'small', function( isCurrent, viewport ) {

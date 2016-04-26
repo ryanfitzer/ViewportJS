@@ -27,6 +27,24 @@
     var instances = [];
     // Cache vieport size when window.matchMedia is not supported
     var vpSize = {};
+    
+    /**
+     * Return an array containing the differences between the 2
+     */
+    function arrayDiff( a, b ) {
+        
+        a.sort();
+        b.sort();
+        
+        return a.filter( function( val ) {
+            
+            return b.indexOf( val ) < 0;
+            
+        }).concat( b.filter( function( val ) {
+            
+            return a.indexOf( val ) < 0;
+        }));
+    }
 
     if ( !hasMatchMedia ) {
 
@@ -63,7 +81,8 @@
                 hmin = vpSize.height >= vp.height[0];
                 hmax = vp.height[1] ? vpSize.height <= vp.height[1] : true;
             }
-
+            
+            // console.log(vp.name, wmin && wmax && hmin && hmax);
             return wmin && wmax && hmin && hmax;
         }
 
@@ -74,7 +93,7 @@
 
             var timer;
 
-            delay = isNaN( delay ) ? defaultDelay : delay;
+            delay = isNaN( delay ) ? 200 : delay;
 
             return function () {
 
@@ -92,7 +111,7 @@
                         instance.update();
                     });
 
-                }, timer, defaultDelay );
+                }, timer, delay );
             }
         }
 
@@ -186,7 +205,9 @@
             channels: {},
             subscribers: {},
             present: vpEmpty,
-            previous: vpEmpty
+            previous: vpEmpty,
+            curMatches: [],
+            prevMatches: []
         };
 
         viewports.forEach( function ( vp, index ) {
@@ -208,7 +229,7 @@
             vpObj.name = vp.name;
             vpObj.mql = createMediaQueryList( dimensions, self.options.units, function( e ) {
 
-                timer = throttle( self.update.bind( self ), timer, self.options.delay );
+                timer = throttle( self.update.bind( self, vpObj.name ), timer, self.options.delay );
             });
         });
     }
@@ -222,10 +243,17 @@
          * Get the current viewport.
          */
         current: function() {
-
+            
+            this.state.prevMatches = this.state.curMatches;
+            this.state.curMatches = [];
+            
             var match = this.viewports.filter( function ( vp ) {
-
-                return this.vps[ vp.name ] && this.vps[ vp.name ].mql.matches;
+                
+                var isMatch = this.vps[ vp.name ].mql.matches;
+                
+                if ( isMatch ) this.state.curMatches.push( this.vps[ vp.name ] );
+                
+                return isMatch;
 
             }, this ).pop();
 
@@ -244,8 +272,12 @@
          * Check if a specific viewport matches.
          */
         matches: function( name ) {
+            
+            if ( name ) {
+                return this.vps[ name ] && this.vps[ name ].mql.matches;
+            }
 
-            return this.vps[ name ] && this.vps[ name ].mql.matches;
+            return this.state.curMatches;
         },
 
         /**
@@ -279,7 +311,6 @@
             if ( name === '*' && (this.state.previous.name || this.state.present.name) ) {
                 method( this.state.present, this.state.previous );
             }
-            // if ( name === '*' ) method( this.state.present, this.state.previous );
 
             return this.state.tokenUid;
         },
@@ -320,9 +351,13 @@
             if ( !subscribers ) return;
 
             while ( subsLength-- ) {
-
-                if ( name === '*' ) subscribers[ subsLength ].method( this.state.present, this.state.previous );
-                else subscribers[ subsLength ].method( matches, this.vps[ name ] );
+                
+                if ( name === '*' ) {
+                    subscribers[ subsLength ].method( this.state.present, this.state.previous );
+                }
+                else {
+                    subscribers[ subsLength ].method( matches, this.vps[ name ] );
+                }
             }
         },
 
@@ -331,22 +366,17 @@
          *
          * @private
          */
-        update: function() {
-
-            if ( !this.state.subscribers ) return;
-
+        update: function( name ) {
+            
             this.state.previous = this.state.present;
             this.state.present = this.current();
-
-            if ( this.state.present === this.state.previous ) return;
-
-            if ( this.state.previous.name ) {
+            
+            if ( this.state.previous.name !== this.state.present.name ) {
                 this.publish( this.state.previous.name, false );
+                this.publish( this.state.present.name, true );
             }
-
-            this.publish( this.state.present.name, true );
-
-            if ( this.state.previous.name || this.state.present.name ) {
+            
+            if ( arrayDiff( this.state.curMatches, this.state.prevMatches ).length ) {
                 this.publish( '*' );
             }
         }

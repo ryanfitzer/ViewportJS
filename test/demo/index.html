@@ -4,77 +4,36 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <title>Viewport Tests</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style type="text/css">
-    #feature-tests {
-      height:3000px;
-    }
-    #window {
-        margin:0;
-    }
-    .result {
-        padding:10px;
-        background:#ccc;
-    }
-    .break {
-        background:red;
-    }
-
-    @media screen and (max-width: 480px) {
-        #break-max-480 {
-            background:green;
-        }
-    }
-    @media screen and (min-width: 481px) and (max-width: 768px) {
-        #break-max-768 {
-            background:green;
-        }
-    }
-    @media screen and (min-width: 925px) {
-        #break-min-925 {
-            background:green;
-        }
-    }
-
-    @media screen and (min-width: 320px) {
-        #break-min-320 {
-            background:green;
-        }
-    }
-    @media screen and (min-width: 1250px) {
-        #break-min-1250 {
-            background:green;
-        }
-    }
-    @media screen and (min-height: 600px) and ( min-width: 600px ) {
-        #break-min-600 {
-            background:green;
-        }
-    }
-
-  </style>
+  <link rel="stylesheet" href="main.css">
 </head>
-<body id="feature-tests">
+<body>
+  
+<h1>ViewportJS Demonstration</h1>
 
-<div class="viewport" id="window">
-
-  <h1>Viewport Tests</h1>
-
-  <div class="test" id="breakpoints">
-
-    <h2>VP One</h2>
-
-    <p class="result break" id="break-max-480">small <code>(max-width:480px)</code></p>
-    <p class="result break" id="break-max-768">medium <code>(min-width: 481px) and (max-width: 768px)</code></p>
-    <p class="result break" id="break-min-925">large <code>(min-width:925px)</code></p>
-
-    <h2>VP Two</h2>
-    <p class="result break" id="break-min-320">small-one <code>(min-width:320px)</code></p>
-    <p class="result break" id="break-min-1250">medium-one <code>(min-width:1250px)</code></p>
-    <p class="result break" id="break-min-600">height-one <code>(min-height:600px)</code></p>
-
-  </div>
-
+<div class="viewport small">
+  <div><code>@media screen and (max-width: 480px)</code></div>
+  <div class="break" id="css-small">CSS</div>
+  <div class="break" id="vps-small">ViewportJS</div>
 </div>
+
+<div class="viewport medium">
+  <div><code>@media screen and (min-width: 481px) and (max-width: 768px)</code></div>
+  <div class="break" id="css-medium">CSS</div>
+  <div class="break" id="vps-medium">ViewportJS</div>
+</div>
+
+<div class="viewport medium-alt">
+  <div><code>@media screen and (max-width: 600px) and (min-height: 600px)</code></div>
+  <div class="break" id="css-medium-alt">CSS</div>
+  <div class="break" id="vps-medium-alt">ViewportJS</div>
+</div>
+
+<div class="viewport large">
+  <div><code>@media screen and (min-width: 925px)</code></div>
+  <div class="break" id="css-large">CSS</div>
+  <div class="break" id="vps-large">ViewportJS</div>
+</div>
+
 <script src="../../viewport.js"></script>
 <script src="demo.js"></script>
 </body>
