@@ -22,7 +22,7 @@
     };
 
     // Test for window.matchMedia
-    var hasMatchMedia = !!window.matchMedia;
+    var hasMatchMedia = !window.matchMedia;
     // Save instances when window.matchMedia not supported
     var instances = [];
     // Cache vieport size when window.matchMedia is not supported
@@ -74,7 +74,7 @@
 
             var timer;
 
-            delay = isNaN( delay ) ? defaultDelay : delay;
+            delay = isNaN( delay ) ? 100 : delay;
 
             return function () {
 
@@ -92,7 +92,7 @@
                         instance.update();
                     });
 
-                }, timer, defaultDelay );
+                }, timer, delay );
             }
         }
 
