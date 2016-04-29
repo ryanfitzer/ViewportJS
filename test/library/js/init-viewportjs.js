@@ -1,17 +1,17 @@
 function setState( id, isCurrent, vp ) {
-    
+
     var element = document.getElementById( id );
-    
+
     if ( isCurrent ) {
-      
+
         element.setAttribute( 'data-state', 'current' );
     }
     else if ( vp.mql.matches ) {
-      
+
         element.setAttribute( 'data-state', 'matches' );
     }
     else {
-      
+
         element.setAttribute( 'data-state', '' );
     }
 }
@@ -37,20 +37,20 @@ var vp = viewport([
 ]);
 
 vp.subscribe( 'small', function( isCurrent, vp ) {
-    setState( 'vps-small', isCurrent, vp );
+    setState( 'vpjs-small', isCurrent, vp );
 });
 
 vp.subscribe( 'medium', function( isCurrent, vp ) {
-    setState( 'vps-medium', isCurrent, vp );
+    setState( 'vpjs-medium', isCurrent, vp );
 
 });
 
 vp.subscribe( 'medium-alt', function( isCurrent, vp ) {
-    setState( 'vps-medium-alt', isCurrent, vp );
+    setState( 'vpjs-medium-alt', isCurrent, vp );
 });
 
 vp.subscribe( 'large', function( isCurrent, vp ) {
-    setState( 'vps-large', isCurrent, vp );
+    setState( 'vpjs-large', isCurrent, vp );
 });
 
 vp.subscribe( '*', function( current, previous ) {
@@ -60,8 +60,7 @@ vp.subscribe( '*', function( current, previous ) {
         viewport = vp.vps[ viewport.name ];
 
         if ( viewport.name !== current.name ) {
-            viewport.mql.matches && console.log( viewport.name );
-            setState( 'vps-' + viewport.name, false, viewport );
+            setState( 'vpjs-' + viewport.name, false, viewport );
         }
     });
 });

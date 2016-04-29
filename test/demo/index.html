@@ -7,34 +7,48 @@
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  
+
 <h1>ViewportJS Demonstration</h1>
 
-<div class="viewport small">
+<div id="small" class="viewport">
   <div><code>@media screen and (max-width: 480px)</code></div>
   <div class="break" id="css-small">CSS</div>
-  <div class="break" id="vps-small">ViewportJS</div>
+  <div class="break" id="vpjs-small">ViewportJS</div>
 </div>
 
-<div class="viewport medium">
+<div id="medium" class="viewport medium">
   <div><code>@media screen and (min-width: 481px) and (max-width: 768px)</code></div>
   <div class="break" id="css-medium">CSS</div>
-  <div class="break" id="vps-medium">ViewportJS</div>
+  <div class="break" id="vpjs-medium">ViewportJS</div>
 </div>
 
-<div class="viewport medium-alt">
+<div id="medium-alt" class="viewport medium-alt">
   <div><code>@media screen and (max-width: 600px) and (min-height: 600px)</code></div>
   <div class="break" id="css-medium-alt">CSS</div>
-  <div class="break" id="vps-medium-alt">ViewportJS</div>
+  <div class="break" id="vpjs-medium-alt">ViewportJS</div>
 </div>
 
-<div class="viewport large">
+<div id="large" class="viewport large">
   <div><code>@media screen and (min-width: 925px)</code></div>
   <div class="break" id="css-large">CSS</div>
-  <div class="break" id="vps-large">ViewportJS</div>
+  <div class="break" id="vpjs-large">ViewportJS</div>
 </div>
 
 <script src="../../viewport.js"></script>
 <script src="demo.js"></script>
+<script src="tests.js"></script>
+<script>
+  window.viewportTesterSettings = {
+    position: 'top-right',
+    layout: 'side-by-side',
+    textColor: '#ffffff',
+    backgroundColor: '#008000',
+    fontFamily: 'sans-serif',
+    fontSize: '14px',
+    opacity: '0.9'
+  };
+</script>
+<script src="../lib/viewportTester.js"></script>
+
 </body>
 </html>

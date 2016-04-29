@@ -27,21 +27,21 @@
     var instances = [];
     // Cache vieport size when window.matchMedia is not supported
     var vpSize = {};
-    
+
     /**
      * Return an array containing the differences between the 2
      */
     function arrayDiff( a, b ) {
-        
+
         a.sort();
         b.sort();
-        
+
         return a.filter( function( val ) {
-            
+
             return b.indexOf( val ) < 0;
-            
+
         }).concat( b.filter( function( val ) {
-            
+
             return a.indexOf( val ) < 0;
         }));
     }
@@ -81,7 +81,7 @@
                 hmin = vpSize.height >= vp.height[0];
                 hmax = vp.height[1] ? vpSize.height <= vp.height[1] : true;
             }
-            
+
             // console.log(vp.name, wmin && wmax && hmin && hmax);
             return wmin && wmax && hmin && hmax;
         }
@@ -243,16 +243,16 @@
          * Get the current viewport.
          */
         current: function() {
-            
+
             this.state.prevMatches = this.state.curMatches;
             this.state.curMatches = [];
-            
+
             var match = this.viewports.filter( function ( vp ) {
-                
+
                 var isMatch = this.vps[ vp.name ].mql.matches;
-                
+
                 if ( isMatch ) this.state.curMatches.push( this.vps[ vp.name ] );
-                
+
                 return isMatch;
 
             }, this ).pop();
@@ -272,7 +272,7 @@
          * Check if a specific viewport matches.
          */
         matches: function( name ) {
-            
+
             if ( name ) {
                 return this.vps[ name ] && this.vps[ name ].mql.matches;
             }
@@ -351,7 +351,7 @@
             if ( !subscribers ) return;
 
             while ( subsLength-- ) {
-                
+
                 if ( name === '*' ) {
                     subscribers[ subsLength ].method( this.state.present, this.state.previous );
                 }
@@ -367,15 +367,15 @@
          * @private
          */
         update: function( name ) {
-            
+
             this.state.previous = this.state.present;
             this.state.present = this.current();
-            
+
             if ( this.state.previous.name !== this.state.present.name ) {
                 this.publish( this.state.previous.name, false );
                 this.publish( this.state.present.name, true );
             }
-            
+
             if ( arrayDiff( this.state.curMatches, this.state.prevMatches ).length ) {
                 this.publish( '*' );
             }

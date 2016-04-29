@@ -6,11 +6,8 @@ body {
 	height: 3000px;
 	font-family: 'Helvetica Nueue', 'Helvetica', sans-serif;
 }
-h1, h2 {
-	margin: 15px;
-}
-h2 {
-	margin-top: 30px;
+h1 {
+	margin: 50px 15px 15px;
 }
 pre,
 code {
@@ -48,7 +45,7 @@ pre {
 	color: #fff;
 	float: left;
 	padding: 10px;
-	background: red;
+	background: #ff0000;
 	text-align: center;
 }
 .break:nth-child(2) {
@@ -62,7 +59,7 @@ pre {
 	text-align: center;
 }
 [data-state=""] {
-	background: red;
+	background: #ff0000;
 }
 [data-state="matches"] {
 	background: #b5c104;

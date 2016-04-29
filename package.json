@@ -13,7 +13,7 @@
     "url": "https://github.com/ryanfitzer/ViewportJS.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha-phantomjs test/index.html --view 320x480; ./node_modules/.bin/mocha-phantomjs test/index.html --view 768x1024"
+    "test": "./node_modules/.bin/mocha-phantomjs test/index.html --view 320x700; ./node_modules/.bin/mocha-phantomjs test/index.html --view 481x700; ./node_modules/.bin/mocha-phantomjs test/index.html --view 601x599; ./node_modules/.bin/mocha-phantomjs test/index.html --view 924x700; ./node_modules/.bin/mocha-phantomjs test/index.html --view 925x700;"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
