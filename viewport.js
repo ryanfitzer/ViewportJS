@@ -1,18 +1,37 @@
-/*! ViewportJS 1.0.0 | github.com/ryanfitzer/ViewportJS/blob/master/LICENSE */
-;(function ( root, factory ) {
-
-    if ( typeof define === 'function' && define.amd ) {
-
+/*! ViewportJS github.com/ryanfitzer/ViewportJS/blob/master/LICENSE */
+;(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define( factory );
-
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory();
     } else {
-
-        // Browser global
+        // Browser globals (root is window)
         root.viewport = factory();
     }
-
 }( this, function() {
+
+    // Stub API for handling server-side rendering scenarios.
+    if ( typeof window === 'undefined' ) {
+
+        return function() {
+
+            var noop = function () { return {}; };
+
+            return {
+                vps: {},
+                viewports: {},
+                is: noop,
+                current: noop,
+                matches: noop,
+                subscribe: noop,
+                unsubscribe: noop
+            };
+        };
+    };
 
     // Default viewport object to use when no queries match.
     var vpEmpty = {
