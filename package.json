@@ -1,6 +1,6 @@
 {
   "name": "viewportjs",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "ViewportJS exposes an API for querying and subscribing to the browser's viewport changes.",
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
