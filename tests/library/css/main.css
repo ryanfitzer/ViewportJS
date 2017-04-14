@@ -3,11 +3,10 @@
 }
 body {
 	margin: 0;
-	height: 3000px;
 	font-family: 'Helvetica Nueue', 'Helvetica', sans-serif;
 }
 h1 {
-	margin: 50px 15px 15px;
+	margin: 20px 15px 15px;
 }
 pre,
 code {
@@ -36,6 +35,15 @@ pre {
 	background-color: #edf6ff;
 	-webkit-overflow-scrolling: touch;
 }
+#mocha {
+    margin: 20px 15px;
+}
+#mocha .suite {
+    margin-left: 0;
+}
+#btn-popup {
+    margin: 15px 15px 20px;
+}
 .viewport {
 	overflow: hidden;
 	margin-bottom: 20px;
@@ -56,7 +64,6 @@ pre {
 }
 .viewport code {
 	display: block;
-	text-align: center;
 }
 [data-state=""] {
 	background: #ff0000;
