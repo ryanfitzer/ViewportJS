@@ -25,6 +25,7 @@
         var height;
 
         beforeEach( function () {
+
             width = viewportSize.getWidth();
             height = viewportSize.getHeight();
         });
@@ -109,6 +110,24 @@
           assert.equal( vp.matches( 'third' ), true );
           assert.equal( vp.is( 'third' ), true );
 
+        });
+
+        it( 'should subscribe and unsubscribe to a viewport', function() {
+
+            var vp = viewport([
+                {
+                    name: 'first',
+                    width: [ 0, width ]
+                }
+            ]);
+
+            var unsub0 = vp.subscribe( 'first', function () {});
+            var unsub1 = vp.subscribe( 'first', function () {});
+
+            assert.ok( unsub0().token === 0 );
+            assert.ok( typeof unsub0() === 'undefined' );
+            assert.ok( unsub1().token === 1 );
+            assert.ok( typeof unsub1() === 'undefined' );
         });
     });
 

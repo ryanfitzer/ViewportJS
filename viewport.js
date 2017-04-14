@@ -40,15 +40,8 @@
         height: []
     };
 
-    // Test for window.matchMedia
-    var hasMatchMedia = !!window.matchMedia;
-    // Save instances when window.matchMedia not supported
-    var instances = [];
-    // Cache vieport size when window.matchMedia is not supported
-    var vpSize = {};
-
     /**
-     * Return an array containing the differences between the 2
+     * Return an array containing the differences between 2 arrays.
      */
     function arrayDiff( a, b ) {
 
@@ -65,81 +58,8 @@
         }));
     }
 
-    if ( !hasMatchMedia ) {
-
-        /**
-         * Get the current viewport dimensions.
-         */
-        function setVPSize() {
-
-            return vpSize = {
-                width: window.innerWidth,
-                height: window.innerHeight
-            };
-        }
-
-        /**
-         * Test a viewport's query.
-         */
-        function isVPMatch( vp ) {
-
-            var wmin = true
-                , wmax = true
-                , hmin = true
-                , hmax = true
-                ;
-
-            if ( vp.width ) {
-
-                wmin = vpSize.width >= vp.width[0];
-                wmax = vp.width[1] ? vpSize.width <= vp.width[1] : true;
-            }
-
-            if ( vp.height ) {
-
-                hmin = vpSize.height >= vp.height[0];
-                hmax = vp.height[1] ? vpSize.height <= vp.height[1] : true;
-            }
-
-            // console.log(vp.name, wmin && wmax && hmin && hmax);
-            return wmin && wmax && hmin && hmax;
-        }
-
-        /**
-         * Update the `matches` property for all viewport queries.
-         */
-        function updateQueries( delay ) {
-
-            var timer;
-
-            delay = isNaN( delay ) ? 200 : delay;
-
-            return function () {
-
-                timer = throttle( function () {
-
-                    setVPSize();
-
-                    instances.forEach( function ( instance ) {
-
-                        instance.viewports.forEach( function ( vp ) {
-
-                            instance.vps[ vp.name ].mql.matches = isVPMatch( vp );
-                        });
-
-                        instance.update();
-                    });
-
-                }, timer, delay );
-            }
-        }
-
-        window.addEventListener( 'resize', updateQueries() );
-        window.addEventListener( 'orientationchange', updateQueries() );
-    }
-
     /**
-     * Throttle
+     * Generic throttle method.
      */
     function throttle( method, timer, delay ) {
 
@@ -189,24 +109,14 @@
 
     /**
      * Creates a `mediaQueryList` object.
-     *
-     * If `window.matchMedia` is not supported (IE9), the object only contains the `matches` property.
      */
     function createMediaQueryList( dimensions, units, listener ) {
 
-        var mql;
+        var mql = window.matchMedia( createExpression( dimensions, units ) );
 
-        if ( hasMatchMedia ) {
+        mql.addListener( listener );
 
-            mql = window.matchMedia( createExpression( dimensions, units ) );
-            mql.addListener( listener );
-
-            return mql;
-        }
-
-        return {
-            matches: false
-        };
+        return mql;
     };
 
     /**
@@ -246,10 +156,11 @@
             }, {} );
 
             vpObj.name = vp.name;
-            vpObj.mql = createMediaQueryList( dimensions, self.options.units, function( e ) {
+            vpObj.listener = function( e ) {
 
                 timer = throttle( self.update.bind( self, vpObj.name ), timer, self.options.delay );
-            });
+            };
+            vpObj.mql = createMediaQueryList( dimensions, self.options.units, vpObj.listener );
         });
     }
 
@@ -304,13 +215,14 @@
          */
         subscribe: function( name, method ) {
 
+            var token;
             var subscribers;
 
             if ( !( name in this.vps ) && name !== '*' ) {
                 throw new Error( 'The viewport "' + name + '" does not match any configured viewports.' );
             }
 
-            this.state.tokenUid = this.state.tokenUid + 1;
+            token = this.state.tokenUid = this.state.tokenUid + 1;
 
             if ( !this.state.channels[ name ] ) {
                 this.state.channels[ name ] = [];
@@ -319,7 +231,7 @@
             subscribers = this.state.channels[ name ];
 
             subscribers.push({
-                token: this.state.tokenUid,
+                token: token,
                 method: method
             });
 
@@ -327,39 +239,32 @@
             if ( name === this.state.present.name ) method( true, this.state.present );
 
             // The "*" channel is always fired.
-            if ( name === '*' && (this.state.previous.name || this.state.present.name) ) {
+            if ( name === '*' && ( this.state.previous.name || this.state.present.name) ) {
                 method( this.state.present, this.state.previous );
             }
 
-            return this.state.tokenUid;
+            return this.unsubscribe( subscribers, token );
         },
 
         /**
-         * Unsubscribe from a particular viewport.
+         * Unsubscribe a listener from a particular viewport.
          */
-        unsubscribe: function( token ) {
+        unsubscribe: function ( subscribers, token ) {
 
-            var subscribers;
+            return function () {
 
-            for ( var name in this.state.channels ) {
+                return subscribers.reduce( function ( accum, sub, index ) {
 
-                subscribers = this.state.channels[ name ];
+                    if ( sub.token === token ) {
 
-                if ( !subscribers ) continue;
-
-                for ( var i = 0, len = subscribers.length; i < len; i++ ) {
-
-                    if ( !( subscribers[i].token === token ) ) continue;
-
-                    subscribers.splice( i, 1 );
-                }
+                        return subscribers.splice( index, 1 )[0];
+                    };
+                }, undefined );
             }
         },
 
         /**
          * Publish that a particular viewport has become valid/invalid.
-         *
-         * @private
          */
         publish: function( name, matches ) {
 
@@ -382,8 +287,6 @@
 
         /**
          * Update the state.
-         *
-         * @private
          */
         update: function( name ) {
 
@@ -419,22 +322,15 @@
 
         instance = new Viewport( viewports, config );
 
-        if ( !hasMatchMedia ) {
-            instances.push( instance );
-            updateQueries( 0 )();
-        }
-
         instance.update();
 
-        // Provide public API
         return {
             vps: instance.vps,
             viewports: instance.viewports,
             is: instance.is.bind( instance ),
             current: instance.current.bind( instance ),
             matches: instance.matches.bind( instance ),
-            subscribe: instance.subscribe.bind( instance ),
-            unsubscribe: instance.unsubscribe.bind( instance )
+            subscribe: instance.subscribe.bind( instance )
         };
     };
 }));
