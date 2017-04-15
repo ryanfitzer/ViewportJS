@@ -239,7 +239,7 @@
             if ( name === this.state.present.name ) method( true, this.state.present );
 
             // The "*" channel is always fired.
-            if ( name === '*' && ( this.state.previous.name || this.state.present.name) ) {
+            if ( name === '*' && ( this.state.previous.name || this.state.present.name ) ) {
                 method( this.state.present, this.state.previous );
             }
 
@@ -309,7 +309,7 @@
         var instance;
         var config = {
             units: 'px',
-            delay: 200
+            delay: 0
         };
 
         if ( typeof options === 'string' ) {

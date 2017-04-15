@@ -2,24 +2,7 @@
 
     // phantomjs defaults to width = 300, height = 400
 
-    describe( 'API Setup', function() {
-
-        it( 'should set up a viewport', function() {
-
-            var vp = viewport([
-                {
-                    name: 'first',
-                    width: [ 1 ]
-                }
-            ]);
-
-            assert.deepEqual( vp.is( 'first' ), true );
-            assert.deepEqual( vp.current(), vp.vps[ 'first' ] );
-            assert.deepEqual( vp.matches( 'first' ), true );
-        });
-    });
-
-    describe( 'API Tests', function() {
+    describe( 'API', function() {
 
         var width;
         var height;
@@ -43,9 +26,9 @@
                 }
             ]);
 
-            assert.equal( vp.current(), vp.vps[ 'second' ] );
-            assert.equal( vp.matches( 'second' ), true );
-            assert.equal( vp.is( 'second' ), true );
+            assert.equal( vp.current().name, 'second' );
+            assert.isTrue( vp.matches( 'second' ) );
+            assert.isTrue( vp.is( 'second' ) );
         });
 
         it( 'should return the correct viewport object based on height', function() {
@@ -61,9 +44,9 @@
                 }
             ]);
 
-            assert.equal( vp.current(), vp.vps[ 'second' ] );
-            assert.equal( vp.matches( 'second' ), true );
-            assert.equal( vp.is( 'second' ), true );
+            assert.equal( vp.current().name, 'second' );
+            assert.isTrue( vp.matches( 'second' ) );
+            assert.isTrue( vp.is( 'second' ) );
         });
 
         it( 'should return the correct viewport object based on width and height', function() {
@@ -81,9 +64,9 @@
                 }
             ]);
 
-            assert.equal( vp.current(), vp.vps[ 'second' ] );
-            assert.equal( vp.matches( 'second' ), true );
-            assert.equal( vp.is( 'second' ), true );
+            assert.equal( vp.current().name, 'second' );
+            assert.isTrue( vp.matches( 'second' ) );
+            assert.isTrue( vp.is( 'second' ) );
         });
 
         it( 'should return the last matching viewport object when multiple match', function() {
@@ -106,9 +89,9 @@
             }
           ]);
 
-          assert.equal( vp.current(), vp.vps[ 'third' ] );
-          assert.equal( vp.matches( 'third' ), true );
-          assert.equal( vp.is( 'third' ), true );
+          assert.equal( vp.current().name, 'third' );
+          assert.isTrue( vp.matches( 'third' ) );
+          assert.isTrue( vp.is( 'third' ) );
 
         });
 

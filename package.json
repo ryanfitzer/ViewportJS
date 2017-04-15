@@ -1,7 +1,7 @@
 {
   "name": "viewportjs",
   "version": "2.0.0",
-  "description": "ViewportJS exposes an API for querying and subscribing to the browser's viewport changes.",
+  "description": "ViewportJS is an API on top of `window.matchMedia` that gives more structure to subscribing and querying viewports.",
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
   "main": "viewport.js",
@@ -13,13 +13,14 @@
     "url": "https://github.com/ryanfitzer/ViewportJS.git"
   },
   "scripts": {
+    "grunt": "node_modules/.bin/grunt",
     "test": "./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 320x700; ./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 481x700; ./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 601x599; ./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 924x700; ./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 925x700;"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
     "grunt": "^1.0.1",
     "grunt-contrib-uglify": "^1.0.1",
-    "mocha-phantomjs": "^4.0.2",
-    "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "mocha": "^3.2.0",
+    "mocha-phantomjs": "^4.1.0"
   }
 }
