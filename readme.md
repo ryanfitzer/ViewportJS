@@ -2,68 +2,87 @@
 
 [![NPM version](https://badge.fury.io/js/viewportjs.svg)](https://www.npmjs.com/package/viewportjs)
 
-ViewportJS exposes an API for querying and subscribing to the browser's viewport changes.
+ViewportJS is an API on top of `window.matchMedia` that gives more structure to subscribing and querying viewports.
 
-- 1.32 kB minified & gzipped.
-- Supports all modern browsers, including Internet Explorer >= 9.
-- Supports [UMD](https://github.com/umdjs/umd).
+- 1.23 kB minified & gzipped.
+- Supports all modern browsers that support `window.matchMedia`.
+- Supports Node, AMD, or being used as a browser global (via [UMD](https://github.com/umdjs/umd)).
 
 
 
 ## Features ##
 
-ViewportJS exposes an API that answers the following questions:
-
-1. Can I subscribe/unsubscribe to the `name` viewport to receive updates when `name` becomes valid/invalid?
+1. Register viewports by name:
 
     ```js
-    var myToken = myViewport.subscribe( 'name', function( matches, viewport ) {
-        // do something
+    var myViewports = viewport([
+        {
+            name: 'small',
+            width: [ 0, 480 ] // ( min-width:0px ) and ( max-width:480px )
+        },
+        {
+            name: 'medium',
+            width: [ 481, 768 ] // ( min-width:480px ) and ( max-width:767px )
+        },
+        {
+            name: 'large',
+            width: [ 769 ] // ( min-width:769px )
+        }
+    ]);
+    ```
+
+2. Subscribe/Unsubscribe to viewports by name to receive updates when `name` becomes valid/invalid:
+
+    ```js
+    // Subscribe
+    var svpUnsubscribe = myViewports.subscribe( 'small', function( matches, viewportObj ) {
+        // Do something when the small viewport becomes valid/invalid
     });
     
-    myViewport.unsubscribe( myToken );
+    // Unsubscribe
+    svpUnsubscribe();
     ```
 
-2. Can I subscribe to all viewports at once?
+3. Subscribe to all viewports:
 
     ```js
-    myViewport.subscribe( '*', function( viewport ) {
+    myViewports.subscribe( '*', function( viewport ) {
         // do something
     });
     ```
 
-3. Is `name` the current viewport?
+4. Check if the `small` viewport is valid:
 
     ```js
-    myViewport.is( 'name' );
+    myViewports.matches( 'small' );
     ```
 
-4. Which viewport is the current viewport?
+5. Check if `small` is the current viewport:
 
     ```js
-    myViewport.current();
+    myViewports.is( 'small' );
     ```
 
-5. Does `name` fall within the current viewport?
+6. Get the current viewport object:
 
     ```js
-    myViewport.matches( 'name' );
+    var current = myViewports.current();
     ```
 
 
 
 ## Usage ##
 
-The `viewport` function takes an array of viewport objects and returns a new instance of the `Viewport` constructor:
+The `viewport` method takes a `viewports` array and an `options` object:
 
 ```js
-var myViewport = viewport( viewports );
+var myViewports = viewport( viewports, options );
 ```
 
-The `viewports` argument is an `Array` of viewport objects:
+The `viewports` argument is an array of viewport objects:
 
 ```js
-var myViewport = viewport([
+var myViewports = viewport([
     {
         name: 'small',
         width: [ 0, 480 ] // ( min-width:0px ) and ( max-width:480px )
@@ -83,33 +102,55 @@ var myViewport = viewport([
 
 ## Viewport Object Properties ##
 
-The `viewports` are made up from an `Array` of 1 or more viewport objects. A viewport object has the following possible properties:
+The `viewports` array is made up of 1 or more viewport objects. A viewport object consists of a `name` and a `width` and/or `height` array.
 
 
-### `name String` ###
+### `name` ###
 
-The viewport nickname.
+A `String` representing the viewport's nickname. Required.
     
 
-### `width Array` ###
+### `width` ###
 
-The min/max-width `Number` to test. Example:
+An `Array` of `Number` values representing the min/max-width. Example:
 
 ```js  
 width: [ 960 ]      // ( min-width:960px )
-width: [ 0, 960 ]   // ( max-width:960px )
+width: [ 0, 960 ]   // ( min-width:0px ) and ( max-width:960px )
 width: [ 480, 960 ] // ( min-width:480px ) and ( max-width:960px )
 ```
 
 ### `height Array` ###
 
-The min/max-height `Number` to test. Example:
+An `Array` of `Number` values representing the min/max-height. Example:
 
 ```js
 height: [ 960 ]      // ( min-height:960px )
-height: [ 0, 960 ]   // ( max-height:960px )
+height: [ 0, 960 ]   // ( min-height:0px ) and ( max-height:960px )
 height: [ 480, 960 ] // ( min-height:480px ) and ( max-height:960px )
 ```
+
+
+
+## Options ##
+
+### units ###
+
+The [unit of length](https://developer.mozilla.org/en-US/docs/Web/CSS/length) to use for the provided dimensions.
+
+  - Required: No
+  - Type: `String`
+  - Default: `px`
+
+
+### delay ###
+
+The number of milliseconds to delay the viewport subscribers.
+
+  - Required: No
+  - Type: `Number`
+  - Default: 0
+
 
 
 
@@ -118,46 +159,42 @@ height: [ 480, 960 ] // ( min-height:480px ) and ( max-height:960px )
 
 ### `current()` ###
 
-Checks each viewport and returns the last matching viewport `object` based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest. Returns the current `viewport` object.
+Checks each viewport and returns the last matching viewport object based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest. Returns the current viewport object.
 
 ```js
-var currentVP = myViewport.current();
+var currentVP = myViewports.current();
 ```
 
-### `is( name String )` ###
+### `is( name )` ###
 
-Checks if the specified viewport is the current viewport. Returns a `boolean`. (See the `current` method for more info on how this is determined.)
+Checks if the specified viewport is the current viewport. Returns a `Boolean`. (See the `current` method for more info on how this is determined.)
 
 ```js
-var isSmallCurrentVP = myViewport.is( 'small' );
-
-if ( isSmallCurrentVP ) {
+if ( myViewports.is( 'small' ) ) {
     // do something
 }
 ```
 
-### `matches( String name )` ###
+### `matches( name )` ###
 
-Checks if the specified viewport matches the current viewport dimensions. Returns a `boolean`.
+Checks if the specified viewport's condition matches. Returns a `Boolean`.
 
 ```js
-var isSmallWithinVP = myViewport.matches( 'small' );
-
-if ( isSmallWithinVP ) {
+if ( myViewports.matches( 'small' ) ) {
     // do something
 }
 ```
 
-### `subscribe( String name, Function handler )` ###
+### `subscribe( name, handler )` ###
 
-Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed the `isCurrent` boolean for checking if the viewport has become valid/invalid, as well as the current viewport's object. All subscribers are checked for validity when first subscribed in order to allow for lazy subscribers. The `subscribe` method returns a token for use on the `unsubscribe` method.
+Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed a `matches` `Boolean` for checking if the viewport has become valid/invalid, as well as the current viewport's object. All subscribers are checked for validity when first subscribed in order to allow for lazy subscribers. The `subscribe` method returns an `unsubscribe` method.
 
-There is also a reserved viewport name `*` to allow for subscribing to all viewports at once. It's handler only receives the current viewport's object.
+There is also a reserved viewport name, `*`, to allow for subscribing to all viewports at once. Its handler receives the current viewport's object.
 
 ```js
-var smallVPToken = myViewport.subscribe( 'small', function( isCurrent, viewport ) {
+var svpUnsubscribe = myViewport.subscribe( 'small', function( matches, viewport ) {
     
-    if ( isCurrent ) {
+    if ( matches ) {
         // do something
     } else {
         // do another thing
@@ -165,31 +202,19 @@ var smallVPToken = myViewport.subscribe( 'small', function( isCurrent, viewport 
 });
 ```
 
-### `unsubscribe( Number token )` ###
-
-Unsubscribe from updates to a specific viewport. Requires the `token` returned from the original subscription.
-
-```js
-var smallVPToken = myViewport.subscribe( 'small', function( matches ) {
-    // do something
-});
-
-myViewport.unsubscribe( smallVP );
-```
-
 
 
 ## Properties ##
 
 
-### `viewports Array` ###
+### `viewports` ###
 
-The original `array` of viewport objects.
+The original array of viewport objects.
 
 
-### `vps Object` ###
+### `vps` ###
 
-An object keyed by the viewport names containing its `MediaQueryList` object.
+An object keyed by the viewport names which contains its respective `MediaQueryList` object.
 
 ```js
 {
@@ -202,30 +227,9 @@ An object keyed by the viewport names containing its `MediaQueryList` object.
 }
 ```
 
-If `window.matchMedia` is not supported (IE9), this object only contains the `matches` property.
-
-```js
-{
-    'small': {
-        name: 'small',
-        mql: {
-          matches: {Boolean}
-        }
-    },
-    'medium': {...},
-    'large': {...},
-}
-```
 
 
-## Testing ##
+## Known Issues ##
 
-- Install phantomJS >= 1.9.1
-- Run `npm install` to install the required modules
-- Run the tests: `npm test`
+  - Safari has a 1px delta: https://github.com/WickyNilliams/enquire.js/issues/79
 
-
-
-## Roadmap ##
-
-- Functional testing. Testing the subscribe feature requires the window size to be manipulated.

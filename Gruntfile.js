@@ -7,8 +7,7 @@ module.exports = function( grunt ) {
         uglify: {
             options: {
                 report: 'gzip', // requires using `grunt --verbose`
-                compress: true,
-                // preserveComments: 'some'
+                compress: true
             },
             dist: {
                 files: {
