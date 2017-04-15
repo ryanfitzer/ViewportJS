@@ -120,7 +120,7 @@ width: [ 0, 960 ]   // ( min-width:0px ) and ( max-width:960px )
 width: [ 480, 960 ] // ( min-width:480px ) and ( max-width:960px )
 ```
 
-### `height Array` ###
+### `height` ###
 
 An `Array` of `Number` values representing the min/max-height. Example:
 
