@@ -1,6 +1,6 @@
 {
   "name": "viewportjs",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "ViewportJS is an API on top of `window.matchMedia` that gives more structure to subscribing and querying viewports.",
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
