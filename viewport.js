@@ -15,7 +15,7 @@
 }( this, function() {
 
     // Stub API for handling server-side rendering scenarios.
-    if ( typeof window === 'undefined' ) {
+    if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
 
         return function() {
 

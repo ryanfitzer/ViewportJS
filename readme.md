@@ -2,9 +2,9 @@
 
 [![NPM version](https://badge.fury.io/js/viewportjs.svg)](https://www.npmjs.com/package/viewportjs)
 
-ViewportJS is an API on top of `window.matchMedia` that gives more structure to subscribing and querying viewports.
+ViewportJS is an API on top of `window.matchMedia` that gives more structure to subscribing and querying viewports. To support scenarios where `window.matchMedia` isn't available (server-side rendering, for example), a [noop](https://en.wikipedia.org/wiki/NOP) API is returned.
 
-- 1.23 kB minified & gzipped.
+- 1.24 kB minified & gzipped.
 - Supports all modern browsers that support `window.matchMedia`.
 - Supports Node, AMD, or being used as a browser global (via [UMD](https://github.com/umdjs/umd)).
 
@@ -15,7 +15,7 @@ ViewportJS is an API on top of `window.matchMedia` that gives more structure to 
 1. Register viewports by name:
 
     ```js
-    var myViewports = viewport([
+    const myViewports = viewport([
         {
             name: 'small',
             width: [ 0, 480 ] // ( min-width:0px ) and ( max-width:480px )
@@ -35,7 +35,7 @@ ViewportJS is an API on top of `window.matchMedia` that gives more structure to 
 
     ```js
     // Subscribe
-    var svpUnsubscribe = myViewports.subscribe( 'small', function( matches, viewportObj ) {
+    const svpUnsubscribe = myViewports.subscribe( 'small', function( matches, viewportObj ) {
         // Do something when the small viewport becomes valid/invalid
     });
     
@@ -66,7 +66,7 @@ ViewportJS is an API on top of `window.matchMedia` that gives more structure to 
 6. Get the current viewport object:
 
     ```js
-    var current = myViewports.current();
+    const current = myViewports.current();
     ```
 
 
@@ -76,13 +76,13 @@ ViewportJS is an API on top of `window.matchMedia` that gives more structure to 
 The `viewport` method takes a `viewports` array and an `options` object:
 
 ```js
-var myViewports = viewport( viewports, options );
+const myViewports = viewport( viewports, options );
 ```
 
 The `viewports` argument is an array of viewport objects:
 
 ```js
-var myViewports = viewport([
+const myViewports = viewport([
     {
         name: 'small',
         width: [ 0, 480 ] // ( min-width:0px ) and ( max-width:480px )
@@ -162,7 +162,7 @@ The number of milliseconds to delay the viewport subscribers.
 Checks each viewport and returns the last matching viewport object based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest. Returns the current viewport object.
 
 ```js
-var currentVP = myViewports.current();
+const currentVP = myViewports.current();
 ```
 
 ### `is( name )` ###
@@ -192,7 +192,7 @@ Subscribe for updates when a specific viewport becomes valid/invalid. The handle
 There is also a reserved viewport name, `*`, to allow for subscribing to all viewports at once. Its handler receives the current viewport's object.
 
 ```js
-var svpUnsubscribe = myViewport.subscribe( 'small', function( matches, viewport ) {
+const svpUnsubscribe = myViewport.subscribe( 'small', function( matches, viewport ) {
     
     if ( matches ) {
         // do something
