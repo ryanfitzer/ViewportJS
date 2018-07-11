@@ -31,7 +31,7 @@ ViewportJS is an API on top of `window.matchMedia` that gives more structure to 
     ]);
     ```
 
-2. Subscribe/Unsubscribe to viewports by name to receive updates when `name` becomes valid/invalid:
+2. Subscribe/Unsubscribe to viewports by name to receive updates when `name` becomes valid/invalid[1]:
 
     ```js
     // Subscribe
@@ -232,4 +232,7 @@ An object keyed by the viewport names which contains its respective `MediaQueryL
 ## Known Issues ##
 
   - Safari has a 1px delta: https://github.com/WickyNilliams/enquire.js/issues/79
+
+
+[1]: 
 
