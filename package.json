@@ -13,8 +13,12 @@
     "url": "https://github.com/ryanfitzer/ViewportJS.git"
   },
   "scripts": {
+    "build": "grunt default",
     "grunt": "node_modules/.bin/grunt",
-    "test": "./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 320x700; ./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 481x700; ./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 601x599; ./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 924x700; ./node_modules/.bin/mocha-phantomjs ./tests/index.html --view 925x700;"
+    "test": "open ./tests/index.html",
+    "test:ff": "open -a 'Firefox' ./tests/index.html",
+    "test:safari": "open -a 'Safari' ./tests/index.html",
+    "test:chrome": "open -a 'Google Chrome' ./tests/index.html"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -22,7 +26,9 @@
     "grunt-contrib-uglify": "^1.0.1",
     "gzip-size": "^4.1.0",
     "mocha": "^3.2.0",
-    "mocha-phantomjs": "^4.1.0",
     "pretty-bytes": "^4.0.2"
+  },
+  "dependencies": {
+    "phantomjs-prebuilt": "^2.1.16"
   }
 }

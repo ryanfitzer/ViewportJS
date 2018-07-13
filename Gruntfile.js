@@ -5,11 +5,10 @@ module.exports = function( grunt ) {
 
     /* Configure */
     grunt.initConfig({
-        pkg: grunt.file.readJSON( 'package.json' ),
 
         uglify: {
             options: {
-                report: 'gzip', // requires using `grunt --verbose`
+                report: 'gzip',
                 compress: true
             },
             dist: {
