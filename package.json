@@ -21,6 +21,11 @@
     "test:safari": "open -W -a 'Safari' ./tests/index.html",
     "test:chrome": "open -W -a 'Google Chrome' ./tests/index.html"
   },
+  "files": [
+    "LICENSE",
+    "readme.md",
+    "viewport.js"
+  ],
   "devDependencies": {
     "chai": "^3.5.0",
     "grunt": "^1.0.1",

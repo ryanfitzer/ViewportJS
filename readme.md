@@ -214,6 +214,10 @@ const unsubSVP = myViewport.subscribe( 'small', function( matches, viewport ) {
 });
 ```
 
+#### Subscribe to All Viewports ####
+
+(This approach is deprecated and [will be replaced with a new approach in version 3](https://github.com/ryanfitzer/ViewportJS/issues/7))
+
 There is also a reserved viewport name, `*`, that enables subscribing to all viewports at once. Its handler receives:
 
   - `currentVP`: `Object` The current viewport's object. Same result as calling `.current()`.
@@ -230,14 +234,14 @@ const unsubAny = myViewport.subscribe( '*', function( currentVP, previousVP ) {
 ## Instance Properties ##
 
 
-### `viewports` ###
+### `viewports` (deprecated) ###
 
-The original configuration array of viewport objects.
+The original configuration array of viewport objects. This property [will be removed in version 3](https://github.com/ryanfitzer/ViewportJS/issues/7).
 
 
-### `vps` ###
+### `vps` (deprecated) ###
 
-An object keyed by the viewport names which contains its respective `MediaQueryList` object.
+An object keyed by the viewport names which contains its respective `MediaQueryList` object. This property [will be removed in version 3](https://github.com/ryanfitzer/ViewportJS/issues/7).
 
 ```js
 {
@@ -254,6 +258,6 @@ An object keyed by the viewport names which contains its respective `MediaQueryL
 
 ## Known Issues ##
 
-  - [Safari has a 1px delta](https://github.com/WickyNilliams/enquire.js/issues/79) 
+  - Older versions of Safari have a 1px delta due to a [webkit bug](https://github.com/WickyNilliams/enquire.js/issues/79). As of Safari 12, this is no longer an issue.
 
 
