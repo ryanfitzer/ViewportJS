@@ -4,9 +4,9 @@
 
 ViewportJS is an API on top of `window.matchMedia` that gives more structure to subscribing and querying viewports. To support scenarios where `window.matchMedia` isn't available (server-side rendering, for example), a [noop](https://en.wikipedia.org/wiki/NOP) API is returned.
 
-- 1.24 kB minified & gzipped.
-- Supports all modern browsers that support `window.matchMedia`.
-- Supports Node, AMD, or being used as a browser global (via [UMD](https://github.com/umdjs/umd)).
+- 1.25 kB minified & gzipped.
+- Supports all browsers that support [`window.matchMedia`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia).
+- Supports Node, AMD, and as a browser global (via [UMD](https://github.com/umdjs/umd)).
 
 
 
@@ -35,19 +35,19 @@ ViewportJS is an API on top of `window.matchMedia` that gives more structure to 
 
     ```js
     // Subscribe
-    const svpUnsubscribe = myViewports.subscribe( 'small', function( matches, viewportObj ) {
+    const unsubSVP = myViewports.subscribe( 'small', function( matches, viewportObj ) {
         // Do something when the small viewport becomes valid/invalid
     });
     
     // Unsubscribe
-    svpUnsubscribe();
+    unsubSVP();
     ```
 
 3. Subscribe to all viewports:
 
     ```js
     myViewports.subscribe( '*', function( viewport ) {
-        // do something
+        // Do something
     });
     ```
 
@@ -73,7 +73,7 @@ ViewportJS is an API on top of `window.matchMedia` that gives more structure to 
 
 ## Usage ##
 
-The `viewport` method takes a `viewports` array and an `options` object:
+The initialization method exported from `viewportjs` takes 2 arguments, a `viewports` configuration array and an `options` object:
 
 ```js
 const myViewports = viewport( viewports, options );
@@ -102,7 +102,7 @@ const myViewports = viewport([
 
 ## Viewport Object Properties ##
 
-The `viewports` array is made up of 1 or more viewport objects. A viewport object consists of a `name` and a `width` and/or `height` array.
+The `viewports` configuration array is made up of 1 or more viewport objects. A viewport object consists of a `name` and a `width` and/or `height` array.
 
 
 ### `name` ###
@@ -153,13 +153,14 @@ The number of milliseconds to delay the viewport subscribers.
 
 
 
-
 ## Methods ##
 
 
 ### `current()` ###
 
-Checks each viewport and returns the last matching viewport object based on the `viewports` array configuration order. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest. Returns the current viewport object.
+Checks each viewport and returns the last matching viewport object based on the order of the `viewports` configuration array. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest. Returns a viewport object.
+
+When there are no matching viewports, the viewport object will be empty (`name` is `undefined`, and `width` and `height` are empty arrays).
 
 ```js
 const currentVP = myViewports.current();
@@ -171,7 +172,7 @@ Checks if the specified viewport is the current viewport. Returns a `Boolean`. (
 
 ```js
 if ( myViewports.is( 'small' ) ) {
-    // do something
+    // Do something
 }
 ```
 
@@ -181,35 +182,57 @@ Checks if the specified viewport's condition matches. Returns a `Boolean`.
 
 ```js
 if ( myViewports.matches( 'small' ) ) {
-    // do something
+    // Do something
 }
+```
+
+### `previous()` ###
+
+Get the previously current viewport (see the `current()` method for how that's calculated). Returns a viewport object.
+
+```js
+const previousVP = myViewports.previous();
 ```
 
 ### `subscribe( name, handler )` ###
 
-Subscribe for updates when a specific viewport becomes valid/invalid. The handler is passed a `matches` `Boolean` for checking if the viewport has become valid/invalid, as well as the current viewport's object. All subscribers are checked for validity when first subscribed in order to allow for lazy subscribers. The `subscribe` method returns an `unsubscribe` method.
+Subscribe to updates when a specific viewport becomes valid/invalid. The handler is passed arguments:
 
-There is also a reserved viewport name, `*`, to allow for subscribing to all viewports at once. Its handler receives the current viewport's object.
+  - `matches`: `Boolean` A boolean for checking if the viewport has become valid/invalid.
+  - `viewport`: `Object` The viewport's object.
+
+All subscribers are checked for validity during initial subscription in order to allow for lazy subscribers. The `subscribe` method returns an `unsubscribe` method.
 
 ```js
-const svpUnsubscribe = myViewport.subscribe( 'small', function( matches, viewport ) {
+const unsubSVP = myViewport.subscribe( 'small', function( matches, viewport ) {
     
     if ( matches ) {
-        // do something
+        // Do something
     } else {
-        // do another thing
+        // Do another thing
     }
 });
 ```
 
+There is also a reserved viewport name, `*`, that enables subscribing to all viewports at once. Its handler receives:
+
+  - `currentVP`: `Object` The current viewport's object. Same result as calling `.current()`.
+  - `previousVP`: `Object` The previously current viewport's object. Same result as calling `.previous()`.
+
+```js
+const unsubAny = myViewport.subscribe( '*', function( currentVP, previousVP ) {
+    
+    // Do something
+});
+```
 
 
-## Properties ##
+## Instance Properties ##
 
 
 ### `viewports` ###
 
-The original array of viewport objects.
+The original configuration array of viewport objects.
 
 
 ### `vps` ###
@@ -231,8 +254,6 @@ An object keyed by the viewport names which contains its respective `MediaQueryL
 
 ## Known Issues ##
 
-  - Safari has a 1px delta: https://github.com/WickyNilliams/enquire.js/issues/79
+  - [Safari has a 1px delta](https://github.com/WickyNilliams/enquire.js/issues/79) 
 
-
-[1]: 
 

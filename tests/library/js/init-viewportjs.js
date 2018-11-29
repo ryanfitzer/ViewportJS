@@ -1,8 +1,14 @@
 !function () {
 
-    function setState( id, isCurrent, vp ) {
+    var statusCurrent = document.querySelector( '#vp-current code' );
+    var statusPrev = document.querySelector( '#vp-previous code' );
+
+    function setState( id, isCurrent, vp, prev ) {
 
         var element = document.getElementById( id );
+
+        statusCurrent.innerText = vps.current().name;
+        statusPrev.innerText = prev ? prev.name : 'undefined';
 
         if ( isCurrent ) {
 
@@ -18,7 +24,7 @@
         }
     }
 
-    var vp = viewport([
+    var vps = viewport([
         {
             name: 'small',
             width: [ 0, 480 ]
@@ -37,32 +43,33 @@
             width: [ 925 ]
         }
     ]);
+    window.testvps = vps;
 
-    vp.subscribe( 'small', function( isCurrent, vp ) {
-        setState( 'vpjs-small', isCurrent, vp );
+    vps.subscribe( 'small', function( isCurrent, vp ) {
+        setState( 'vpjs-small', isCurrent, vp, vps.previous() );
     });
 
-    vp.subscribe( 'medium', function( isCurrent, vp ) {
-        setState( 'vpjs-medium', isCurrent, vp );
+    vps.subscribe( 'medium', function( isCurrent, vp ) {
+        setState( 'vpjs-medium', isCurrent, vp, vps.previous() );
 
     });
 
-    vp.subscribe( 'medium-alt', function( isCurrent, vp ) {
-        setState( 'vpjs-medium-alt', isCurrent, vp );
+    vps.subscribe( 'medium-alt', function( isCurrent, vp ) {
+        setState( 'vpjs-medium-alt', isCurrent, vp, vps.previous() );
     });
 
-    vp.subscribe( 'large', function( isCurrent, vp ) {
-        setState( 'vpjs-large', isCurrent, vp );
+    vps.subscribe( 'large', function( isCurrent, vp ) {
+        setState( 'vpjs-large', isCurrent, vp, vps.previous() );
     });
 
-    vp.subscribe( '*', function( current, previous ) {
+    vps.subscribe( '*', function( current, previous ) {
 
-        vp.viewports.forEach( function ( viewport ) {
+        vps.viewports.forEach( function ( viewport ) {
 
-            viewport = vp.vps[ viewport.name ];
+            viewport = vps.vps[ viewport.name ];
 
             if ( viewport.name !== current.name ) {
-                setState( 'vpjs-' + viewport.name, false, viewport );
+                setState( 'vpjs-' + viewport.name, false, viewport, previous );
             }
         });
     });

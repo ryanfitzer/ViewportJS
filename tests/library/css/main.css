@@ -44,9 +44,16 @@ pre {
 #btn-popup {
     margin: 15px 15px 20px;
 }
+.status,
 .viewport {
 	overflow: hidden;
 	margin-bottom: 20px;
+}
+.status div {
+    width: 50%;
+	color: #000;
+	float: left;
+	padding: 10px;
 }
 .break {
     width: 50%;

@@ -211,6 +211,14 @@
         },
 
         /**
+         * Get the previous viewport.
+         */
+        previous: function() {
+
+            return this.state.previous;
+        },
+
+        /**
          * Subscribe to a particular viewport.
          */
         subscribe: function( name, method ) {
@@ -329,6 +337,7 @@
             viewports: instance.viewports,
             is: instance.is.bind( instance ),
             current: instance.current.bind( instance ),
+            previous: instance.previous.bind( instance ),
             matches: instance.matches.bind( instance ),
             subscribe: instance.subscribe.bind( instance )
         };
