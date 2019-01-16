@@ -5,7 +5,7 @@
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
   "license": "MIT",
-  "main": "viewport.js",
+  "main": "index.js",
   "contributors": [
     "Derek Pittsinger (http://derekpitt.com)"
   ],
@@ -24,15 +24,16 @@
   "files": [
     "LICENSE",
     "readme.md",
-    "viewport.js"
+    "index.js"
   ],
   "devDependencies": {
-    "chai": "^3.5.0",
-    "grunt": "^1.0.1",
-    "grunt-contrib-uglify": "^1.0.1",
-    "mocha": "^3.2.0"
+    "chai": "^4.2.0",
+    "eslint-plugin-compat": "^2.6.3",
+    "grunt": "^1.0.3",
+    "grunt-contrib-uglify": "^4.0.0",
+    "mocha": "^5.2.0"
   },
   "dependencies": {
-    "phantomjs-prebuilt": "^2.1.16"
+    "eslint": "^5.12.0"
   }
 }

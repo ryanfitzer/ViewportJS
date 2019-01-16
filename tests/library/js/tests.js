@@ -226,10 +226,10 @@
         var width = parseInt( sizes[ 1 ], 10 );
         var height = parseInt( sizes[ 2 ], 10 );
 
+        console.log( 'Resizing to ' + width + 'x' + height );
+
         window.resizeTo( width + sizeDelta.width, height + sizeDelta.height );
     }
-
-    resizeWindow( viewportTestsSizes.shift() );
 
     var listener = function ( e ) {
 
@@ -259,6 +259,7 @@
                     }
 
                     it( name + ' should ' + currentTest[ name ] , closure( expectedCondition, actualCondition ) );
+
                 });
             });
 
@@ -271,8 +272,11 @@
 
             resizeWindow( nextSize );
 
-        }, 1000 );
+        }, 500 );
     }
 
     window.addEventListener( 'resize', listener );
+
+    resizeWindow( viewportTestsSizes.shift() );
+
 }();

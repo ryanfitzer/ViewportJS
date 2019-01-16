@@ -37,13 +37,14 @@
     var vpEmpty = {
         name: undefined,
         width: [],
-        height: []
+        height: [],
+        query: undefined
     };
 
     /**
-     * Return an array containing the differences between 2 arrays.
+     * Merge 2 arrays and remove any duplicates.
      */
-    function arrayDiff( a, b ) {
+    function arrayDedupe( a, b ) {
 
         a.sort();
         b.sort();
@@ -298,15 +299,29 @@
          */
         update: function( name ) {
 
+            var logInfo = ( state, matches ) => {
+                console.log(`    ${ state }: `);
+                if ( !matches.length ) console.log( `        (none)` );
+                matches.forEach( vp => {
+                    console.log( `        ${ vp.name }: ${ vp.mql.matches }` );
+                } )
+            }
+
+            logInfo( 'Previous', this.state.prevMatches );
+
             this.state.previous = this.state.present;
             this.state.present = this.current();
 
+            logInfo( 'Current', this.state.curMatches );
+            console.log('    ------\n');
+
             if ( this.state.previous.name !== this.state.present.name ) {
+
                 this.publish( this.state.previous.name, false );
                 this.publish( this.state.present.name, true );
             }
 
-            if ( arrayDiff( this.state.curMatches, this.state.prevMatches ).length ) {
+            if ( arrayDedupe( this.state.curMatches, this.state.prevMatches ).length ) {
                 this.publish( '*' );
             }
         }

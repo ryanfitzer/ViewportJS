@@ -5,28 +5,28 @@
   <title>Mocha Test Suite</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+  <!-- <link rel="stylesheet" href="../node_modules/mocha/mocha.css"> -->
   <link rel="stylesheet" href="library/css/main.css">
 
-  <script src="../node_modules/mocha/mocha.js"></script>
-  <script src="../node_modules/chai/chai.js"></script>
-  <script src="../viewport.js"></script>
-  <script>
+  <!-- <script src="../node_modules/mocha/mocha.js"></script> -->
+  <!-- <script src="../node_modules/chai/chai.js"></script> -->
+  <script src="../index.js"></script>
+  <!-- <script>
     mocha.setup({
       ui: 'bdd'
     });
     assert = chai.assert;
-  </script>
+  </script>  -->
 </head>
 <body>
 
   <h1>ViewportJS Tests</h1>
 
-  <div id="mocha">
+  <!-- <div id="mocha">
     <div id="mocha-pending">Running tests...</div>
-  </div>
+  </div> -->
 
-  <button id="btn-popup">Run Full Test Suite (popup required)</button>
+  <!-- <button id="btn-popup">Run Full Test Suite (popup required)</button>
   <script>
     var popupbtn = document.getElementById( 'btn-popup' );
 
@@ -36,29 +36,7 @@
         window.open( './index.html', '_blank', 'width=1000,height=1000,scrollbars=yes' );
       });
     }
-  </script>
-
-  <!--
-  <button data-resize>922</button>
-  <button data-resize>923</button>
-  <button data-resize>924</button>
-  <button data-resize>925</button>
-  <button data-resize>926</button>
-  <button data-resize>927</button>
-  <button data-resize>1024</button>
-  <button data-resize>2024</button>
-  <script>
-    var btns = document.querySelectorAll( 'button[data-resize]' );
-
-    Array.from( btns ).forEach( function( btn ) {
-
-      btn.addEventListener( 'click', function (e) {
-
-        window.resizeTo( e.target.innerText, 700 );
-      });
-    });
-  </script>
-  -->
+  </script> -->
 
   <div class="status">
     <div id="vp-current">Current: <code>undefined</code></div>
@@ -89,9 +67,9 @@
     <div class="break" id="vpjs-large">ViewportJS</div>
   </div>
 
-  <script src="library/js/viewportSize.js"></script>
+  <!-- <script src="library/js/viewportSize.js"></script> -->
   <script src="library/js/init-viewportjs.js"></script>
-  <script src="library/js/tests.js"></script>
+  <!-- <script src="library/js/tests.js"></script>  -->
 
   <!-- TODO: The following scripts block Safari 10 from firing MQL listeners. -->
   <!-- <script>

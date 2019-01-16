@@ -2,3 +2,4 @@
 node_modules/
 package-lock.json
 viewport.min.js
+.tm_properties
