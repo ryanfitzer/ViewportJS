@@ -72,6 +72,7 @@
     function Viewport( viewports ) {
 
         this.viewports = viewports;
+        this.aliases = {};
         this.state = {
             vps: {},
             tokenUid: -1,
@@ -81,6 +82,8 @@
         };
 
         this.viewports.forEach( function ( vp ) {
+
+            this.aliases[ vp.name ] = this.subscribe.bind( this, vp.name );
 
             vp.listener = this.setState.bind( this );
             vp.mql = createMediaQueryList( vp.query, vp.listener );
@@ -276,20 +279,24 @@
 
     return function ( viewports ) {
 
-        var instance;
+        var instance = new Viewport( viewports );
 
-        instance = new Viewport( viewports );
-
-        return {
-            vps: instance.vps,
+        var api = {
             matches: instance.matches.bind( instance ),
             current: instance.current.bind( instance ),
             previous: instance.previous.bind( instance ),
             subscribe: instance.subscribe.bind( instance ),
-            unsubscribe: instance.unsubscribe.bind( instance ),
-            subscribeAll: instance.subscribeAll.bind( instance ),
-            unsubscribeAll: instance.unsubscribeAll.bind( instance )
+            subscribeAll: instance.subscribeAll.bind( instance )
         };
+
+        for ( var name in instance.aliases ) {
+
+            if ( api[ name ] ) return console.warn( '[viewportjs] Defining the viewport name "' + name + '" as an alias to `subscribe` failed.' );
+
+            api[ name ] = instance.aliases[ name ];
+        }
+
+        return api;
 
     };
 

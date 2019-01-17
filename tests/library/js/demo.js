@@ -65,6 +65,22 @@
         updateView( 'vpjs-xlarge', state );
     } );
 
+    // vps.small( function ( state ) {
+    //     updateView( 'vpjs-small', state );
+    // } );
+    //
+    // vps.medium( function ( state ) {
+    //     updateView( 'vpjs-medium', state );
+    // } );
+    //
+    // vps.large( function ( state ) {
+    //     updateView( 'vpjs-large', state );
+    // } );
+    //
+    // vps.xlarge( function ( state ) {
+    //     updateView( 'vpjs-xlarge', state );
+    // } );
+
     // vps.subscribe( '*', function( current, previous ) {
     //
     //     vps.viewports.forEach( function ( viewport ) {
