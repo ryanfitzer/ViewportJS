@@ -1,5 +1,4 @@
 /* ! ViewportJS github.com/ryanfitzer/ViewportJS/blob/master/LICENSE */
-'use strict';
 ( function ( root, factory ) {
 
     if ( typeof define === 'function' && define.amd ) {
@@ -23,7 +22,8 @@
 
     }
 
-}( this, function () {
+}
+( this, function () {
 
     // Stub API for handling server-side rendering.
     if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
@@ -49,12 +49,15 @@
 
     }
 
-    // Undefined viewport object to use when no queries match.
-    // var undefinedViewport = {
-    //     name: undefined,
-    //     matches: undefined,
-    //     current: undefined
-    // };
+    function copyViewportObject( vp ) {
+
+        return {
+            name: vp.name,
+            matches: vp.matches,
+            current: vp.current
+        };
+
+    }
 
     function createMediaQueryList( query, listener ) {
 
@@ -73,15 +76,16 @@
             vps: {},
             tokenUid: -1,
             channels: {},
-            subscribers: {},
             current: undefined,
             previous: undefined
         };
 
-        this.viewports.forEach( function ( vp, index ) {
+        this.viewports.forEach( function ( vp ) {
 
-            vp.listener = this.setState.bind( this, vp );
+            vp.listener = this.setState.bind( this );
             vp.mql = createMediaQueryList( vp.query, vp.listener );
+
+            this.state.channels[ vp.name ] = [];
 
             this.state.vps[ vp.name ] = {
                 name: vp.name,
@@ -91,17 +95,49 @@
 
         }, this );
 
-        this.viewports.forEach( function ( vp, index ) {
-
-            vp.listener();
-
-        } );
+        this.setState();
 
     }
 
     Viewport.prototype = {
 
+        ensureViewportObject: function ( name ) {
+
+            if ( this.state.vps[ name ] ) return copyViewportObject( this.state.vps[ name ] );
+
+            return {
+                name: undefined,
+                matches: false,
+                current: false
+            };
+
+        },
+
+        validateViewportName: function ( name ) {
+
+            if ( !this.state.vps[ name ] ) {
+
+                throw new Error( 'The viewport "' + name + '" does not match any configured viewports.' );
+
+            }
+
+        },
+
         matches: function ( name ) {
+
+            if ( name ) return this.state.vps[ name ].matches;
+
+            return this.getMatches();
+
+        },
+
+        getMatches: function () {
+
+            return this.viewports.filter( function ( vp ) {
+
+                return vp.mql.matches;
+
+            } ).map( copyViewportObject );
 
         },
 
@@ -109,25 +145,55 @@
 
             if ( name ) return this.state.current === name;
 
-            var match = this.viewports.filter( function ( vp ) {
+            return this.ensureViewportObject( this.state.current );
 
-                return vp.mql.matches;
+        },
 
-            } ).pop();
+        getCurrent: function () {
 
-            return match || {
-                name: undefined,
-                matches: undefined,
-                current: undefined
+            var match = this.getMatches().pop();
+
+            return match ? match.name : undefined;
+
+        },
+
+        previous: function ( name ) {
+
+            if ( name ) return this.state.previous === name;
+
+            return this.ensureViewportObject( this.state.previous );
+
+        },
+
+        subscribe: function ( name, handler ) {
+
+            this.validateViewportName( name );
+
+            var vp = this.state.vps[ name ];
+            var token = this.state.tokenUid = this.state.tokenUid + 1;
+
+            this.state.channels[ name ].push( {
+                token: token,
+                handler: handler
+            } );
+
+            if ( vp.current || vp.matches ) handler( vp );
+
+            return this.unsubscribe( token, name );
+
+        },
+
+        unsubscribe: function ( token, name ) {
+
+            return function () {
+
+                this.state.channels[ name ].forEach( function ( subscriber, index ) {
+
+                    if ( subscriber.token === token ) this.state.channels[ name ].splice( index, 1 );
+
+                } );
+
             };
-
-        },
-
-        previous: function () {
-
-        },
-
-        subscribe: function ( name, method ) {
 
         },
 
@@ -135,47 +201,74 @@
 
         },
 
-        unsubscribe: function ( subscribers, token ) {
-
-        },
-
         unsubscribeAll: function ( subscribers, token ) {
 
         },
 
-        setState: function ( viewport ) {
+        getChanges: function ( viewport, current ) {
 
             var name = viewport.name;
-            var isChanged = false;
-            var current = this.current();
-            var isCurrent = current.name === name;
-            var vpState = this.state.vps[ name ];
+            var state = this.state.vps[ name ];
+            var props = {
+                matches: viewport.mql.matches,
+                current: current.name === name
+            };
 
-            if ( vpState.current !== isCurrent || vpState.matches !== viewport.matches ) isChanged = true;
+            return Object.keys( props ).reduce( function ( accum, label ) {
 
-            vpState.current = isCurrent;
-            vpState.matches = viewport.mql.matches;
+                if ( state[ label ] !== props[ label ] ) {
 
-            if ( isCurrent && this.state.current !== name ) {
+                    accum.push( {
+                        key: label,
+                        value: props[ label ]
+                    } );
 
-                this.state.previous = this.state.current;
-                this.state.current = name;
+                }
 
-            }
-            else if ( !isCurrent && this.state.current === name ) {
+                return accum;
+
+            }, [] );
+
+        },
+
+        setState: function () {
+
+            var changed = [];
+            var current = this.ensureViewportObject( this.getCurrent() );
+
+            this.viewports.forEach( function ( viewport ) {
+
+                var vp = this.state.vps[ viewport.name ];
+                var changes = this.getChanges( viewport, current );
+
+                changes.forEach( function ( change ) {
+
+                    vp[ change.key ] = change.value;
+
+                } );
+
+                if ( changes.length ) changed.push( vp.name );
+
+            }, this );
+
+            if ( current.name !== this.state.current ) {
 
                 this.state.previous = this.state.current;
                 this.state.current = current.name;
 
             }
 
-            if ( isChanged ) this.publish( name );
+            changed.forEach( this.publish, this );
 
         },
 
         publish: function ( name ) {
 
-            console.log( '[publish]', name );
+            this.state.channels[ name ].forEach( function ( subscriber ) {
+
+                subscriber.handler( this.state.vps[ name ] );
+
+            }, this );
 
         }
 

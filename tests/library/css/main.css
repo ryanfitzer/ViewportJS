@@ -14,10 +14,6 @@ code {
 	font-size: .85rem;
 	font-family: 'Monaco', 'Menlo', 'Courier', monospace;
 }
-code {
-	background: #eee;
-	padding: 5px 5px 5px 6px;
-}
 pre code {
 	padding: 0;
 	background: none;
@@ -47,7 +43,7 @@ pre {
 .status,
 .viewport {
 	overflow: hidden;
-	margin-bottom: 20px;
+/*    margin-bottom: 20px;*/
 }
 .status div {
     width: 50%;
@@ -55,39 +51,58 @@ pre {
 	float: left;
 	padding: 10px;
 }
+.query {
+    text-align: center;
+}
+.query strong {
+    display: block;
+}
+.query,
+.status code {
+	background: #eee;
+	padding: 5px 5px 5px 6px;
+}
+.title,
 .break {
     width: 50%;
 	color: #fff;
 	float: left;
 	padding: 10px;
-	background: #ff0000;
 	text-align: center;
+	background: #ff0000;
 }
+.title {
+    color: #fff;
+    background: #181818;
+}
+.break {
+    height: 40px;
+}
+.title:nth-child(2),
 .break:nth-child(2) {
 	border-right: 1px solid #fff;
 }
+.title:last-child,
 .break:last-child {
 	border-left: 1px solid #fff;
 }
-.viewport code {
-	display: block;
-}
+
 [data-state=""] {
 	background: #ff0000;
 }
 [data-state="matches"] {
-	background: #b5c104;
+	background: #04c104;
 }
 [data-state="matches"]:after {
-	font-style: italic;
 	content: ' matches';
+    font-family: 'Monaco', 'Menlo', 'Courier', monospace;
 }
 [data-state="current"] {
 	background: #04c104;
 }
 [data-state="current"]:after {
-	font-style: italic;
 	content: ' current';
+    font-family: 'Monaco', 'Menlo', 'Courier', monospace;
 }
 
 @media screen and (max-width: 480px) {
@@ -95,18 +110,18 @@ pre {
 		background: #04c104;
 	}
 }
-@media screen and (min-width: 481px) and (max-width: 768px) {
+@media screen and (max-width: 600px) and (min-height: 600px) {
 	#css-medium {
 		background: #04c104;
 	}
 }
-@media screen and (max-width: 600px) and (min-height: 600px) {
-	#css-medium-alt {
+@media screen and (min-width: 481px) and (max-width: 768px) {
+	#css-large {
 		background: #04c104;
 	}
 }
 @media screen and (min-width: 925px) {
-	#css-large {
+	#css-xlarge {
 		background: #04c104;
 	}
 }

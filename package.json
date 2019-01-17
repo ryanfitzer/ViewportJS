@@ -5,7 +5,7 @@
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
   "license": "MIT",
-  "main": "index.js",
+  "main": "viewport.js",
   "contributors": [
     "Derek Pittsinger (http://derekpitt.com)"
   ],
@@ -24,16 +24,14 @@
   "files": [
     "LICENSE",
     "readme.md",
-    "index.js"
+    "viewport.js"
   ],
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^5.12.0",
     "eslint-plugin-compat": "^2.6.3",
     "grunt": "^1.0.3",
     "grunt-contrib-uglify": "^4.0.0",
     "mocha": "^5.2.0"
-  },
-  "dependencies": {
-    "eslint": "^5.12.0"
   }
 }
