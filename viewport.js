@@ -1,25 +1,40 @@
-/*! ViewportJS github.com/ryanfitzer/ViewportJS/blob/master/LICENSE */
-;(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
+/* ! ViewportJS github.com/ryanfitzer/ViewportJS/blob/master/LICENSE */
+( function ( root, factory ) {
+
+    if ( typeof define === 'function' && define.amd ) {
+
         // AMD. Register as an anonymous module.
-        define([], factory);
-    } else if (typeof module === 'object' && module.exports) {
+        define( [], factory );
+
+    }
+    else if ( typeof module === 'object' && module.exports ) {
+
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
         module.exports = factory();
-    } else {
+
+    }
+    else {
+
         // Browser globals (root is window)
         root.viewport = factory();
+
     }
-}( this, function() {
+
+}
+( this, function () {
 
     // Stub API for handling server-side rendering scenarios.
     if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
 
-        return function() {
+        return function () {
 
-            var noop = function () { return {}; };
+            var noop = function () {
+
+                return {};
+
+            };
 
             return {
                 vps: {},
@@ -30,8 +45,10 @@
                 subscribe: noop,
                 unsubscribe: noop
             };
+
         };
-    };
+
+    }
 
     // Default viewport object to use when no queries match.
     var vpEmpty = {
@@ -49,14 +66,16 @@
         a.sort();
         b.sort();
 
-        return a.filter( function( val ) {
+        return a.filter( function ( val ) {
 
             return b.indexOf( val ) < 0;
 
-        }).concat( b.filter( function( val ) {
+        } ).concat( b.filter( function ( val ) {
 
             return a.indexOf( val ) < 0;
-        }));
+
+        } ) );
+
     }
 
     /**
@@ -66,11 +85,12 @@
 
         clearTimeout( timer );
 
-        return setTimeout( function() {
+        return setTimeout( function () {
 
             method();
 
         }, delay );
+
     }
 
     /**
@@ -80,6 +100,7 @@
 
         var mqls = []
             , expTmpl = '({prefix}{dimension}:{num}' + units + ')'
+
             ;
 
         var prefix = [
@@ -92,12 +113,14 @@
             var expressions = [];
 
             vp[ dimension ].forEach( function ( num, index ) {
+
                 expressions.push(
                     expTmpl.replace( '{prefix}', prefix[ index ] )
                     .replace( '{dimension}', dimension )
                     .replace( '{num}', num )
                 );
-            });
+
+            } );
 
             acc.push( expressions.join( ' and ' ) );
 
@@ -106,6 +129,7 @@
         }, [] );
 
         return mqls.join( ' and ' );
+
     }
 
     /**
@@ -118,7 +142,8 @@
         mql.addListener( listener );
 
         return mql;
-    };
+
+    }
 
     /**
      * Viewport constructor.
@@ -144,12 +169,15 @@
 
             var timer
                 , vpObj = self.vps[ vp.name ] = {}
+
                 ;
 
             var dimensions = Object.keys( vp ).reduce( function ( acc, key ) {
 
                 if ( !/name/.test( key ) ) {
+
                     acc[ key ] = vp[ key ];
+
                 }
 
                 return acc;
@@ -157,12 +185,15 @@
             }, {} );
 
             vpObj.name = vp.name;
-            vpObj.listener = function( e ) {
+            vpObj.listener = function ( e ) {
 
                 timer = throttle( self.update.bind( self, vpObj.name ), timer, self.options.delay );
+
             };
             vpObj.mql = createMediaQueryList( dimensions, self.options.units, vpObj.listener );
-        });
+
+        } );
+
     }
 
     /**
@@ -173,7 +204,7 @@
         /**
          * Get the current viewport.
          */
-        current: function() {
+        current: function () {
 
             this.state.prevMatches = this.state.curMatches;
             this.state.curMatches = [];
@@ -189,70 +220,83 @@
             }, this ).pop();
 
             return this.vps[ match && match.name ] || vpEmpty;
+
         },
 
         /**
          * Check a specific viewport against the current viewport.
          */
-        is: function( name ) {
+        is: function ( name ) {
 
             return this.current().name === name;
+
         },
 
         /**
          * Check if a specific viewport matches.
          */
-        matches: function( name ) {
+        matches: function ( name ) {
 
             if ( name ) {
+
                 return this.vps[ name ] && this.vps[ name ].mql.matches;
+
             }
 
             return this.state.curMatches;
+
         },
 
         /**
          * Get the previous viewport.
          */
-        previous: function() {
+        previous: function () {
 
             return this.state.previous;
+
         },
 
         /**
          * Subscribe to a particular viewport.
          */
-        subscribe: function( name, method ) {
+        subscribe: function ( name, method ) {
 
             var token;
             var subscribers;
 
             if ( !( name in this.vps ) && name !== '*' ) {
+
                 throw new Error( 'The viewport "' + name + '" does not match any configured viewports.' );
+
             }
 
             token = this.state.tokenUid = this.state.tokenUid + 1;
 
             if ( !this.state.channels[ name ] ) {
+
                 this.state.channels[ name ] = [];
+
             }
 
             subscribers = this.state.channels[ name ];
 
-            subscribers.push({
+            subscribers.push( {
                 token: token,
                 method: method
-            });
+            } );
 
             // Execute matches immediately to enable lazy subscribers.
             if ( name === this.state.present.name ) method( true, this.state.present );
 
             // The "*" channel is always fired.
             if ( name === '*' && ( this.state.previous.name || this.state.present.name ) ) {
+
                 method( this.state.present, this.state.previous );
+
             }
 
             return this.unsubscribe( subscribers, token );
+
         },
 
         /**
@@ -267,18 +311,23 @@
                     if ( sub.token === token ) {
 
                         return subscribers.splice( index, 1 )[0];
-                    };
+
+                    }
+
                 }, undefined );
-            }
+
+            };
+
         },
 
         /**
          * Publish that a particular viewport has become valid/invalid.
          */
-        publish: function( name, matches ) {
+        publish: function ( name, matches ) {
 
             var subscribers = this.state.channels[ name ]
                 , subsLength = subscribers ? subscribers.length : 0
+
                 ;
 
             if ( !subscribers ) return;
@@ -286,48 +335,45 @@
             while ( subsLength-- ) {
 
                 if ( name === '*' ) {
+
                     subscribers[ subsLength ].method( this.state.present, this.state.previous );
+
                 }
                 else {
+
                     subscribers[ subsLength ].method( matches, this.vps[ name ] );
+
                 }
+
             }
+
         },
 
         /**
          * Update the state.
          */
-        update: function( name ) {
-
-            var logInfo = ( state, matches ) => {
-                console.log(`    ${ state }: `);
-                if ( !matches.length ) console.log( `        (none)` );
-                matches.forEach( vp => {
-                    console.log( `        ${ vp.name }: ${ vp.mql.matches }` );
-                } )
-            }
-
-            logInfo( 'Previous', this.state.prevMatches );
+        update: function ( name ) {
 
             this.state.previous = this.state.present;
             this.state.present = this.current();
-
-            logInfo( 'Current', this.state.curMatches );
-            console.log('    ------\n');
 
             if ( this.state.previous.name !== this.state.present.name ) {
 
                 this.publish( this.state.previous.name, false );
                 this.publish( this.state.present.name, true );
+
             }
 
             if ( arrayDedupe( this.state.curMatches, this.state.prevMatches ).length ) {
+
                 this.publish( '*' );
+
             }
+
         }
     };
 
-    return function( viewports, options ) {
+    return function ( viewports, options ) {
 
         var instance;
         var config = {
@@ -336,11 +382,15 @@
         };
 
         if ( typeof options === 'string' ) {
+
             config.units = options;
+
         }
         else if ( typeof options === 'object' ) {
+
             config.units = options.units || config.units;
             config.delay = isNaN( options.delay ) ? config.delay : options.delay;
+
         }
 
         instance = new Viewport( viewports, config );
@@ -356,5 +406,7 @@
             matches: instance.matches.bind( instance ),
             subscribe: instance.subscribe.bind( instance )
         };
+
     };
-}));
+
+} ) );

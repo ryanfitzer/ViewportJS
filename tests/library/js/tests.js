@@ -1,6 +1,10 @@
 !function () {
 
-    // phantomjs defaults to width = 300, height = 400
+    mocha.setup({
+      ui: 'bdd'
+    });
+
+    window.assert = chai.assert;
 
     describe( 'API', function() {
 
@@ -13,118 +17,114 @@
             height = viewportSize.getHeight();
         });
 
-        it( 'should return the correct viewport object based on width', function() {
+        it( 'should return the correct viewport based on width', function() {
 
-            var vp = viewport([
+            var vp = viewportjs([
                 {
                     name: 'first',
-                    width: [ 0, width - 1 ]
+                    query: [ '(max-width:', width - 1, 'px)' ].join( '' )
                 },
                 {
                     name: 'second',
-                    width: [ width ]
+                    query: [ '(min-width:', width, 'px)' ].join( '' )
                 }
             ]);
 
-            assert.equal( vp.current().name, 'second' );
             assert.isTrue( vp.matches( 'second' ) );
-            assert.isTrue( vp.is( 'second' ) );
+            assert.isTrue( vp.current( 'second' ) );
+            assert.equal( vp.current().name, 'second' );
         });
 
-        it( 'should return the correct viewport object based on height', function() {
+        it( 'should return the correct viewport based on height', function() {
 
-            var vp = viewport([
+            var vp = viewportjs([
                 {
                     name: 'first',
-                    height: [ 0, height - 1 ]
+                    query: [ '(max-height:', height - 1, 'px)' ].join( '' )
                 },
                 {
                     name: 'second',
-                    height: [ height ]
+                    query: [ '(min-height:', height, 'px)' ].join( '' )
                 }
             ]);
 
-            assert.equal( vp.current().name, 'second' );
             assert.isTrue( vp.matches( 'second' ) );
-            assert.isTrue( vp.is( 'second' ) );
+            assert.isTrue( vp.current( 'second' ) );
+            assert.equal( vp.current().name, 'second' );
         });
 
-        it( 'should return the correct viewport object based on width and height', function() {
+        it( 'should return the correct viewport based on width and height', function() {
 
-            var vp = viewport([
+            var vp = viewportjs([
                 {
                     name: 'first',
-                    height: [ 0, height - 1 ],
-                    width: [ 0, width - 1 ]
+                    query: [
+                        [ '(max-width:', width - 1, 'px) and ' ].join( '' ),
+                        [ '(max-height:', height - 1, 'px)' ].join( '' )
+                    ].join( '' )
                 },
                 {
                     name: 'second',
-                    height: [ height ],
-                    width: [ width ]
+                    query: [
+                        [ '(max-width:', width, 'px) and ' ].join( '' ),
+                        [ '(max-height:', height, 'px)' ].join( '' )
+                    ].join( '' )
                 }
             ]);
 
-            assert.equal( vp.current().name, 'second' );
             assert.isTrue( vp.matches( 'second' ) );
-            assert.isTrue( vp.is( 'second' ) );
+            assert.isTrue( vp.current( 'second' ) );
+            assert.equal( vp.current().name, 'second' );
         });
 
-        it( 'should return the last matching viewport object when multiple match', function() {
+        it( 'should return the last matching viewport when multiple match', function() {
 
-          var vp = viewport([
+            var query = [
+                [ '(min-width:', width, 'px) and ' ].join( '' ),
+                [ '(min-height:', height, 'px)' ].join( '' )
+            ].join( '' );
+
+          var vp = viewportjs([
             {
               name: 'first',
-              height: [ height ],
-              width: [ width ]
+              query: query
             },
             {
               name: 'second',
-              height: [ height ],
-              width: [ width ]
+              query: query
             },
             {
               name: 'third',
-              height: [ height ],
-              width: [ width ]
+              query: query
             }
           ]);
 
-          assert.equal( vp.current().name, 'third' );
           assert.isTrue( vp.matches( 'third' ) );
-          assert.isTrue( vp.is( 'third' ) );
+          assert.isTrue( vp.current( 'third' ) );
+          assert.equal( vp.current().name, 'third' );
 
         });
 
         it( 'should subscribe and unsubscribe to a viewport', function() {
 
-            var vp = viewport([
+            var vp = viewportjs([
                 {
                     name: 'first',
-                    width: [ 0, width ]
+                    query: [ '(min-width:', width, 'px)' ].join( '' )
                 }
             ]);
 
-            var unsub0 = vp.subscribe( 'first', function () {});
-            var unsub1 = vp.subscribe( 'first', function () {});
+            var unsub0 = vp.subscribe( 'first', function () {} );
+            var unsub1 = vp.subscribe( 'first', function () {} );
+            var unsub2 = vp.subscribeAll( function () {} );
+            var unsub3 = vp.first( function () {} );
 
-            assert.ok( unsub0().token === 0 );
-            assert.ok( typeof unsub0() === 'undefined' );
-            assert.ok( unsub1().token === 1 );
-            assert.ok( typeof unsub1() === 'undefined' );
+            assert.ok( unsub0() === 0 );
+            assert.ok( unsub1() === 1 );
+            assert.ok( unsub2() === 2 );
+            assert.ok( unsub3() === 3 );
         });
     });
-
-    function startMocha() {
-
-        document.getElementById( 'mocha' ).removeChild( document.getElementById( 'mocha-pending' ) );
-
-        mocha.run();
-    }
-
-    if ( !window.opener ) {
-
-        return startMocha();
-    }
 
     var sizeDelta = {
         width: window.outerWidth - window.innerWidth,
@@ -135,45 +135,45 @@
 
         '480x700': {
             'small': 'match',
-            'medium': 'not match',
-            'medium-alt': 'be current',
-            'large': 'not match'
+            'medium': 'current',
+            'large': 'not match',
+            'xlarge': 'not match'
         },
         '600x700': {
             'small': 'not match',
             'medium': 'match',
-            'medium-alt': 'be current',
-            'large': 'not match'
+            'large': 'current',
+            'xlarge': 'not match'
         },
         '601x700': {
             'small': 'not match',
-            'medium': 'be current',
-            'medium-alt': 'not match',
-            'large': 'not match'
+            'medium': 'not match',
+            'large': 'current',
+            'xlarge': 'not match'
         },
         '768x700': {
             'small': 'not match',
-            'medium': 'be current',
-            'medium-alt': 'not match',
-            'large': 'not match'
+            'medium': 'not match',
+            'large': 'current',
+            'xlarge': 'not match'
         },
         '769x700': {
             'small': 'not match',
             'medium': 'not match',
-            'medium-alt': 'not match',
-            'large': 'not match'
+            'large': 'not match',
+            'xlarge': 'not match'
         },
         '924x700': {
             'small': 'not match',
             'medium': 'not match',
-            'medium-alt': 'not match',
-            'large': 'not match'
+            'large': 'not match',
+            'xlarge': 'not match'
         },
         '925x700': {
             'small': 'not match',
             'medium': 'not match',
-            'medium-alt': 'not match',
-            'large': 'be current'
+            'large': 'not match',
+            'xlarge': 'current'
         }
     }
 
@@ -190,7 +190,7 @@
             css: colors.red,
             vpjs: colors.red
         },
-        'be current': {
+        'current': {
             css: colors.green,
             vpjs: colors.green
         },
@@ -203,8 +203,8 @@
     var vpsElements = [
         'small',
         'medium',
-        'medium-alt',
-        'large'
+        'large',
+        'xlarge'
     ].reduce( function ( acc, name ) {
 
         acc[ name ] = {
@@ -267,7 +267,7 @@
 
                 window.removeEventListener( 'resize', listener );
 
-                return startMocha();
+                return mocha.run();
             };
 
             resizeWindow( nextSize );

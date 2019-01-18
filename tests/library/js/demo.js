@@ -1,6 +1,42 @@
 !function () {
 
-    var vps = viewport( [
+    var demo = {};
+    var file = './tests.html';
+    var isPopup = window.opener;
+    var html = document.documentElement;
+    var statusCurrent = document.querySelector( '#vp-current code' );
+    var statusPrev = document.querySelector( '#vp-previous code' );
+
+    function initView() {
+
+        if ( isPopup ) {
+
+            html.classList.add( 'popup' );
+        }
+    }
+
+    function updateView( vp ) {
+
+        var element = document.getElementById( 'vpjs-' + vp.name );
+
+        if ( vp.current ) element.setAttribute( 'data-state', 'current' );
+        else if ( vp.matches ) element.setAttribute( 'data-state', 'matches' );
+        else element.setAttribute( 'data-state', '' );
+
+        if ( isPopup ) return;
+
+        statusCurrent.innerText = vpjs.current().name;
+        statusPrev.innerText = vpjs.previous().name;
+
+    }
+
+    function popup( e ) {
+
+        window.open( file, '_blank', 'width=1000,height=1000,scrollbars=yes' );
+
+    }
+
+    vpjs = viewportjs( [
         {
             name: 'small',
             query: '( max-width: 480px )'
@@ -19,78 +55,18 @@
         }
     ] );
 
-    window.testvps = vps;
+    vpjs.subscribe( 'small', updateView );
 
-    var statusCurrent = document.querySelector( '#vp-current code' );
-    var statusPrev = document.querySelector( '#vp-previous code' );
+    vpjs.subscribe( 'medium', updateView );
 
-    function updateView( id, state ) {
+    vpjs.subscribe( 'large', updateView );
 
-        var element = document.getElementById( id );
+    vpjs.subscribe( 'xlarge', updateView );
 
-        statusCurrent.innerText = vps.current().name;
-        statusPrev.innerText = vps.previous().name;
+    demo.vpjs = vpjs;
+    demo.popup = popup;
+    window.demo = demo;
 
-        if ( state.current ) {
-
-            element.setAttribute( 'data-state', 'current' );
-
-        }
-        else if ( state.matches ) {
-
-            element.setAttribute( 'data-state', 'matches' );
-
-        }
-        else {
-
-            element.setAttribute( 'data-state', '' );
-
-        }
-
-    }
-
-    vps.subscribe( 'small', function ( state ) {
-        updateView( 'vpjs-small', state );
-    } );
-
-    vps.subscribe( 'medium', function ( state ) {
-        updateView( 'vpjs-medium', state );
-    } );
-
-    vps.subscribe( 'large', function ( state ) {
-        updateView( 'vpjs-large', state );
-    } );
-
-    vps.subscribe( 'xlarge', function ( state ) {
-        updateView( 'vpjs-xlarge', state );
-    } );
-
-    // vps.small( function ( state ) {
-    //     updateView( 'vpjs-small', state );
-    // } );
-    //
-    // vps.medium( function ( state ) {
-    //     updateView( 'vpjs-medium', state );
-    // } );
-    //
-    // vps.large( function ( state ) {
-    //     updateView( 'vpjs-large', state );
-    // } );
-    //
-    // vps.xlarge( function ( state ) {
-    //     updateView( 'vpjs-xlarge', state );
-    // } );
-
-    // vps.subscribe( '*', function( current, previous ) {
-    //
-    //     vps.viewports.forEach( function ( viewport ) {
-    //
-    //         viewport = vps.vps[ viewport.name ];
-    //
-    //         if ( viewport.name !== current.name ) {
-    //             updateView( 'vpjs-' + viewport.name, false, viewport, previous );
-    //         }
-    //     });
-    // });
+    initView();
 
 }();

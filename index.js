@@ -18,36 +18,12 @@
     else {
 
         // Browser globals (root is window)
-        root.viewport = factory();
+        root.viewportjs = factory();
 
     }
 
 }
 ( this, function () {
-
-    // Stub API for handling server-side rendering.
-    if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
-
-        return function () {
-
-            var noop = function () {};
-            var warn = function () {
-
-                console.warn( '[viewportjs] Subscribing to a viewport in this environment can cause memory leaks.' );
-
-            };
-
-            return {
-                matches: noop,
-                current: noop,
-                previous: noop,
-                subscribe: warn,
-                subscribeAll: warn
-            };
-
-        };
-
-    }
 
     function copyViewportObject( vp ) {
 
@@ -59,7 +35,17 @@
 
     }
 
-    function createMediaQueryList( query, listener ) {
+    function copyViewportObjects( vps ) {
+
+        var result = [];
+
+        for ( var vp in vps ) result.push( copyViewportObject( vps[ vp ] ) );
+
+        return result;
+
+    }
+
+    function createMediaQuery( query, listener ) {
 
         var mql = window.matchMedia( query );
 
@@ -69,14 +55,31 @@
 
     }
 
+    function createUnsubscribe( token, channel ) {
+
+        return function () {
+
+            channel = channel.filter( function ( subscriber ) {
+
+                subscriber.token !== token;
+
+            } );
+
+            return token;
+
+        };
+
+    }
+
     function Viewport( viewports ) {
 
-        this.viewports = viewports;
         this.aliases = {};
+        this.viewports = viewports;
         this.state = {
             vps: {},
             tokenUid: -1,
             channels: {},
+            channelAll: [],
             current: undefined,
             previous: undefined
         };
@@ -86,7 +89,7 @@
             this.aliases[ vp.name ] = this.subscribe.bind( this, vp.name );
 
             vp.listener = this.setState.bind( this );
-            vp.mql = createMediaQueryList( vp.query, vp.listener );
+            vp.mql = createMediaQuery( vp.query, vp.listener );
 
             this.state.channels[ vp.name ] = [];
 
@@ -116,24 +119,6 @@
 
         },
 
-        validateViewportName: function ( name ) {
-
-            if ( !this.state.vps[ name ] ) {
-
-                throw new Error( 'The viewport "' + name + '" does not match any configured viewports.' );
-
-            }
-
-        },
-
-        matches: function ( name ) {
-
-            if ( name ) return this.state.vps[ name ].matches;
-
-            return this.getMatches();
-
-        },
-
         getMatches: function () {
 
             return this.viewports.filter( function ( vp ) {
@@ -144,67 +129,11 @@
 
         },
 
-        current: function ( name ) {
-
-            if ( name ) return this.state.current === name;
-
-            return this.ensureViewportObject( this.state.current );
-
-        },
-
         getCurrent: function () {
 
             var match = this.getMatches().pop();
 
             return match ? match.name : undefined;
-
-        },
-
-        previous: function ( name ) {
-
-            if ( name ) return this.state.previous === name;
-
-            return this.ensureViewportObject( this.state.previous );
-
-        },
-
-        subscribe: function ( name, handler ) {
-
-            this.validateViewportName( name );
-
-            var vp = this.state.vps[ name ];
-            var token = this.state.tokenUid = this.state.tokenUid + 1;
-
-            this.state.channels[ name ].push( {
-                token: token,
-                handler: handler
-            } );
-
-            if ( vp.current || vp.matches ) handler( vp );
-
-            return this.unsubscribe( token, name );
-
-        },
-
-        unsubscribe: function ( token, name ) {
-
-            return function () {
-
-                this.state.channels[ name ].forEach( function ( subscriber, index ) {
-
-                    if ( subscriber.token === token ) this.state.channels[ name ].splice( index, 1 );
-
-                } );
-
-            };
-
-        },
-
-        subscribeAll: function ( name, method ) {
-
-        },
-
-        unsubscribeAll: function ( subscribers, token ) {
 
         },
 
@@ -265,6 +194,26 @@
 
         },
 
+        addSubscriber: function ( opts ) {
+
+            var vps = copyViewportObjects( this.state.vps );
+            var token = this.state.tokenUid = this.state.tokenUid + 1;
+
+            opts.channel.push( {
+                token: token,
+                handler: opts.handler
+            } );
+
+            opts.changed.forEach( function ( vp ) {
+
+                opts.handler( vp, vps );
+
+            } );
+
+            return createUnsubscribe( token, opts.channel );
+
+        },
+
         publish: function ( name ) {
 
             this.state.channels[ name ].forEach( function ( subscriber ) {
@@ -273,15 +222,114 @@
 
             }, this );
 
+            this.state.channelAll.forEach( function ( subscriber ) {
+
+                subscriber.handler( this.state.vps[ name ], copyViewportObjects( this.state.vps ) );
+
+            }, this );
+
+        },
+
+        matches: function ( name ) {
+
+            if ( name ) return this.state.vps[ name ].matches;
+
+            return this.getMatches();
+
+        },
+
+        current: function ( name ) {
+
+            if ( name ) return this.state.current === name;
+
+            return this.ensureViewportObject( this.state.current );
+
+        },
+
+        previous: function ( name ) {
+
+            if ( name ) return this.state.previous === name;
+
+            return this.ensureViewportObject( this.state.previous );
+
+        },
+
+        subscribe: function ( name, handler ) {
+
+            // [].concat( name ).forEach( function ( label ) {
+
+            var vp = this.state.vps[ label ];
+
+            if ( !vp ) return console.warn( '[viewportjs] Subscription failed. The viewport "' + label + '" does not match any configured viewports.' );
+
+            return this.addSubscriber( {
+                handler: handler,
+                channel: this.state.channels[ label ],
+                changed: ( vp.current || vp.matches ) ? [ vp ] : []
+            } );
+
+            // }, this );
+
+        },
+
+        subscribeAll: function ( handler ) {
+
+            var current = this.current();
+            var matches = this.matches().filter( function ( vp ) {
+
+                return vp.name !== current.name;
+
+            } );
+
+            return this.addSubscriber( {
+                handler: handler,
+                channel: this.state.channelAll,
+                changed: current.name ? matches.concat( current ) : []
+            } );
+
+        },
+
+        destroy: function () {
+
+            this.viewports.forEach( function ( viewport ) {
+
+                viewport.mql.removeListener( viewport.listener );
+
+            } );
+
         }
 
     };
+
+    if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
+
+        return function () {
+
+            var noop = function () {};
+            var warn = function () {
+
+                console.warn( '[viewportjs] Subscribing to a viewport in this environment can cause memory leaks.' );
+
+            };
+
+            return {
+                matches: noop,
+                current: noop,
+                previous: noop,
+                subscribe: warn,
+                subscribeAll: warn
+            };
+
+        };
+
+    }
 
     return function ( viewports ) {
 
         var instance = new Viewport( viewports );
 
         var api = {
+            destroy: instance.destroy.bind( instance ),
             matches: instance.matches.bind( instance ),
             current: instance.current.bind( instance ),
             previous: instance.previous.bind( instance ),
@@ -294,6 +342,7 @@
             if ( api[ name ] ) return console.warn( '[viewportjs] Defining the viewport name "' + name + '" as an alias to `subscribe` failed.' );
 
             api[ name ] = instance.aliases[ name ];
+
         }
 
         return api;
