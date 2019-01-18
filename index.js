@@ -256,19 +256,15 @@
 
         subscribe: function ( name, handler ) {
 
-            // [].concat( name ).forEach( function ( label ) {
+            var vp = this.state.vps[ name ];
 
-            var vp = this.state.vps[ label ];
-
-            if ( !vp ) return console.warn( '[viewportjs] Subscription failed. The viewport "' + label + '" does not match any configured viewports.' );
+            if ( !vp ) return console.warn( '[viewportjs] Subscription failed. The viewport "' + name + '" does not match any configured viewports.' );
 
             return this.addSubscriber( {
                 handler: handler,
-                channel: this.state.channels[ label ],
+                channel: this.state.channels[ name ],
                 changed: ( vp.current || vp.matches ) ? [ vp ] : []
             } );
-
-            // }, this );
 
         },
 
