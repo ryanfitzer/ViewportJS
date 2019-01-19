@@ -36,7 +36,7 @@
 
     }
 
-    vpjs = viewportjs( [
+    vpjs = viewport( [
         {
             name: 'small',
             query: '( max-width: 480px )'

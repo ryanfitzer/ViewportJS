@@ -1,12 +1,14 @@
 !function () {
 
+    var noop = function () {};
+
     mocha.setup({
       ui: 'bdd'
     });
 
     window.assert = chai.assert;
 
-    describe( 'API', function() {
+    describe( 'API: Instance', function() {
 
         var width;
         var height;
@@ -19,7 +21,7 @@
 
         it( 'should return the correct viewport based on width', function() {
 
-            var vp = viewportjs([
+            var vp = viewport([
                 {
                     name: 'first',
                     query: [ '(max-width:', width - 1, 'px)' ].join( '' )
@@ -37,7 +39,7 @@
 
         it( 'should return the correct viewport based on height', function() {
 
-            var vp = viewportjs([
+            var vp = viewport([
                 {
                     name: 'first',
                     query: [ '(max-height:', height - 1, 'px)' ].join( '' )
@@ -55,7 +57,7 @@
 
         it( 'should return the correct viewport based on width and height', function() {
 
-            var vp = viewportjs([
+            var vp = viewport([
                 {
                     name: 'first',
                     query: [
@@ -84,7 +86,7 @@
                 [ '(min-height:', height, 'px)' ].join( '' )
             ].join( '' );
 
-          var vp = viewportjs([
+          var vp = viewport([
             {
               name: 'first',
               query: query
@@ -107,23 +109,51 @@
 
         it( 'should subscribe and unsubscribe to a viewport', function() {
 
-            var vp = viewportjs([
+            var vp = viewport([
                 {
                     name: 'first',
                     query: [ '(min-width:', width, 'px)' ].join( '' )
                 }
             ]);
 
-            var unsub0 = vp.subscribe( 'first', function () {} );
-            var unsub1 = vp.subscribe( 'first', function () {} );
-            var unsub2 = vp.subscribeAll( function () {} );
-            var unsub3 = vp.first( function () {} );
+            [
+                vp.subscribe( 'first', noop ),
+                vp.subscribe( 'first', noop ),
+                vp( 'first', noop ),
+                vp.subscribeAll( noop ),
+                vp( noop )
+            ]
+            .forEach( function ( unsubscribe, index ) {
+                assert.ok( unsubscribe() === index );
+            });
 
-            assert.ok( unsub0() === 0 );
-            assert.ok( unsub1() === 1 );
-            assert.ok( unsub2() === 2 );
-            assert.ok( unsub3() === 3 );
         });
+
+    });
+
+    describe( 'API: Static', function() {
+
+        var width;
+        var height;
+
+        beforeEach( function () {
+
+            width = viewportSize.getWidth();
+            height = viewportSize.getHeight();
+        });
+
+        it( 'should subscribe and match the correct viewport using the static `subscribe` method.', function () {
+
+            var vp1 = viewport( [ '(max-width:', width - 1, 'px)' ].join( '' ), noop );
+            var vp2 = viewport( [ '(min-width:', width, 'px)' ].join( '' ), noop );
+
+            assert.isTrue( !vp1.matches() );
+            assert.isTrue( vp2.matches() );
+            assert.isFalse( !!vp1.remove() );
+            assert.isFalse( !!vp2.remove() );
+
+        });
+
     });
 
     var sizeDelta = {

@@ -6,6 +6,7 @@
   "readmeFilename": "readme.md",
   "license": "MIT",
   "main": "viewport.js",
+  "unpkg": "./dist/viewport.min.js",
   "contributors": [
     "Derek Pittsinger (http://derekpitt.com)"
   ],
@@ -14,16 +15,17 @@
     "url": "https://github.com/ryanfitzer/ViewportJS.git"
   },
   "scripts": {
-    "build": "grunt default",
-    "grunt": "node_modules/.bin/grunt",
-    "test": "open -W ./tests/index.html",
-    "test:ff": "open -W -a 'Firefox' ./tests/index.html",
-    "test:safari": "open -W -a 'Safari' ./tests/index.html",
-    "test:chrome": "open -W -a 'Google Chrome' ./tests/index.html"
+    "build": "grunt --verbose",
+    "checkpkg": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
+    "test": "open ./tests/index.html &",
+    "test:ff": "open -a 'Firefox' './tests/index.html'",
+    "test:safari": "open -a 'Safari' ./tests/index.html",
+    "test:chrome": "open -a 'Google Chrome' ./tests/index.html"
   },
   "files": [
+    "dist",
     "LICENSE",
-    "readme.md",
+    "README.md",
     "viewport.js"
   ],
   "devDependencies": {

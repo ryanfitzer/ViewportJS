@@ -1,4 +1,4 @@
-/* ! ViewportJS github.com/ryanfitzer/ViewportJS/blob/master/LICENSE */
+/* !ViewportJS github.com/ryanfitzer/ViewportJS/blob/master/LICENSE */
 ( function ( root, factory ) {
 
     if ( typeof define === 'function' && define.amd ) {
@@ -25,119 +25,38 @@
 }
 ( this, function () {
 
-    // Stub API for handling server-side rendering scenarios.
-    if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
+    var exposedAPI = [
+        'remove',
+        'matches',
+        'current',
+        'previous',
+        'subscribe',
+        'subscribeAll'
+    ];
 
-        return function () {
+    function copyViewportObject( vp ) {
 
-            var noop = function () {
-
-                return {};
-
-            };
-
-            return {
-                vps: {},
-                viewports: {},
-                is: noop,
-                current: noop,
-                matches: noop,
-                subscribe: noop,
-                unsubscribe: noop
-            };
-
+        return {
+            name: vp.name,
+            matches: vp.matches,
+            current: vp.current
         };
 
     }
 
-    // Default viewport object to use when no queries match.
-    var vpEmpty = {
-        name: undefined,
-        width: [],
-        height: [],
-        query: undefined
-    };
+    function copyViewportObjects( vps ) {
 
-    /**
-     * Merge 2 arrays and remove any duplicates.
-     */
-    function arrayDedupe( a, b ) {
+        var result = [];
 
-        a.sort();
-        b.sort();
+        for ( var vp in vps ) result.push( copyViewportObject( vps[ vp ] ) );
 
-        return a.filter( function ( val ) {
-
-            return b.indexOf( val ) < 0;
-
-        } ).concat( b.filter( function ( val ) {
-
-            return a.indexOf( val ) < 0;
-
-        } ) );
+        return result;
 
     }
 
-    /**
-     * Generic throttle method.
-     */
-    function throttle( method, timer, delay ) {
+    function createMediaQuery( query, listener ) {
 
-        clearTimeout( timer );
-
-        return setTimeout( function () {
-
-            method();
-
-        }, delay );
-
-    }
-
-    /**
-     * Create a full media expression string from width and height dimensions.
-     */
-    function createExpression( vp, units ) {
-
-        var mqls = []
-            , expTmpl = '({prefix}{dimension}:{num}' + units + ')'
-
-            ;
-
-        var prefix = [
-            'min-',
-            'max-'
-        ];
-
-        var mqls = Object.keys( vp ).reduce( function ( acc, dimension ) {
-
-            var expressions = [];
-
-            vp[ dimension ].forEach( function ( num, index ) {
-
-                expressions.push(
-                    expTmpl.replace( '{prefix}', prefix[ index ] )
-                    .replace( '{dimension}', dimension )
-                    .replace( '{num}', num )
-                );
-
-            } );
-
-            acc.push( expressions.join( ' and ' ) );
-
-            return acc;
-
-        }, [] );
-
-        return mqls.join( ' and ' );
-
-    }
-
-    /**
-     * Creates a `mediaQueryList` object.
-     */
-    function createMediaQueryList( dimensions, units, listener ) {
-
-        var mql = window.matchMedia( createExpression( dimensions, units ) );
+        var mql = window.matchMedia( query );
 
         mql.addListener( listener );
 
@@ -145,268 +64,331 @@
 
     }
 
-    /**
-     * Viewport constructor.
-     */
-    function Viewport( viewports, options ) {
+    function createUnsubscribe( token, channel ) {
 
-        var self = this;
+        return function () {
 
-        this.vps = {};
-        this.viewports = viewports;
-        this.options = options;
-        this.state = {
-            tokenUid: -1,
-            channels: {},
-            subscribers: {},
-            present: vpEmpty,
-            previous: vpEmpty,
-            curMatches: [],
-            prevMatches: []
+            channel = channel.filter( function ( subscriber ) {
+
+                subscriber.token !== token;
+
+            } );
+
+            return token;
+
         };
-
-        viewports.forEach( function ( vp, index ) {
-
-            var timer
-                , vpObj = self.vps[ vp.name ] = {}
-
-                ;
-
-            var dimensions = Object.keys( vp ).reduce( function ( acc, key ) {
-
-                if ( !/name/.test( key ) ) {
-
-                    acc[ key ] = vp[ key ];
-
-                }
-
-                return acc;
-
-            }, {} );
-
-            vpObj.name = vp.name;
-            vpObj.listener = function ( e ) {
-
-                timer = throttle( self.update.bind( self, vpObj.name ), timer, self.options.delay );
-
-            };
-            vpObj.mql = createMediaQueryList( dimensions, self.options.units, vpObj.listener );
-
-        } );
 
     }
 
-    /**
-     * Viewport prototype.
-     */
-    Viewport.prototype = {
+    function staticSubscribe( query, handler ) {
 
-        /**
-         * Get the current viewport.
-         */
-        current: function () {
+        var mql = window.matchMedia( query );
+        var api = {
+            remove: function () {
 
-            this.state.prevMatches = this.state.curMatches;
-            this.state.curMatches = [];
+                console.warn( '[viewportjs] The `remove()` method was called for the query "' + query + '", but a handler was never originally provided.' );
 
-            var match = this.viewports.filter( function ( vp ) {
+            },
+            matches: function () {
 
-                var isMatch = this.vps[ vp.name ].mql.matches;
-
-                if ( isMatch ) this.state.curMatches.push( this.vps[ vp.name ] );
-
-                return isMatch;
-
-            }, this ).pop();
-
-            return this.vps[ match && match.name ] || vpEmpty;
-
-        },
-
-        /**
-         * Check a specific viewport against the current viewport.
-         */
-        is: function ( name ) {
-
-            return this.current().name === name;
-
-        },
-
-        /**
-         * Check if a specific viewport matches.
-         */
-        matches: function ( name ) {
-
-            if ( name ) {
-
-                return this.vps[ name ] && this.vps[ name ].mql.matches;
+                return mql.matches;
 
             }
+        };
 
-            return this.state.curMatches;
+        if ( !handler ) return api;
 
-        },
+        var listener = function ( event ) {
 
-        /**
-         * Get the previous viewport.
-         */
-        previous: function () {
-
-            return this.state.previous;
-
-        },
-
-        /**
-         * Subscribe to a particular viewport.
-         */
-        subscribe: function ( name, method ) {
-
-            var token;
-            var subscribers;
-
-            if ( !( name in this.vps ) && name !== '*' ) {
-
-                throw new Error( 'The viewport "' + name + '" does not match any configured viewports.' );
-
-            }
-
-            token = this.state.tokenUid = this.state.tokenUid + 1;
-
-            if ( !this.state.channels[ name ] ) {
-
-                this.state.channels[ name ] = [];
-
-            }
-
-            subscribers = this.state.channels[ name ];
-
-            subscribers.push( {
-                token: token,
-                method: method
+            handler( {
+                matches: event.matches
             } );
 
-            // Execute matches immediately to enable lazy subscribers.
-            if ( name === this.state.present.name ) method( true, this.state.present );
+        };
 
-            // The "*" channel is always fired.
-            if ( name === '*' && ( this.state.previous.name || this.state.present.name ) ) {
+        mql.addListener( listener );
 
-                method( this.state.present, this.state.previous );
+        if ( mql.matches ) listener( mql.matches );
 
-            }
+        api.remove = mql.removeListener.bind( mql, listener );
 
-            return this.unsubscribe( subscribers, token );
+        return api;
 
-        },
+    }
 
-        /**
-         * Unsubscribe a listener from a particular viewport.
-         */
-        unsubscribe: function ( subscribers, token ) {
+    function Viewport( viewports ) {
 
-            return function () {
+        this.viewports = viewports;
+        this.state = {
+            vps: {},
+            tokenUid: -1,
+            channels: {},
+            channelAll: [],
+            current: undefined,
+            previous: undefined
+        };
 
-                return subscribers.reduce( function ( accum, sub, index ) {
+        this.viewports.forEach( function ( vp ) {
 
-                    if ( sub.token === token ) {
+            vp.listener = this.setState.bind( this );
+            vp.mql = createMediaQuery( vp.query, vp.listener );
 
-                        return subscribers.splice( index, 1 )[0];
+            this.state.channels[ vp.name ] = [];
 
-                    }
+            this.state.vps[ vp.name ] = {
+                name: vp.name,
+                matches: false,
+                current: false
+            };
 
-                }, undefined );
+        }, this );
 
+        this.setState();
+
+    }
+
+    Viewport.prototype = {
+
+        ensureViewportObject: function ( name ) {
+
+            if ( this.state.vps[ name ] ) return copyViewportObject( this.state.vps[ name ] );
+
+            return {
+                name: undefined,
+                matches: false,
+                current: false
             };
 
         },
 
-        /**
-         * Publish that a particular viewport has become valid/invalid.
-         */
-        publish: function ( name, matches ) {
+        getMatches: function () {
 
-            var subscribers = this.state.channels[ name ]
-                , subsLength = subscribers ? subscribers.length : 0
+            return this.viewports.filter( function ( vp ) {
 
-                ;
+                return vp.mql.matches;
 
-            if ( !subscribers ) return;
-
-            while ( subsLength-- ) {
-
-                if ( name === '*' ) {
-
-                    subscribers[ subsLength ].method( this.state.present, this.state.previous );
-
-                }
-                else {
-
-                    subscribers[ subsLength ].method( matches, this.vps[ name ] );
-
-                }
-
-            }
+            } ).map( copyViewportObject );
 
         },
 
-        /**
-         * Update the state.
-         */
-        update: function ( name ) {
+        getCurrent: function () {
 
-            this.state.previous = this.state.present;
-            this.state.present = this.current();
+            var match = this.getMatches().pop();
 
-            if ( this.state.previous.name !== this.state.present.name ) {
+            return match ? match.name : undefined;
 
-                this.publish( this.state.previous.name, false );
-                this.publish( this.state.present.name, true );
+        },
+
+        getChanges: function ( viewport, current ) {
+
+            var name = viewport.name;
+            var state = this.state.vps[ name ];
+            var props = {
+                matches: viewport.mql.matches,
+                current: current.name === name
+            };
+
+            return Object.keys( props ).reduce( function ( accum, label ) {
+
+                if ( state[ label ] !== props[ label ] ) {
+
+                    accum.push( {
+                        key: label,
+                        value: props[ label ]
+                    } );
+
+                }
+
+                return accum;
+
+            }, [] );
+
+        },
+
+        setState: function () {
+
+            var changed = [];
+            var current = this.ensureViewportObject( this.getCurrent() );
+
+            this.viewports.forEach( function ( viewport ) {
+
+                var vp = this.state.vps[ viewport.name ];
+                var changes = this.getChanges( viewport, current );
+
+                changes.forEach( function ( change ) {
+
+                    vp[ change.key ] = change.value;
+
+                } );
+
+                if ( changes.length ) changed.push( vp.name );
+
+            }, this );
+
+            if ( current.name !== this.state.current ) {
+
+                this.state.previous = this.state.current;
+                this.state.current = current.name;
 
             }
 
-            if ( arrayDedupe( this.state.curMatches, this.state.prevMatches ).length ) {
+            changed.forEach( this.publish, this );
 
-                this.publish( '*' );
+        },
 
-            }
+        addSubscriber: function ( opts ) {
+
+            var vps = copyViewportObjects( this.state.vps );
+            var token = this.state.tokenUid = this.state.tokenUid + 1;
+
+            opts.channel.push( {
+                token: token,
+                handler: opts.handler
+            } );
+
+            opts.changed.forEach( function ( vp ) {
+
+                opts.handler( vp, vps );
+
+            } );
+
+            return createUnsubscribe( token, opts.channel );
+
+        },
+
+        publish: function ( name ) {
+
+            this.state.channels[ name ].forEach( function ( subscriber ) {
+
+                subscriber.handler( this.state.vps[ name ] );
+
+            }, this );
+
+            this.state.channelAll.forEach( function ( subscriber ) {
+
+                subscriber.handler( this.state.vps[ name ], copyViewportObjects( this.state.vps ) );
+
+            }, this );
+
+        },
+
+        matches: function ( name ) {
+
+            if ( name ) return this.state.vps[ name ].matches;
+
+            return this.getMatches();
+
+        },
+
+        current: function ( name ) {
+
+            if ( name ) return this.state.current === name;
+
+            return this.ensureViewportObject( this.state.current );
+
+        },
+
+        previous: function ( name ) {
+
+            if ( name ) return this.state.previous === name;
+
+            return this.ensureViewportObject( this.state.previous );
+
+        },
+
+        subscribe: function ( name, handler ) {
+
+            var vp = this.state.vps[ name ];
+
+            if ( !vp ) return console.warn( '[viewportjs] Subscription failed. The viewport "' + name + '" does not match any configured viewports.' );
+
+            return this.addSubscriber( {
+                handler: handler,
+                channel: this.state.channels[ name ],
+                changed: ( vp.current || vp.matches ) ? [ vp ] : []
+            } );
+
+        },
+
+        subscribeAll: function ( handler ) {
+
+            var current = this.current();
+            var matches = this.matches().filter( function ( vp ) {
+
+                return vp.name !== current.name;
+
+            } );
+
+            return this.addSubscriber( {
+                handler: handler,
+                channel: this.state.channelAll,
+                changed: current.name ? matches.concat( current ) : []
+            } );
+
+        },
+
+        remove: function () {
+
+            this.viewports.forEach( function ( viewport ) {
+
+                viewport.mql.removeListener( viewport.listener );
+
+            } );
+
+            this.viewports = this.state = null;
 
         }
+
     };
 
-    return function ( viewports, options ) {
+    function module( config, handler ) {
 
-        var instance;
-        var config = {
-            units: 'px',
-            delay: 0
+        if ( !Array.isArray( config ) ) return staticSubscribe( config, handler );
+
+        var instance = new Viewport( config );
+
+        var api = function ( first, second ) {
+
+            if ( typeof first === 'string' ) return instance.subscribe.call( instance, first, second );
+
+            return instance.subscribeAll.call( instance, first );
+
         };
 
-        if ( typeof options === 'string' ) {
+        return exposedAPI.reduce( function ( api, method ) {
 
-            config.units = options;
+            api[ method ] = instance[ method ].bind( instance );
 
-        }
-        else if ( typeof options === 'object' ) {
+            return api;
 
-            config.units = options.units || config.units;
-            config.delay = isNaN( options.delay ) ? config.delay : options.delay;
+        }, api );
 
-        }
+    }
 
-        instance = new Viewport( viewports, config );
+    if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
 
-        instance.update();
+        return function () {
 
-        return {
-            vps: instance.vps,
-            viewports: instance.viewports,
-            is: instance.is.bind( instance ),
-            current: instance.current.bind( instance ),
-            previous: instance.previous.bind( instance ),
-            matches: instance.matches.bind( instance ),
-            subscribe: instance.subscribe.bind( instance )
+            var noop = function () {};
+            var warn = function () {
+
+                console.warn( '[viewportjs] Subscribing to a viewport in this environment can cause memory leaks.' );
+
+            };
+
+            return exposedAPI.reduce( function ( api, method ) {
+
+                if ( 'subscribe'.test( method ) ) api[ method ] = warn;
+                else api[ method ] = noop;
+
+                return api;
+
+            }, {} );
+
         };
 
-    };
+    }
+
+    return module;
 
 } ) );
