@@ -55,13 +55,13 @@
         }
     ] );
 
-    vpjs.subscribe( 'small', updateView );
+    vpjs( 'small', updateView );
 
-    vpjs.subscribe( 'medium', updateView );
+    vpjs( 'medium', updateView );
 
-    vpjs.subscribe( 'large', updateView );
+    vpjs( 'large', updateView );
 
-    vpjs.subscribe( 'xlarge', updateView );
+    vpjs( 'xlarge', updateView );
 
     demo.vpjs = vpjs;
     demo.popup = popup;

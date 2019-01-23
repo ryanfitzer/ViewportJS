@@ -1,5 +1,13 @@
 !function () {
 
+    /*
+        TODO
+
+        - Test that that methods are properly asserting.
+        - Replace the window resizing test with something that doesn't rely on color matching the demo.
+        - Test the `.previous()` method (dependent on window resizing logic).
+    */
+
     var noop = function () {};
 
     mocha.setup({
@@ -7,6 +15,7 @@
     });
 
     window.assert = chai.assert;
+    console.assert = noop;
 
     describe( 'API: Instance', function() {
 
@@ -107,7 +116,7 @@
 
         });
 
-        it( 'should subscribe and unsubscribe to a viewport', function() {
+        it( 'should subscribe and unsubscribe to each viewport', function() {
 
             var vp = viewport([
                 {
@@ -117,16 +126,72 @@
             ]);
 
             [
-                vp.subscribe( 'first', noop ),
-                vp.subscribe( 'first', noop ),
                 vp( 'first', noop ),
-                vp.subscribeAll( noop ),
+                vp( 'first', noop ),
+                vp( 'first', noop ),
+                vp( noop ),
                 vp( noop )
             ]
             .forEach( function ( unsubscribe, index ) {
                 assert.ok( unsubscribe() === index );
             });
 
+        });
+
+        it( 'should pass the correct arguments to subscribers', function() {
+
+            var checkArgs = function ( state, instance ) {
+
+                assert.isObject( state, 'The `state` arg is an object.' );
+                assert.isFunction( instance, 'The `instance` arg is a function.' );
+            }
+
+            var vp = viewport([
+                {
+                    name: 'first',
+                    query: [ '(min-width:', width, 'px)' ].join( '' )
+                }
+            ]);
+
+            vp( 'first', checkArgs );
+            vp(  checkArgs );
+
+        });
+
+        it( 'should remove all configured viewports, state, and handlers', function() {
+
+            var vp = viewport([
+                {
+                    name: 'first',
+                    query: [ '(min-width:', width, 'px)' ].join( '' )
+                }
+            ]);
+
+            vp( noop );
+            vp( 'first', noop );
+
+            assert.isNull( vp.remove() );
+            assert.isEmpty( vp.state() );
+            assert.isUndefined( vp.state( 'first' ).name );
+            assert.isEmpty( vp.matches() );
+            assert.isFalse( vp.matches( 'first' ) );
+            assert.isUndefined( vp.current().name );
+            assert.isFalse( vp.current( 'first' ) );
+            assert.isUndefined( vp.previous().name );
+            assert.isFalse( vp.previous( 'first' ) );
+        });
+
+        it( 'should return the correct type when `.state()` is called', function() {
+
+            var vp = viewport([
+                {
+                    name: 'first',
+                    query: [ '(min-width:', width, 'px)' ].join( '' )
+                }
+            ]);
+
+            assert.isObject( vp.state( 'first' ), 'calling with a `name` argument should return and object.' );
+            assert.isArray( vp.state(), 'calling with no arguments should return an array.' );
         });
 
     });
@@ -144,8 +209,14 @@
 
         it( 'should subscribe and match the correct viewport using the static `subscribe` method.', function () {
 
+            var checkArgs = function ( state, instance ) {
+
+                assert.isObject( state, 'The `state` arg is an object.' );
+                assert.isObject( instance, 'The `instance` arg is an object.' );
+            }
+
             var vp1 = viewport( [ '(max-width:', width - 1, 'px)' ].join( '' ), noop );
-            var vp2 = viewport( [ '(min-width:', width, 'px)' ].join( '' ), noop );
+            var vp2 = viewport( [ '(min-width:', width, 'px)' ].join( '' ), checkArgs );
 
             assert.isTrue( !vp1.matches() );
             assert.isTrue( vp2.matches() );

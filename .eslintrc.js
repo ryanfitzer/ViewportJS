@@ -77,7 +77,7 @@ config.rules = {};
 config.rules[ 'possible-errors' ] = {
     'comma-dangle': [ 2, 'never' ],
     'no-cond-assign': 2,
-    'no-console': [ 2, { allow: [ 'warn', 'error', 'info' ] } ],
+    'no-console': [ 2, { allow: [ 'warn', 'error', 'info', 'assert' ] } ],
     'no-constant-condition': 2,
     'no-control-regex': 2,
     'no-debugger': 2,
