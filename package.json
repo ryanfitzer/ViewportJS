@@ -17,6 +17,7 @@
   "scripts": {
     "build": "npm run toc && rm -rf ./dist && grunt --verbose",
     "checkpkg": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
+    "prepublishOnly": "npm run build",
     "test": "open ./tests/index.html &",
     "test:ff": "open -a 'Firefox' './tests/index.html'",
     "test:safari": "open -a 'Safari' ./tests/index.html",
