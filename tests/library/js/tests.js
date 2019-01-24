@@ -15,14 +15,14 @@
     });
 
     window.assert = chai.assert;
-    console.assert = noop;
+    consoleAssert = console.assert;
 
     describe( 'API: Instance', function() {
 
         var width;
         var height;
 
-        beforeEach( function () {
+        before( function () {
 
             width = viewportSize.getWidth();
             height = viewportSize.getHeight();
@@ -170,7 +170,11 @@
             vp( noop );
             vp( 'first', noop );
 
+
             assert.isNull( vp.remove() );
+
+            console.assert = noop;
+
             assert.isEmpty( vp.state() );
             assert.isUndefined( vp.state( 'first' ).name );
             assert.isEmpty( vp.matches() );
@@ -179,6 +183,8 @@
             assert.isFalse( vp.current( 'first' ) );
             assert.isUndefined( vp.previous().name );
             assert.isFalse( vp.previous( 'first' ) );
+
+            console.assert = consoleAssert;
         });
 
         it( 'should return the correct type when `.state()` is called', function() {

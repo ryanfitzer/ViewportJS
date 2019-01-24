@@ -33,16 +33,23 @@
         'previous'
     ];
 
-    function getLogMessage( label, subs ) {
+    var undefinedVP = {
+        name: undefined,
+        matches: false,
+        current: false
+    };
 
-        subs = subs || {};
+    function getLogMessage( label, sub ) {
+
+        sub = sub || {};
 
         var msg = {
-            subNoSupport: '[viewportjs] Subscribing to a viewport in this environment can cause memory leaks.',
+            subNoSupport: '[viewportjs] Subscribing in this environment can cause memory leaks.',
             subNoConfig: '[viewportjs] Subscriber failed to be added. Instance does not have a configuration.',
-            queryNoConfig: '[viewportjs] The `' + subs + '()` method failed. Instance does not have a configuration.',
-            noHandler: '[viewportjs] The `' + subs.method + '()` method failed. Instance for query `' + subs.query + '`, was configured without a `handler`.',
-            subNoName: '[viewportjs] Subscriber failed to be added. The name `' + subs + '` does not match any configured viewports.'
+            queryNoConfig: '[viewportjs] The `' + sub + '()` method failed. Instance does not have a configuration.',
+            noHandler: '[viewportjs] The `' + sub.method + '()` method failed. Instance for query `' + sub.query + '`, was configured without a `handler`.',
+            subNoName: '[viewportjs] Subscriber failed to be added. The name `' + sub + '` does not match any configured viewports.',
+            uniqueViewportName: '[viewportjs] Viewport configuration object overwritten. The viewport name `' + sub + '` already exists.'
         };
 
         return msg[ label ];
@@ -63,11 +70,7 @@
 
         if ( vps && vps[ name ] ) return copyViewportObject( vps[ name ] );
 
-        return {
-            name: undefined,
-            matches: false,
-            current: false
-        };
+        return undefinedVP;
 
     }
 
@@ -155,6 +158,8 @@
             vp.mql = createMediaQuery( vp.query, vp.listener );
 
             this.store.channels[ vp.name ] = [];
+
+            console.assert( !this.store.vps[ vp.name ], getLogMessage( 'uniqueViewportName', vp.name ) );
 
             this.store.vps[ vp.name ] = {
                 name: vp.name,
@@ -409,23 +414,48 @@
     // Create noop API for use in Node
     if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
 
-        return function () {
+        return function ( config ) {
 
             var noop = function () {};
-            var warn = function () {
+            var query = function ( arg ) {
 
-                console.warn( getLogMessage( 'subNoSupport' ) );
+                if ( typeof arg === 'string' ) return false;
+
+                return undefinedVP;
+
+            };
+
+            console.warn( getLogMessage( 'subNoSupport' ) );
+
+            if ( typeof config === 'string' ) {
+
+                return function () {
+
+                    console.warn( getLogMessage( 'subNoSupport' ) );
+
+                    return {
+                        remove: noop,
+                        matches: noop
+                    };
+
+                };
+
+            }
+
+            var instance = function () {
+
+                console.error( getLogMessage( 'subNoSupport' ) );
 
             };
 
             return exposedAPI.reduce( function ( api, method ) {
 
-                if ( 'subscribe'.test( method ) ) api[ method ] = warn;
-                else api[ method ] = noop;
+                if ( /remove/.test( method ) ) api[ method ] = noop;
+                else api[ method ] = query;
 
                 return api;
 
-            }, {} );
+            }, instance );
 
         };
 

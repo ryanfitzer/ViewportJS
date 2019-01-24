@@ -15,21 +15,23 @@
     "url": "https://github.com/ryanfitzer/ViewportJS.git"
   },
   "scripts": {
-    "build": "rm -rf ./dist && grunt --verbose",
+    "build": "npm run toc && rm -rf ./dist && grunt --verbose",
     "checkpkg": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
     "test": "open ./tests/index.html &",
     "test:ff": "open -a 'Firefox' './tests/index.html'",
     "test:safari": "open -a 'Safari' ./tests/index.html",
-    "test:chrome": "open -a 'Google Chrome' ./tests/index.html"
+    "test:chrome": "open -a 'Google Chrome' ./tests/index.html",
+    "toc": "doctoc README.md --github"
   },
   "files": [
     "dist",
     "LICENSE",
     "README.md",
-    "viewport.js"
+    "index.js"
   ],
   "devDependencies": {
     "chai": "^4.2.0",
+    "doctoc": "^1.4.0",
     "eslint": "^5.12.0",
     "eslint-plugin-compat": "^2.6.3",
     "grunt": "^1.0.3",

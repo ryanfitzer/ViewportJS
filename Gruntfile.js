@@ -18,9 +18,6 @@ module.exports = function ( grunt ) {
             dist: {
                 src: './src/viewport.js',
                 dest: './dist/viewport.min.js'
-                // files: {
-                //     './dist/viewport.min.js': [ './src/viewport.js' ]
-                // }
             }
         }
     } );

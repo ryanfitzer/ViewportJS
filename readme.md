@@ -2,48 +2,87 @@
 
 [![NPM version](https://badge.fury.io/js/viewportjs.svg)](https://www.npmjs.com/package/viewportjs)
 
-ViewportJS is an API on top of `window.matchMedia` that gives more features and structure to subscribing and querying viewports. To support scenarios where `window.matchMedia` isn't available (server-side rendering, for example), a [noop](https://en.wikipedia.org/wiki/NOP) API is returned.
+ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.
 
-- 1.15 kB minified & gzipped.
-- Supports all browsers that support [`window.matchMedia`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia).
-- Supports Node, AMD, and as a browser global (via [UMD](https://github.com/umdjs/umd)).
+  - 1.18 kB minified & gzipped.
+  
+  - Supports all browsers that [support `window.matchMedia`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia#Browser_compatibility).
+  
+  - Compatible with CommonJS, AMD, and browser globals (via [UMD](https://github.com/umdjs/umd)).
+  
+  - Supports SSR (server-side rendering) by providing a shallow API when `window.matchMedia` is unavailable.
 
+Give the [demo](http://ryanfitzer.github.io/ViewportJS/tests) a try by changing the size of your browser window and watch the UI update.
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Installation](#installation)
+  - [CommonJS](#commonjs)
+  - [AMD](#amd)
+  - [Browser Globals](#browser-globals)
+- [Usage](#usage)
+- [Configuration](#configuration)
+  - [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
+    - [Subscribing to a Single Media Query](#subscribing-to-a-single-media-query)
+- [Instance Methods](#instance-methods)
+  - [`current( [name] )`](#current-name-)
+  - [`matches( [name] )`](#matches-name-)
+  - [`previous( [name] )`](#previous-name-)
+  - [`remove()`](#remove)
+  - [`state( [name] )`](#state-name-)
+- [Server-Side Rendering](#server-side-rendering)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 ## Installation ##
 
 
-### npm ###
+### CommonJS ###
 
+
+Install the latest version from [npm](https://www.npmjs.com/package/viewportjs):
 
 ```bash
 npm install viewportjs
 ```
 
-### AMD ###
+Add the `viewportjs` package to your app:
 
-The API is exported as an unnamed module. If you're not familiar with AMD, [RequireJS](https://requirejs.org/docs/start.html) is a great place to start.
+```js
+const viewport = require( 'viewportjs' );
 
-
-### Browser Global ###
-
-Download the latest [development](https://unpkg.com/viewportjs/dist/viewport.js) and [production](https://unpkg.com/viewportjs/dist/viewport.min.js) versions from [UNPKG](https://unpkg.com/viewportjs/dist/).
-
-```html
-<!-- Note: when deploying, replace "viewport.js" with "viewport.min.js". -->
-<script src="viewport.js"></script>
+const myViewports = viewport( /* configuration */ );
 ```
 
-Once loaded, the `viewport` function can be accessed globally.
+### AMD ###
+
+The API is exported as an anonymous module. If you're not familiar with AMD, [RequireJS](https://requirejs.org/docs/start.html) is a great place to start.
+
+
+### Browser Globals ###
+
+Download the latest [development](https://unpkg.com/viewportjs/dist/viewport.js) and [production](https://unpkg.com/viewportjs/dist/viewport.min.js) versions from [UNPKG](https://unpkg.com/viewportjs/dist/). Once the script is loaded, the `viewport` function can be accessed globally.
+
+```html
+<!-- When deploying, replace "viewport.js" with "viewport.min.js". -->
+<script src="viewport.js"></script>
+<script>
+  const myViewports = viewport( /* configuration */ );
+</script>
+```
 
 
 
 ## Usage ##
 
-Configure viewports by name and subscribe to their changes:
+Configure viewports by name:
 
 ```js
-const myViewports = viewport([
+const myViewports = viewport( [
     {
         name: 'small',
         query: '( min-width:0px ) and ( max-width:480px )'
@@ -56,17 +95,10 @@ const myViewports = viewport([
         name: 'large',
         query: '( min-width:769px )'
     }
-]);
-
-// Subscribe to changes in 'small' viewport
-myViewports( 'small', state => {} );
-
-// Subscribe to changes in all viewports
-myViewports( state => {} );
-
+] );
 ```
 
-You can also query the state of the configured viewports:
+Once configured, you can query their state:
 
 ```js
 // Check if `small` is the current viewport
@@ -80,54 +112,122 @@ myViewports.matches( 'small' ); // boolean
 
 // Retrieve all matches
 myViewports.matches(); // [ /* matches viewport state objects */ ]
+```
 
+You can also subscribe to state changes:
+
+```js
+// Subscribe to changes in 'small' viewport
+myViewports( 'small', state => {
+
+  // Do something based on `state`
+  // {
+  //    name: 'small',
+  //    matches: boolean,
+  //    current: boolean
+  // }
+  
+} );
 ```
 
 
 
 ## Configuration ##
 
-The initialization method takes an array of viewport configuration objects:
+The initialization method takes an array of viewport configuration objects that are composed of two properties:
+
+- `name` *(string)* The viewport's nickname. Must be unique.
+
+- `query` *(string)* A valid [`mediaQueryString`](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#Syntax).
+
+The order of these objects in the array is important because it determines how to calculate the `current` viewport, which is defined as the last matching viewport based on the order of the configuration array. So if you prefer a "mobile-first" approach, your viewport configuration objects should be ordered from smallest to largest.
+
+The initialization method returns a configured instance that can act as:
+
+   - A function used to subscribe to viewport changes.
+   - An object that contains methods for querying viewport state.
+
+
+
+### Subscribing to Viewport Changes ###
+
+The initialization method returns an instance that can be used to subscribe to state changes on the configured viewports.
+
+Arguments:
+
+  - `name`: *(string)* (optional) The name of a configured viewport.
+  - `handler`: *(Function)* The function to execute whenever state changes occur.
+
+Returns:
+
+  - *(Function)*: A function that unsubscribes `handler`.
+
+To subscribe to the state of an individual viewport, both `name` and `handler` are required. Providing only a `handler` will set up a subscription to the states of all configured viewports.
+
+A subscriber's `handler` is executed whenever there's a change in either the viewport's `matched` or `current` state. When a subscriber is added, it's `handler` will be immediately executed if either its viewport(s) `current` or `matched` state is `true`.
+
+The `handler` receives the following arguments when executed:
+
+  - `state`: *(Object)* The changed viewport's state object.
+  - `instance`: *(Object)* The configured instance.
+
+A viewport state object has three properties:
+
+  - `name`: *(string)* The name of a configured viewport.
+  - `matches`: *(boolean)* If the viewport's media query matches.
+  - `current`: *(boolean)* If the viewport is current.
+
+Example:
 
 ```js
-const myViewports = viewport([
-    {
-        name: 'small',
-        query: '( min-width:0px ) and ( max-width:480px )'
-    },
-    {
-        name: 'medium',
-        query: '( min-width:480px ) and ( max-width:767px )'
-    },
-    {
-        name: 'large',
-        query: '( min-width:769px )'
-    }
-]);
+const myViewports = viewport( /* configuration */ );
+
+// Subscribe to an individual configured viewport
+myViewports( 'name', state => {} );
+
+// Subscribe to all configured viewport
+myViewports( state => {} )
+```
+
+#### Subscribing to a Single Media Query ####
+
+For times where you're only interested in matching single a media query, you can provide the initialization method with a valid [`mediaQueryString`](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#Syntax) and an optional `handler`, instead of a configuration array. This will return an instance with a limited API.
+
+Arguments:
+
+  - `query`: *(string)* A valid `mediaQueryString`.
+  - `handler`: *(Function)* (optional) The function to execute whenever state changes occur.
+
+Returns:
+
+  - *(Object)*: A limited API composed of the `matches()` and `remove()` method.
+
+If provided, `handler` is executed whenever there's a change in the media query's `matched` state, including on initial subscription.
+
+The `handler` receives the following arguments when executed:
+
+  - `matches`: *(boolean)* If the media query matches.
+  - `instance`: *(Object)* The configured instance.
+
+Example:
+
+```js
+const smallvp = viewport( '( max-width: 500px )', state => {} );
+
+smallvp.matches(); // true/false
+smallvp.remove(); // remove the handler, if provided.
 ```
 
 
 
-## Viewport Object Properties ##
-
-The configuration array is made up of 1 or more viewport configuration objects. A viewport object requires 2 properties:
-
-- `name` *(string)* The viewport's nickname.
-
-- `query` *(string)* A valid [`mediaQueryString`](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#Syntax).
-
-
-
-## Methods ##
+## Instance Methods ##
 
 
 ### `current( [name] )` ###
 
-When called with the `name` argument, checks if `name` is the current viewport. Otherwise, returns the current viewport's state object.
+When called with the `name` argument, checks if `name` is the current viewport and returns a boolean. Otherwise, it returns the current viewport's state object.
 
-The current viewport is determined by looking for the last matching viewport based on the order of the `viewports` configuration array. So if you prefer a "mobile-first" approach, your `viewports` array should be ordered from smallest to largest.
-
-If there is no current viewport, the state object for the `undefined` viewport is returned: `{ name: undefined, matches: false, current: false }`.
+The current viewport is defined as the last matching viewport based on the order of the configuration array. If there is no current viewport, the state object for the `undefined` viewport is returned: `{ name: undefined, matches: false, current: false }`.
 
 
 Arguments:
@@ -141,14 +241,14 @@ Returns:
 
 
 ```js
-myViewports.current(); // `{ name: string, matches: boolean, current: boolean }`
+myViewports.current(); // { name: string, matches: boolean, current: boolean }
 
 myViewports.current( 'name' ); // true/false
 ```
 
 ### `matches( [name] )` ###
 
-When called with the `name` argument, checks if the `name` viewport's media query matches. Otherwise, returns an array of all matching viewports.
+When called with the `name` argument, checks if the `name` viewport's media query matches. Otherwise, it returns an array of all matching viewports.
 
 If there are no matching viewports, an empty array is returned.
 
@@ -164,14 +264,14 @@ Returns:
 
 
 ```js
-myViewports.matches(); // `[ { name: string, matches: boolean, current: boolean }, ... ]`
+myViewports.matches(); // [ { name: string, matches: boolean, current: boolean }, ... ]
 
 myViewports.matches( 'name' ); // true/false
 ```
 
 ### `previous( [name] )` ###
 
-When called with the `name` argument, checks if the `name` viewport was the previously current viewport. Otherwise, returns the previously current viewport's state object.
+When called with the `name` argument, checks if the `name` viewport was the previously current viewport. Otherwise, it returns the previously current viewport's state object.
 
 If there was no previously current viewport, the state object for the `undefined` viewport is returned: `{ name: undefined, matches: false, current: false }`.
 
@@ -187,7 +287,7 @@ Returns:
 
 
 ```js
-myViewports.previous(); // `{ name: string, matches: boolean, current: boolean }`
+myViewports.previous(); // { name: string, matches: boolean, current: boolean }
 
 myViewports.previous( 'name' ); // true/false
 ```
@@ -195,52 +295,59 @@ myViewports.previous( 'name' ); // true/false
 
 ### `remove()` ###
 
+Removes all the instance's configured viewports and subscribers at once.
 
+Returns:
+
+  - *(null)*: Subscribers are removed and values set to `null`.
+
+```js
+const myViewports = viewport( /* viewport config array */ );
+
+myvps( 'small', state => {} );
+myvps( 'medium', state => {} );
+
+myvps.remove();
+```
 
 ### `state( [name] )` ###
 
+When called with the `name` argument, returns the named viewport's state object. Otherwise, it returns an array of state objects for all viewports.
 
+Arguments:
 
+  - `name`: *(string)* (optional) The name of the configured viewport to check.
 
+Returns:
 
+  - *(Object)*: The state object of the named viewport.
+  - *(Array)*: An array of state objects for all viewports.
 
-
-
-
-
-
-### `subscribe( name, handler )` ###
-
-Subscribe to updates when a specific viewport becomes valid/invalid. The handler is passed arguments:
-
-  - `matches`: `Boolean` A boolean for checking if the viewport has become valid/invalid.
-  - `viewport`: `Object` The viewport's object.
-
-All subscribers are checked for validity during initial subscription in order to allow for lazy subscribers. The `subscribe` method returns an `unsubscribe` method.
 
 ```js
-const unsubSVP = myViewport.subscribe( 'small', function( matches, viewport ) {
-    
-    if ( matches ) {
-        // Do something
-    } else {
-        // Do another thing
-    }
-});
+myViewports.state(); // [ { name: string, matches: boolean, current: boolean }, ... ]
+
+myViewports.previous( 'name' ); // { name: string, matches: boolean, current: boolean }
 ```
 
-#### Subscribe to All Viewports ####
 
-(This approach is deprecated and [will be replaced with a new approach in version 3](https://github.com/ryanfitzer/ViewportJS/issues/7))
 
-There is also a reserved viewport name, `*`, that enables subscribing to all viewports at once. Its handler receives:
+## Server-Side Rendering ##
 
-  - `currentVP`: `Object` The current viewport's object. Same result as calling `.current()`.
-  - `previousVP`: `Object` The previously current viewport's object. Same result as calling `.previous()`.
+To be compatible with frameworks that support SSR (or "Universal JavaScript"), ViewportJS exports a shallow API that enables the use of all methods in an environment where `window.matchMedia` is unavailable.
 
-```js
-const unsubAny = myViewport.subscribe( '*', function( currentVP, previousVP ) {
-    
-    // Do something
-});
-```
+Due to potential memory leaks, calls that subscribe to viewports should only be made when their respective unsubscribe functions (or the instances `remove()` method) can be called in the same environment. To be safe, it's best if subscriptions are made in code that only executes in the browser. The development version of ViewportJS will log a warning whenever a subscription is made in an environment where `window.matchMedia` is unavailable.
+
+Examples for usage in frameworks that support SSR:
+
+  - [React component](examples/react/component.js)
+  - Vue (todo)
+  - Riot (todo)
+  - Angular (todo)
+  - Ember (todo)
+
+
+
+
+
+
