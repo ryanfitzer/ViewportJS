@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import vpjs from 'viewportjs';
 
-class MyComponent extends Component {
+export class MyComponent extends Component {
 
     constructor( props ) {
 
@@ -11,7 +11,7 @@ class MyComponent extends Component {
             small: true, // set as default viewport
             medium: false,
             large: false
-        }
+        };
 
         this.vps = vpjs( [
             {
@@ -27,12 +27,13 @@ class MyComponent extends Component {
                 query: '( min-width:769px )'
             }
         ] );
+
     }
 
     componentDidMount() {
 
         // Subscribe to all viewports
-        this.vps( state => {
+        this.vps( ( state ) => {
 
             // Update the state for all viewports
             this.setState( {
@@ -40,6 +41,7 @@ class MyComponent extends Component {
                 medium: this.vps.current( 'medium' ),
                 large: this.vps.current( 'large' )
             } );
+
         } );
 
     }
@@ -55,16 +57,20 @@ class MyComponent extends Component {
 
         return (
 
-            { this.state.small &&
-                <p>small viewport markup</p>
-            }
-            { this.state.medium &&
-                <p>medium viewport markup</p>
-            }
-            { this.state.large &&
-                <p>large viewport markup</p>
-            }
+            <div>
+                { this.state.small &&
+                    <p>small viewport markup</p>
+                }
+                { this.state.medium &&
+                    <p>medium viewport markup</p>
+                }
+                { this.state.large &&
+                    <p>large viewport markup</p>
+                }
+            </div>
 
         );
+
     }
+
 }
