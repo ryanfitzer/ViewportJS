@@ -26,8 +26,8 @@ If you are upgrading from [v2](../../tree/v2.1.0), please see the [v3 migration 
   - [Browser Globals](#browser-globals)
 - [Usage](#usage)
 - [Configuration](#configuration)
-  - [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
-    - [Subscribing to a Single Media Query](#subscribing-to-a-single-media-query)
+- [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
+  - [Subscribing to a Single Media Query](#subscribing-to-a-single-media-query)
 - [Instance Methods](#instance-methods)
   - [`current( [name] )`](#current-name-)
   - [`matches( [name] )`](#matches-name-)
@@ -150,7 +150,7 @@ The initialization method returns a configured instance that can act as:
 
 
 
-### Subscribing to Viewport Changes ###
+## Subscribing to Viewport Changes ##
 
 The initialization method returns an instance that can be used to subscribe to state changes on the configured viewports.
 
@@ -190,7 +190,7 @@ myViewports( 'name', state => {} );
 myViewports( state => {} )
 ```
 
-#### Subscribing to a Single Media Query ####
+### Subscribing to a Single Media Query ###
 
 For times where you're only interested in matching single a media query, you can provide the initialization method with a valid [`mediaQueryString`](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#Syntax) and an optional `handler`, instead of a configuration array. This will return an instance with a limited API.
 
