@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import vpjs from 'viewportjs';
 
-export class MyComponent extends Component {
+export default class MyComponent extends Component {
 
     constructor( props ) {
 

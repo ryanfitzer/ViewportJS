@@ -425,7 +425,7 @@
 
             };
 
-            console.warn( getLogMessage( 'subNoSupport' ) );
+            console.assert( Array.isArray( config ), getLogMessage( 'subNoSupport' ) );
 
             if ( typeof config === 'string' ) {
 
