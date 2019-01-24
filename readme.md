@@ -16,6 +16,8 @@ Give the [demo](http://ryanfitzer.github.io/ViewportJS/tests) a try by changing 
 
 If you are upgrading from [v2](../../tree/v2.1.0), please see the [v3 migration guide](docs/migrating-to-3.0.0.md).
 
+
+------
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
