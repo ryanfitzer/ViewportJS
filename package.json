@@ -1,7 +1,7 @@
 {
   "name": "viewportjs",
-  "version": "2.1.0",
-  "description": "ViewportJS is an API on top of `window.matchMedia` that gives more structure to subscribing and querying viewports.",
+  "version": "3.0.0-canary.1",
+  "description": "ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.",
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
   "license": "MIT",
