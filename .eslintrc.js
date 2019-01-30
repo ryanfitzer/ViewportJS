@@ -26,7 +26,6 @@ config.parserOptions = {
 config.env = {
     'amd': true,
     'browser': true,
-    'mocha': true,
     'node': true,
 };
 
