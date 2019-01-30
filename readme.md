@@ -1,6 +1,6 @@
 # ViewportJS #
 
-[![NPM version](https://badge.fury.io/js/viewportjs.svg)](https://www.npmjs.com/package/viewportjs) [![Build Status](https://api.travis-ci.org/ryanfitzer/viewportjs.svg?branch=master)](https://travis-ci.org/ryanfitzer/nmsp?branch=master)  [![Maintainability](https://api.codeclimate.com/v1/badges/337f441a325e2fdec7cf/maintainability)](https://codeclimate.com/github/ryanfitzer/ViewportJS/maintainability) 
+[![NPM version](https://badge.fury.io/js/viewportjs.svg)](https://www.npmjs.com/package/viewportjs) [![Build Status](https://api.travis-ci.org/ryanfitzer/ViewportJS.svg?branch=master)](https://travis-ci.org/ryanfitzer/ViewportJS?branch=master)  [![Maintainability](https://api.codeclimate.com/v1/badges/337f441a325e2fdec7cf/maintainability)](https://codeclimate.com/github/ryanfitzer/ViewportJS/maintainability) 
 
 ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.
 
@@ -24,7 +24,7 @@ If you are upgrading from [v2](../../tree/v2.1.0), please see the [v3 migration 
 
 - [Installation](#installation)
   - [CommonJS](#commonjs)
-  - [AMD](#amd)
+  - [AMD](#amd).
   - [Browser Globals](#browser-globals)
 - [Usage](#usage)
 - [Configuration](#configuration)
