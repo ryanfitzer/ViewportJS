@@ -24,7 +24,6 @@ config.parserOptions = {
  * @docs http://eslint.org/docs/user-guide/configuring#specifying-environments
  */
 config.env = {
-    'amd': true,
     'browser': true,
     'node': true,
 };
