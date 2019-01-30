@@ -55,9 +55,7 @@ config.extends = [
  *
  * @docs https://eslint.org/docs/user-guide/configuring#specifying-globals
  */
-config.globals = {
-    'expect': true
-};
+config.globals = {};
 
 /**
  * Rules
