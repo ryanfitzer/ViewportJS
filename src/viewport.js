@@ -416,28 +416,17 @@
 
         return function ( config ) {
 
-            var noop = function () {};
-            var query = function ( arg ) {
-
-                if ( typeof arg === 'string' ) return false;
-
-                return undefinedVP;
-
-            };
-
             console.assert( Array.isArray( config ), getLogMessage( 'subNoSupport' ) );
+
+            var noop = function () {};
 
             if ( typeof config === 'string' ) {
 
-                return function () {
+                console.warn( getLogMessage( 'subNoSupport' ) );
 
-                    console.warn( getLogMessage( 'subNoSupport' ) );
-
-                    return {
-                        remove: noop,
-                        matches: noop
-                    };
-
+                return {
+                    remove: noop,
+                    matches: noop
                 };
 
             }
@@ -450,8 +439,24 @@
 
             return exposedAPI.reduce( function ( api, method ) {
 
-                if ( /remove/.test( method ) ) api[ method ] = noop;
-                else api[ method ] = query;
+                if ( /remove/.test( method ) ) {
+
+                    api[ method ] = function () {};
+
+                }
+                else {
+
+                    api[ method ] = function ( arg ) {
+
+                        if ( typeof arg === 'string' ) return false;
+
+                        if ( /state|matches/.test( method ) ) return [];
+
+                        return undefinedVP;
+
+                    };
+
+                }
 
                 return api;
 

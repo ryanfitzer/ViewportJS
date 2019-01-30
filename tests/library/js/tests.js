@@ -15,7 +15,7 @@
     });
 
     window.assert = chai.assert;
-    consoleAssert = console.assert;
+    var consoleAssert = console.assert;
 
     describe( 'API: Instance', function() {
 
@@ -185,19 +185,6 @@
             assert.isFalse( vp.previous( 'first' ) );
 
             console.assert = consoleAssert;
-        });
-
-        it( 'should return the correct type when `.state()` is called', function() {
-
-            var vp = viewport([
-                {
-                    name: 'first',
-                    query: [ '(min-width:', width, 'px)' ].join( '' )
-                }
-            ]);
-
-            assert.isObject( vp.state( 'first' ), 'calling with a `name` argument should return and object.' );
-            assert.isArray( vp.state(), 'calling with no arguments should return an array.' );
         });
 
     });

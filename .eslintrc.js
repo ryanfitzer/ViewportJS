@@ -25,8 +25,9 @@ config.parserOptions = {
  */
 config.env = {
     'amd': true,
+    'browser': true,
+    'mocha': true,
     'node': true,
-    'browser': true
 };
 
 /**
@@ -55,7 +56,9 @@ config.extends = [
  *
  * @docs https://eslint.org/docs/user-guide/configuring#specifying-globals
  */
-config.globals = {};
+config.globals = {
+    'expect': true
+};
 
 /**
  * Rules
@@ -343,6 +346,14 @@ config.rules[ 'stylistic' ] = {
     'unicode-bom': 0,
     'wrap-regex': 0
 };
+
+/**
+ * Rules: Plugins
+ *
+ * Rules specific to plugins.
+ *
+ */
+config.rules[ 'plugins' ] = {};
 
 config.rules = Object.keys( config.rules ).reduce( ( rules, section ) => {
 

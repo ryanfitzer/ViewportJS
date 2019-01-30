@@ -4,7 +4,7 @@
 
 ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.
 
-  - 1.18 kB minified & gzipped.
+  - 1.19 kB minified & gzipped.
   
   - Supports all browsers that [support `window.matchMedia`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia#Browser_compatibility).
   
@@ -37,6 +37,7 @@ If you are upgrading from [v2](../../tree/v2.1.0), please see the [v3 migration 
   - [`remove()`](#remove)
   - [`state( [name] )`](#state-name-)
 - [Server-Side Rendering](#server-side-rendering)
+- [Examples](#examples)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -337,18 +338,22 @@ myViewports.previous( 'name' ); // { name: string, matches: boolean, current: bo
 
 ## Server-Side Rendering ##
 
-To be compatible with frameworks that support SSR (or "Universal JavaScript"), ViewportJS exports a shallow API that enables the use of all methods in an environment where `window.matchMedia` is unavailable.
+ViewportJS supports SSR (or "Universal JavaScript") through a shallow API that enables the use of all methods in an environment where `window.matchMedia` is unavailable.
 
-Due to potential memory leaks, calls that subscribe to viewports should only be made when their respective unsubscribe functions (or the instances `remove()` method) can be called in the same environment. To be safe, it's best if subscriptions are made in code that only executes in the browser. The development version of ViewportJS will log a warning whenever a subscription is made in an environment where `window.matchMedia` is unavailable.
+Due to potential memory leaks, calls that subscribe to viewports should only be made when their respective unsubscribe functions (or the instance's `remove()` method) can be called in the same environment. Initialization and query methods can be used in any environment, but it's best if subscriptions are made in code that only executes in the browser. The `development` build of ViewportJS will log a warning whenever a subscription is made in an environment where `window.matchMedia` is unavailable. All logging is removed in the `production` build.
 
-Examples for usage in frameworks that support SSR:
 
-  - [React component](examples/react/component.js)
-  - Vue (todo)
-  - Riot (todo)
-  - Angular (todo)
-  - Ember (todo)
 
+## Examples ##
+
+- [Vanilla](https://codesandbox.io/s/q3no20volw?module=%2Fsrc%2Findex.js)
+- [React](https://codesandbox.io/s/00l82nl6pv?module=%2Fsrc%2Fvpjs-component.js)
+- [Vue](https://codesandbox.io/s/zw8283vyol?module=%2Fsrc%2Fcomponents%2Fvpjs-component.vue)
+- Angular (todo)
+- Riot (todo)
+- [Next.js](https://codesandbox.io/s/q3r0xympjq?module=%2Fcomponents%2Fvpjs-component.js)
+- Nuxt.js (todo)
+- Ember (todo)
 
 
 
