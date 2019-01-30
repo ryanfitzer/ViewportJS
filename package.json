@@ -17,15 +17,15 @@
   "scripts": {
     "build": "npm run toc && rm -rf ./dist && grunt --verbose",
     "checkpkg": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
-    "demo": "open ./tests/index.html &",
-    "demo:ff": "open -a 'Firefox' './tests/index.html'",
-    "demo:safari": "open -a 'Safari' ./tests/index.html",
-    "demo:chrome": "open -a 'Google Chrome' ./tests/index.html",
+    "demo": "open ./demo/index.html &",
+    "demo:ff": "open -a 'Firefox' './demo/index.html'",
+    "demo:safari": "open -a 'Safari' ./demo/index.html",
+    "demo:chrome": "open -a 'Google Chrome' ./demo/index.html",
     "karma": "karma start",
     "mocha": "mocha --watch test/api-node.js",
     "prepublishOnly": "npm run build",
     "test": "mocha test/api-node.js && karma start --single-run",
-    "test:travisci": "mocha test/api-node.js && karma start --single-run --browsers ChromeHeadless,Firefox",
+    "test:travis": "mocha test/api-node.js && karma start --single-run --browsers ChromeHeadless,Firefox",
     "toc": "doctoc README.md --github"
   },
   "files": [
