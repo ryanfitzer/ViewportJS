@@ -144,7 +144,7 @@ The initialization method takes an array of viewport configuration objects that 
 
 - `query` *(string)* A valid [`mediaQueryString`](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#Syntax).
 
-The order of these objects in the array is important because it determines how to calculate the `current` viewport, which is defined as the last matching viewport based on the order of the configuration array. So if you prefer a "mobile-first" approach, your viewport configuration objects should be ordered from smallest to largest.
+The order of these objects in the array is important, as it determines how to calculate the `current` viewport, which is defined as the last matching viewport based on the order of the configuration array. So if you prefer a "mobile-first" approach, your viewport configuration objects should be ordered from smallest to largest.
 
 The initialization method returns a configured instance that can act as:
 
@@ -168,7 +168,7 @@ Returns:
 
 To subscribe to the state of an individual viewport, both `name` and `handler` are required. Providing only a `handler` will set up a subscription to the states of all configured viewports.
 
-A subscriber's `handler` is executed whenever there's a change in either the viewport's `matched` or `current` state. When a subscriber is added, it's `handler` will be immediately executed if either its viewport(s) `current` or `matched` state is `true`.
+A subscriber's `handler` is executed whenever there's a change in either the viewport's `matched` or `current` state. When a subscriber is added, its `handler` will be immediately executed if either its viewport(s) `current` or `matched` state is `true`.
 
 The `handler` receives the following arguments when executed:
 
@@ -195,7 +195,7 @@ myViewports( state => {} )
 
 ### Subscribing to a Single Media Query ###
 
-For times where you're only interested in matching single a media query, you can provide the initialization method with a valid [`mediaQueryString`](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#Syntax) and an optional `handler`, instead of a configuration array. This will return an instance with a limited API.
+For scenarios where you're only interested in matching a single media query, you can provide the initialization method with a valid [`mediaQueryString`](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#Syntax) and an optional `handler`, instead of a configuration array. This will return an instance with a limited API.
 
 Arguments:
 
@@ -341,6 +341,8 @@ myViewports.previous( 'name' ); // { name: string, matches: boolean, current: bo
 ViewportJS supports SSR (or "Universal JavaScript") through a shallow API that enables the use of all methods in an environment where `window.matchMedia` is unavailable.
 
 Due to potential memory leaks, calls that subscribe to viewports should only be made when their respective unsubscribe functions (or the instance's `remove()` method) can be called in the same environment. Initialization and query methods can be used in any environment, but it's best if subscriptions are made in code that only executes in the browser. The `development` build of ViewportJS will log a warning whenever a subscription is made in an environment where `window.matchMedia` is unavailable. All logging is removed in the `production` build.
+
+See the relevant framework examples below for SSR-compatible demonstrations.
 
 
 
