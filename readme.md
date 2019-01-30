@@ -12,7 +12,7 @@ ViewportJS is built on top of `window.matchMedia` and provides valuable features
   
   - Supports SSR (server-side rendering) by providing a shallow API when `window.matchMedia` is unavailable.
 
-Give the [demo](http://ryanfitzer.github.io/ViewportJS/tests) a try by changing the size of your browser window and watch the UI update.
+Give the [demo](http://ryanfitzer.github.io/ViewportJS/demo) a try by changing the size of your browser window and watch the UI update.
 
 If you are upgrading from [v2](../../tree/v2.1.0), please see the [v3 migration guide](docs/migrating-to-3.0.0.md).
 
