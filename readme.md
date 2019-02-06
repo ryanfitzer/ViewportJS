@@ -1,6 +1,6 @@
 # ViewportJS #
 
-[![NPM version](https://badge.fury.io/js/viewportjs.svg)](https://www.npmjs.com/package/viewportjs) [![Build Status](https://api.travis-ci.org/ryanfitzer/ViewportJS.svg?branch=master)](https://travis-ci.org/ryanfitzer/ViewportJS?branch=master)  [![Maintainability](https://api.codeclimate.com/v1/badges/337f441a325e2fdec7cf/maintainability)](https://codeclimate.com/github/ryanfitzer/ViewportJS/maintainability) [![Greenkeeper badge](https://badges.greenkeeper.io/ryanfitzer/ViewportJS.svg)](https://greenkeeper.io/) 
+[![NPM version](https://img.shields.io/npm/v/viewportjs.svg)](https://www.npmjs.com/package/viewportjs) [![Build Status](https://img.shields.io/travis/ryanfitzer/ViewportJS.svg)](https://travis-ci.org/ryanfitzer/ViewportJS?branch=master) ![Total downloads](https://img.shields.io/npm/dt/viewportjs.svg?logo=codeclimate) [![Maintainability](https://img.shields.io/codeclimate/maintainability/ryanfitzer/ViewportJS.svg)](https://codeclimate.com/github/ryanfitzer/ViewportJS/maintainability)
 
 ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.
 

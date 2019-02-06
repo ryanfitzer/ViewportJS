@@ -11,11 +11,11 @@ module.exports = function ( config ) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: [
-            'ChromeHeadless',
-            'Firefox',
-            'Safari'
-        ],
+        // browsers: [
+        //     'ChromeHeadless',
+        //     'Firefox',
+        //     'Safari'
+        // ],
 
         // enable / disable colors in the output (reporters and logs)
         colors: true,
@@ -23,6 +23,59 @@ module.exports = function ( config ) {
         // Concurrency level
         // how many browser should be started simultaneous
         concurrency: Infinity,
+
+        // https://github.com/litixsoft/karma-detect-browsers
+        detectBrowsers: {
+
+            // Enable/disable, default is true
+            enabled: true,
+
+            // Enable/disable phantomjs support, default is true
+            usePhantomJS: false,
+
+            // Use headless mode, for browsers that support it, default is false
+            preferHeadless: true,
+
+            // Ppost processing of browsers list where you can edit the list of browsers used by karma
+            postDetection: function ( availableBrowsers ) {
+
+                console.log( 'availableBrowsers', availableBrowsers );
+
+                /* Karma configuration with custom launchers
+                customLaunchers: {
+                  IE9: {
+                    base: 'IE',
+                    'x-ua-compatible': 'IE=EmulateIE9'
+                  }
+                }
+                */
+
+                // // Add IE Emulation
+                // var result = availableBrowsers;
+                //
+                // if ( availableBrowsers.indexOf( 'IE' ) > -1 ) {
+                //
+                //     result.push( 'IE9' );
+                //
+                // }
+                //
+                // // Remove PhantomJS if another browser has been detected
+                // if ( availableBrowsers.length > 1 && availableBrowsers.indexOf( 'PhantomJS' ) > -1 ) {
+                //
+                //     var i = result.indexOf( 'PhantomJS' );
+                //
+                //     if ( i !== -1 ) {
+                //
+                //         result.splice( i, 1 );
+                //
+                //     }
+                //
+                // }
+
+                return availableBrowsers;
+
+            }
+        },
 
         // list of files / patterns to exclude
         exclude: [],
@@ -42,7 +95,8 @@ module.exports = function ( config ) {
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: [
             'chai',
-            'mocha'
+            'mocha',
+            'detectBrowsers'
         ],
 
         // level of logging
@@ -57,6 +111,19 @@ module.exports = function ( config ) {
         preprocessors: {
             // 'src/viewport.js': [ 'coverage' ]
         },
+
+        plugins: [
+            'karma-chai',
+            'karma-mocha',
+            'karma-chrome-launcher',
+            'karma-edge-launcher',
+            'karma-firefox-launcher',
+            'karma-ie-launcher',
+            'karma-safari-launcher',
+            'karma-safaritechpreview-launcher',
+            'karma-opera-launcher',
+            'karma-detect-browsers'
+        ],
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
