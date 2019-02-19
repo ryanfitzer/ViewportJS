@@ -25,7 +25,7 @@ If you are upgrading from [v2](../../tree/v2.1.0), please see the [v3 migration 
 - [Installation](#installation)
   - [CommonJS](#commonjs)
   - [AMD](#amd)
-  - [Browser Globals](#browser-globals)
+  - [Browser Global](#browser-global)
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
