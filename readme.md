@@ -67,7 +67,7 @@ const myViewports = viewport( /* configuration */ );
 The API is exported as an anonymous module. If you're not familiar with AMD, [RequireJS](https://requirejs.org/docs/start.html) is a great place to start.
 
 
-### Browser Globals ###
+### Browser Global ###
 
 Download the latest [development](https://unpkg.com/viewportjs/dist/viewport.js) and [production](https://unpkg.com/viewportjs/dist/viewport.min.js) versions from [UNPKG](https://unpkg.com/viewportjs/dist/). Once the script is loaded, the `viewport` function can be accessed globally.
 
