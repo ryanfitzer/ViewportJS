@@ -1,6 +1,6 @@
 {
   "name": "viewportjs",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.",
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
@@ -65,6 +65,5 @@
     "karma-safaritechpreview-launcher": "^2.0.2",
     "mocha": "^6.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
