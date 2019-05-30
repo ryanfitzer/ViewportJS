@@ -29,7 +29,7 @@ If you are upgrading from [v3](../../tree/v3.0.2), please see the [v4 migration 
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
-  - [Subscribing to a Single Media Query](#subscribing-to-a-single-media-query)
+  - [Subscribing Directly to a `mediaQueryString`](#subscribing-directly-to-a-mediaquerystring)
 - [Instance Methods](#instance-methods)
   - [`current( [name] )`](#current-name-)
   - [`matches( [name] )`](#matches-name-)
