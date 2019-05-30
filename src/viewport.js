@@ -259,11 +259,7 @@
                 handler: opts.handler
             } );
 
-            opts.changed.forEach( function ( vp ) {
-
-                opts.handler( vp, this.api );
-
-            }, this );
+            opts.handler( opts.vp, this.api );
 
             return createUnsubscribe( token, opts.channel );
 
@@ -271,29 +267,20 @@
 
         subscribe: function ( name, handler ) {
 
-            var vp = this.store.vps[ name ];
-
             return this.addSubscriber( {
                 handler: handler,
                 channel: this.store.channels[ name ],
-                changed: ( vp.current || vp.matches ) ? [ vp ] : []
+                vp: this.store.vps[ name ]
             } );
 
         },
 
         subscribeAll: function ( handler ) {
 
-            var current = this.current();
-            var matches = this.matches().filter( function ( vp ) {
-
-                return vp.name !== current.name;
-
-            } );
-
             return this.addSubscriber( {
                 handler: handler,
                 channel: this.store.channelAll,
-                changed: current.name ? matches.concat( current ) : []
+                vp: this.current()
             } );
 
         },

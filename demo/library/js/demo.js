@@ -15,12 +15,14 @@
         }
     }
 
-    function updateView( vp ) {
+    function updateView( state ) {
 
-        var element = document.getElementById( 'vpjs-' + vp.name );
+        console.log(state);
 
-        if ( vp.current ) element.setAttribute( 'data-state', 'current' );
-        else if ( vp.matches ) element.setAttribute( 'data-state', 'matches' );
+        var element = document.getElementById( 'vpjs-' + state.name );
+
+        if ( state.current ) element.setAttribute( 'data-state', 'current' );
+        else if ( state.matches ) element.setAttribute( 'data-state', 'matches' );
         else element.setAttribute( 'data-state', '' );
 
         if ( isPopup ) return;
@@ -62,6 +64,8 @@
     vpjs( 'large', updateView );
 
     vpjs( 'xlarge', updateView );
+
+    // vpjs( updateView );
 
     demo.vpjs = vpjs;
     demo.popup = popup;

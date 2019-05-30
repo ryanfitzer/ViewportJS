@@ -82,7 +82,7 @@
     } );
     ```
 
-- Subscribers are now executed whenever there's a change in both the viewport's `matched` or `current` state. Previously, this only happened when there was a change to the viewport's `current` state.
+- Subscribers are now executed whenever there's a change in either the viewport's `matched` or `current` state. Previously, this only happened when there was a change to the viewport's `current` state.
 
 - Added a `state()` method the returns an array of state objects for the configured viewports of the respective instance. When called with a `name` argument, it returns a state object for the named configured viewport.
 
@@ -99,7 +99,7 @@
 
 - The `subscribe` method has been replaced by calling the instance directly.
 
-- Subscribers are now executed whenever there's a change in both the viewport's `matched` or `current` state. Previously, this only happened when there was a change to the viewport's `current` state.
+- Subscribers are now executed whenever there's a change in either the viewport's `matched` or `current` state. Previously, this only happened when there was a change to the viewport's `current` state.
 
 - Subscribing to all viewports using the reserved viewport name `*` has been replaced by calling the instance directly and passing a `handler`.
 

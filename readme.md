@@ -4,7 +4,7 @@
 
 ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.
 
-  - 1.19 kB minified & gzipped.
+  - 1.14 kB minified & gzipped.
   
   - Supports all browsers that [support `window.matchMedia`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia#Browser_compatibility).
   
@@ -14,7 +14,7 @@ ViewportJS is built on top of `window.matchMedia` and provides valuable features
 
 Give the [demo](http://ryanfitzer.github.io/ViewportJS/demo) a try by changing the size of your browser window and watch the UI update.
 
-If you are upgrading from [v2](../../tree/v2.1.0), please see the [v3 migration guide](docs/migrating-to-3.0.0.md).
+If you are upgrading from [v3](../../tree/v3.0.2), please see the [v4 migration guide](docs/migrating-to-4.0.0.md).
 
 
 ------
@@ -168,7 +168,7 @@ Returns:
 
 To subscribe to the state of an individual viewport, both `name` and `handler` are required. Providing only a `handler` will set up a subscription to the states of all configured viewports.
 
-A subscriber's `handler` is executed whenever there's a change in either the viewport's `matched` or `current` state. When a subscriber is added, its `handler` will be immediately executed if either its viewport(s) `current` or `matched` state is `true`.
+A subscriber's `handler` is executed whenever there's a change in either the viewport's `matched` or `current` state. When a subscriber is added, its `handler` will be immediately executed.
 
 The `handler` receives the following arguments when executed:
 
@@ -193,7 +193,7 @@ myViewports( 'name', state => {} );
 myViewports( state => {} )
 ```
 
-### Subscribing to a Single Media Query ###
+### Subscribing Directly to a `mediaQueryString` ###
 
 For scenarios where you're only interested in matching a single media query, you can provide the initialization method with a valid [`mediaQueryString`](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#Syntax) and an optional `handler`, instead of a configuration array. This will return an instance with a limited API.
 
@@ -216,7 +216,7 @@ The `handler` receives the following arguments when executed:
 Example:
 
 ```js
-const smallvp = viewport( '( max-width: 500px )', state => {} );
+const smallvp = viewport( '( max-width: 500px )', ( matches, instance ) => {} );
 
 smallvp.matches(); // true/false
 smallvp.remove(); // remove the handler, if provided.
