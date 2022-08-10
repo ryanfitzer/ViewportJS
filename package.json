@@ -46,7 +46,7 @@
   ],
   "devDependencies": {
     "chai": "^4.2.0",
-    "doctoc": "^1.4.0",
+    "doctoc": "^2.2.0",
     "eslint": "^6.0.0",
     "eslint-plugin-compat": "^4.0.2",
     "grunt": "^1.0.4",
