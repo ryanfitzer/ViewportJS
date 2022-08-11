@@ -6,9 +6,3 @@
 
 # Browsers
 defaults
-explorer >= 10
-chrome >= 9
-firefox >= 6
-opera >= 12.1
-ios >= 5
-safari >= 5
