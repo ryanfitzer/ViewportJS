@@ -13,4 +13,4 @@ None.
 
 ## Breaking Changes ##
 
-- Internet Explorer is no longer supported. This is due to the move to using [`[add/remove]EventListener`](https://github.com/ryanfitzer/ViewportJS/issues/47)
+- Internet Explorer is no longer supported. See issue [#47](#47).
