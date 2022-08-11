@@ -4,7 +4,7 @@
 
 ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.
 
-  - 1.14 kB minified & gzipped.
+  - 1.16 kB minified & gzipped.
   
   - Supports all modern browsers.
   
@@ -22,7 +22,6 @@ Migration guides:
 ------
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 
 - [ViewportJS](#viewportjs)
   - [Installation](#installation)
