@@ -13,4 +13,4 @@ None.
 
 ## Breaking Changes ##
 
-- Internet Explorer is no longer supported. See issue #47.
+- Internet Explorer is no longer supported. See issue [#47](https://github.com/ryanfitzer/ViewportJS/issues/47).
