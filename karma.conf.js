@@ -36,43 +36,40 @@ module.exports = function ( config ) {
             // Use headless mode, for browsers that support it, default is false
             preferHeadless: true,
 
-            // Ppost processing of browsers list where you can edit the list of browsers used by karma
+            // Post processing of browsers list where you can edit the list of browsers used by karma
             postDetection: function ( availableBrowsers ) {
 
-                console.log( 'availableBrowsers', availableBrowsers );
+                var result = availableBrowsers;
 
-                /* Karma configuration with custom launchers
-                customLaunchers: {
-                  IE9: {
-                    base: 'IE',
-                    'x-ua-compatible': 'IE=EmulateIE9'
-                  }
+                // Remove SafariTechPreview
+                result = availableBrowsers.filter( (browser) => browser !== 'SafariTechPreview');
+
+                /*
+                // Add IE Emulation
+                var result = availableBrowsers;
+                if ( availableBrowsers.indexOf( 'IE' ) > -1 ) {
+                
+                    result.push( 'IE9' );
+                
+                }
+                */
+                
+                /*
+                // Remove PhantomJS if another browser has been detected
+                if ( availableBrowsers.length > 1 && availableBrowsers.indexOf( 'PhantomJS' ) > -1 ) {
+                
+                    var i = result.indexOf( 'PhantomJS' );
+                
+                    if ( i !== -1 ) {
+                
+                        result.splice( i, 1 );
+                
+                    }
+                
                 }
                 */
 
-                // // Add IE Emulation
-                // var result = availableBrowsers;
-                //
-                // if ( availableBrowsers.indexOf( 'IE' ) > -1 ) {
-                //
-                //     result.push( 'IE9' );
-                //
-                // }
-                //
-                // // Remove PhantomJS if another browser has been detected
-                // if ( availableBrowsers.length > 1 && availableBrowsers.indexOf( 'PhantomJS' ) > -1 ) {
-                //
-                //     var i = result.indexOf( 'PhantomJS' );
-                //
-                //     if ( i !== -1 ) {
-                //
-                //         result.splice( i, 1 );
-                //
-                //     }
-                //
-                // }
-
-                return availableBrowsers;
+                return result;
 
             }
         },
