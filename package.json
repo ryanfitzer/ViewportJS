@@ -1,6 +1,6 @@
 {
   "name": "viewportjs",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.",
   "author": "Ryan Fitzer",
   "readmeFilename": "readme.md",
