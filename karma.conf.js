@@ -9,7 +9,7 @@ module.exports = function ( config ) {
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
 
-        // start these browsers
+        // Uncomment if you want only certain browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         // browsers: [
         //     'ChromeHeadless',
@@ -44,31 +44,6 @@ module.exports = function ( config ) {
                 // Remove SafariTechPreview
                 result = availableBrowsers.filter( (browser) => browser !== 'SafariTechPreview');
 
-                /*
-                // Add IE Emulation
-                var result = availableBrowsers;
-                if ( availableBrowsers.indexOf( 'IE' ) > -1 ) {
-                
-                    result.push( 'IE9' );
-                
-                }
-                */
-                
-                /*
-                // Remove PhantomJS if another browser has been detected
-                if ( availableBrowsers.length > 1 && availableBrowsers.indexOf( 'PhantomJS' ) > -1 ) {
-                
-                    var i = result.indexOf( 'PhantomJS' );
-                
-                    if ( i !== -1 ) {
-                
-                        result.splice( i, 1 );
-                
-                    }
-                
-                }
-                */
-
                 return result;
 
             }
@@ -84,6 +59,7 @@ module.exports = function ( config ) {
                 pattern: 'test/lib/viewport-size.js'
             },
             'src/viewport.js',
+            // 'dist/viewport.min.js',
             'test/api-browser.js'
 
         ],

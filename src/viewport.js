@@ -78,7 +78,7 @@
 
         var mql = window.matchMedia( query );
 
-        mql.addListener( listener );
+        mql.addEventListener( 'change', listener );
 
         return mql;
 
@@ -129,11 +129,11 @@
 
         };
 
-        mql.addListener( listener );
+        mql.addEventListener( 'change', listener );
 
         if ( mql.matches ) listener( mql.matches, api );
 
-        api.remove = mql.removeListener.bind( mql, listener );
+        api.remove = mql.removeEventListener.bind( mql, 'change', listener );
 
         return api;
 
@@ -353,7 +353,7 @@
 
             this.viewports.forEach( function ( viewport ) {
 
-                viewport.mql.removeListener( viewport.listener );
+                viewport.mql.removeEventListener( 'change', viewport.listener );
 
             } );
 

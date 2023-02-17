@@ -12,7 +12,7 @@ const config = {};
  * @docs http://eslint.org/docs/user-guide/configuring#specifying-parser-options
  */
 config.parserOptions = {
-    'ecmaVersion': 5,
+    'ecmaVersion': 6,
     'ecmaFeatures': {
         'impliedStrict': true
     }

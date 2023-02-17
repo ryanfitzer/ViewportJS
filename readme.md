@@ -4,7 +4,7 @@
 
 ViewportJS is built on top of `window.matchMedia` and provides valuable features that enable more structure when querying and subscribing to media queries.
 
-  - 1.14 kB minified & gzipped.
+  - 1.16 kB minified & gzipped.
   
   - Supports all browsers that [support `window.matchMedia`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia#Browser_compatibility).
   
@@ -21,23 +21,23 @@ If you are upgrading from [v3](../../tree/v3.0.2), please see the [v4 migration 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
-- [Installation](#installation)
-  - [CommonJS](#commonjs)
-  - [AMD](#amd)
-  - [Browser Global](#browser-global)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
-  - [Subscribing Directly to a `mediaQueryString`](#subscribing-directly-to-a-mediaquerystring)
-- [Instance Methods](#instance-methods)
-  - [`current( [name] )`](#current-name-)
-  - [`matches( [name] )`](#matches-name-)
-  - [`previous( [name] )`](#previous-name-)
-  - [`remove()`](#remove)
-  - [`state( [name] )`](#state-name-)
-- [Server-Side Rendering](#server-side-rendering)
-- [Examples](#examples)
+- [ViewportJS](#viewportjs)
+  - [Installation](#installation)
+    - [CommonJS](#commonjs)
+    - [AMD](#amd)
+    - [Browser Global](#browser-global)
+  - [Usage](#usage)
+  - [Configuration](#configuration)
+  - [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
+    - [Subscribing Directly to a `mediaQueryString`](#subscribing-directly-to-a-mediaquerystring)
+  - [Instance Methods](#instance-methods)
+    - [`current( [name] )`](#current-name-)
+    - [`matches( [name] )`](#matches-name-)
+    - [`previous( [name] )`](#previous-name-)
+    - [`remove()`](#remove)
+    - [`state( [name] )`](#state-name-)
+  - [Server-Side Rendering](#server-side-rendering)
+  - [Examples](#examples)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -356,8 +356,3 @@ See the relevant framework examples below for SSR-compatible demonstrations.
 - [Next.js](https://codesandbox.io/s/q3r0xympjq?module=%2Fcomponents%2Fvpjs-component.js)
 - Nuxt.js (todo)
 - Ember (todo)
-
-
-
-
-

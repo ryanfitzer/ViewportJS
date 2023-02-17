@@ -1,5 +1,6 @@
 const { expect } = require( 'chai' );
 const viewport = require( '../src/viewport' );
+// const viewport = require( '../dist/viewport.min.js' );
 const { toggleConsole } = require( './lib/utils' );
 
 describe( 'API: Node', function () {
