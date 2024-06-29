@@ -61,7 +61,7 @@ describe( 'API: Node', function () {
 
         expect( vpjs.previous( 'first' ), 'Calling `previous( name )` should return `false`' ).to.be.false;
 
-        expect( vpjs.remove(), 'Calling `remove()` should return an empty `undefined`' ).to.equal( null );
+        expect( vpjs.remove(), 'Calling `remove()` should return an empty `undefined`' ).to.equal( undefined );
 
         toggleConsole( 'on' );
 
@@ -103,8 +103,8 @@ describe( 'API: Node', function () {
 
         const vp = viewport( '(max-width: 100px)', checkArgs );
 
-        expect( vp.matches(), 'Calling `matches()` should return `undefined`' ).to.equal( null );
-        expect( vp.remove(), 'Calling `remove()` should return `undefined`' ).to.equal( null );
+        expect( vp.matches(), 'Calling `matches()` should return `undefined`' ).to.equal( undefined );
+        expect( vp.remove(), 'Calling `remove()` should return `undefined`' ).to.equal( undefined );
 
         toggleConsole( 'on' );
 

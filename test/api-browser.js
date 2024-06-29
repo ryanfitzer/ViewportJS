@@ -150,7 +150,7 @@ describe( 'API: Browser', function () {
         ]
         .forEach( function ( unsubscribe, index ) {
 
-            expect( unsubscribe(), 'Unsubscribing from a viewport should return the correct token.' ).to.equal( index );
+            expect( unsubscribe(), 'Unsubscribing from a viewport should return `undefined`' ).to.equal( undefined );
 
         } );
 
@@ -214,7 +214,7 @@ describe( 'API: Browser', function () {
 
         console.assert = noop;
 
-        expect( vpjs.remove(), 'Calling `remove()` should return `null`' ).to.be.null;
+        expect( vpjs.remove(), 'Calling `remove()` should return `undefined`' ).to.be.undefined;
 
         expect( vpjs.state(), 'Calling `state()` should return an empty array' ).to.be.an( 'array' ).to.be.empty;
         expect( vpjs.state( 'first' ).name, 'Calling `state( name )` should return `undefined`' ).to.be.undefined;

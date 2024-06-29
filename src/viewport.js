@@ -87,8 +87,6 @@
 
             } );
 
-            return token; // ToDo: Don't return anything
-
         };
 
     }
@@ -362,7 +360,7 @@
 
             } );
 
-            return ( this.viewports = this.store.vps = this.store.current = this.store.previous = null );
+            return ( this.viewports = this.store.vps = this.store.current = this.store.previous = undefined );
 
         }
     };
@@ -474,11 +472,7 @@
                         };
                         break;
                     default:
-                        api[method] = function () {
-
-                            return null;
-
-                        };
+                        api[method] = noop;
 
                 }
 

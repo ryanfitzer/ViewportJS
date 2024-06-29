@@ -158,11 +158,11 @@ The initialization method returns an instance that can be used to subscribe to s
 Arguments:
 
   - `name`: *(string)* (optional) The name of a configured viewport.
-  - `handler`: *(Function)* The function to execute whenever state changes occur.
+  - `handler`: *(function)* The function to execute whenever state changes occur.
 
 Returns:
 
-  - *(Function)*: A function that unsubscribes `handler`.
+  - *(function)*: A function that unsubscribes `handler`.
 
 To subscribe to the state of an individual viewport, both `name` and `handler` are required. Providing only a `handler` will set up a subscription to the states of all configured viewports.
 
@@ -170,8 +170,8 @@ A subscriber's `handler` is executed whenever there's a change in either the vie
 
 The `handler` receives the following arguments when executed:
 
-  - `state`: *(Object)* The changed viewport's state object.
-  - `instance`: *(Object)* The configured instance.
+  - `state`: *(object)* The changed viewport's state object.
+  - `instance`: *(object)* The configured instance.
 
 A viewport state object has three properties:
 
@@ -198,18 +198,18 @@ For scenarios where you're only interested in matching a single media query, you
 Arguments:
 
   - `query`: *(string)* A valid `mediaQueryString`.
-  - `handler`: *(Function)* (optional) The function to execute whenever state changes occur.
+  - `handler`: *(function)* (optional) The function to execute whenever state changes occur.
 
 Returns:
 
-  - *(Object)*: A limited API composed of the `matches()` and `remove()` method.
+  - *(object)*: A limited API composed of the `matches()` and `remove()` method.
 
 If provided, `handler` is executed whenever there's a change in the media query's `matched` state, including on initial subscription.
 
 The `handler` receives the following arguments when executed:
 
   - `matches`: *(boolean)* If the media query matches.
-  - `instance`: *(Object)* The configured instance.
+  - `instance`: *(object)* The configured instance.
 
 Example:
 
@@ -239,7 +239,7 @@ Arguments:
 Returns:
 
   - *(boolean)*: If `name` is the current viewport. 
-  - *(Object)*: The state object of the current viewport.
+  - *(object)*: The state object of the current viewport.
 
 
 ```js
@@ -262,7 +262,7 @@ Arguments:
 Returns:
 
   - *(boolean)*: If the `name` viewport matches.
-  - *(Array)*: An array of state objects for all matching viewports.
+  - *(array)*: An array of state objects for all matching viewports.
 
 
 ```js
@@ -285,7 +285,7 @@ Arguments:
 Returns:
 
   - *(boolean)*: If `name` was the previously current viewport.
-  - *(Object)*: The state object of the previously current viewport.
+  - *(object)*: The state object of the previously current viewport.
 
 
 ```js
@@ -301,7 +301,7 @@ Removes all the instance's configured viewports and subscribers at once.
 
 Returns:
 
-  - *(null)*: Subscribers are removed and values set to `null`.
+  - *(undefined)*: Subscribers are removed and values set to `undefined`.
 
 ```js
 const myViewports = viewport( /* viewport config array */ );
@@ -322,8 +322,8 @@ Arguments:
 
 Returns:
 
-  - *(Object)*: The state object of the named viewport.
-  - *(Array)*: An array of state objects for all viewports.
+  - *(object)*: The state object of the named viewport.
+  - *(array)*: An array of state objects for all viewports.
 
 
 ```js
@@ -331,7 +331,6 @@ myViewports.state(); // [ { name: string, matches: boolean, current: boolean }, 
 
 myViewports.previous( 'name' ); // { name: string, matches: boolean, current: boolean }
 ```
-
 
 
 ## Server-Side Rendering ##
