@@ -42,7 +42,7 @@ module.exports = function ( config ) {
                 var result = availableBrowsers;
 
                 // Remove SafariTechPreview
-                result = availableBrowsers.filter( (browser) => browser !== 'SafariTechPreview');
+                result = availableBrowsers.filter( (browser) => browser !== 'SafariTechPreview' && browser !== 'Safari');
 
                 return result;
 

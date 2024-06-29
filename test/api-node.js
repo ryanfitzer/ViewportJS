@@ -45,19 +45,23 @@ describe( 'API: Node', function () {
 
         toggleConsole( 'off' );
 
-        expect( vpjs.state(), 'Calling `state()` should return an empty array' ).to.be.an( 'array' ).to.be.empty;
-        expect( vpjs.state( 'first' ).name, 'Calling `state( name )` should return `undefined`' ).to.be.undefined;
+        expect( vpjs.state(), 'Calling `state()` should return an array' ).to.have.lengthOf(2);
+        
+        expect( vpjs.state( 'first' ).name, 'Calling `state( name )` should return viewport object' ).to.equal( 'first' );
 
-        expect( vpjs.matches(), 'Calling `matches()` should return an empty array' ).to.be.an( 'array' ).to.be.empty;
-        expect( vpjs.matches( 'first' ), 'Calling `matches( name )` should return `false`' ).to.be.false;
+        expect( vpjs.matches(), 'Calling `matches()` should return an array' ).to.have.lengthOf(1)
 
-        expect( vpjs.current().name, 'Calling `current().name` should return `undefined`' ).to.be.undefined;
-        expect( vpjs.current( 'first' ), 'Calling `current( name )` should return `false`' ).to.be.false;
+        expect( vpjs.matches( 'first' ), 'Calling `matches( name )` should return `true`' ).to.be.true;
+
+        expect( vpjs.current().name, 'Calling `current().name` should return current viewport name' ).to.equal( 'first' );
+
+        expect( vpjs.current( 'first' ), 'Calling `current( "first" )` should return `true`' ).to.be.true;
 
         expect( vpjs.previous().name, 'Calling `previous().name` should return `undefined`' ).to.be.undefined;
+
         expect( vpjs.previous( 'first' ), 'Calling `previous( name )` should return `false`' ).to.be.false;
 
-        expect( vpjs.remove(), 'Calling `remove()` should return an empty `undefined`' ).to.be.undefined;
+        expect( vpjs.remove(), 'Calling `remove()` should return an empty `undefined`' ).to.equal( null );
 
         toggleConsole( 'on' );
 
@@ -99,8 +103,8 @@ describe( 'API: Node', function () {
 
         const vp = viewport( '(max-width: 100px)', checkArgs );
 
-        expect( vp.matches(), 'Calling `matches()` should return `undefined`' ).to.be.undefined;
-        expect( vp.remove(), 'Calling `remove()` should return `undefined`' ).to.be.undefined;
+        expect( vp.matches(), 'Calling `matches()` should return `undefined`' ).to.equal( null );
+        expect( vp.remove(), 'Calling `remove()` should return `undefined`' ).to.equal( null );
 
         toggleConsole( 'on' );
 

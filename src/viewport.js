@@ -22,16 +22,9 @@
 
     }
 
-}
-( this, function () {
+} )( this, function () {
 
-    var exposedAPI = [
-        'state',
-        'remove',
-        'matches',
-        'current',
-        'previous'
-    ];
+    var exposedAPI = [ 'state', 'remove', 'matches', 'current', 'previous' ];
 
     var undefinedVP = {
         name: undefined,
@@ -52,7 +45,7 @@
             uniqueViewportName: '[viewportjs] Viewport configuration object overwritten. The viewport name `' + sub + '` already exists.'
         };
 
-        return msg[ label ];
+        return msg[label];
 
     }
 
@@ -68,7 +61,7 @@
 
     function ensureViewportObject( name, vps ) {
 
-        if ( vps && vps[ name ] ) return copyViewportObject( vps[ name ] );
+        if ( vps && vps[name] ) return copyViewportObject( vps[name] );
 
         return undefinedVP;
 
@@ -94,7 +87,7 @@
 
             } );
 
-            return token;
+            return token; // ToDo: Don't return anything
 
         };
 
@@ -106,10 +99,12 @@
         var api = {
             remove: function () {
 
-                console.warn( getLogMessage( 'noHandler', {
-                    query: query,
-                    method: 'remove'
-                } ) );
+                console.warn(
+                    getLogMessage( 'noHandler', {
+                        query: query,
+                        method: 'remove'
+                    } )
+                );
 
             },
             matches: function () {
@@ -123,9 +118,12 @@
 
         var listener = function ( event ) {
 
-            handler( {
-                matches: event.matches
-            }, api );
+            handler(
+                {
+                    matches: event.matches
+                },
+                api
+            );
 
         };
 
@@ -157,11 +155,14 @@
             vp.listener = this.setState.bind( this );
             vp.mql = createMediaQuery( vp.query, vp.listener );
 
-            this.store.channels[ vp.name ] = [];
+            this.store.channels[vp.name] = [];
 
-            console.assert( !this.store.vps[ vp.name ], getLogMessage( 'uniqueViewportName', vp.name ) );
+            console.assert(
+                !this.store.vps[vp.name],
+                getLogMessage( 'uniqueViewportName', vp.name )
+            );
 
-            this.store.vps[ vp.name ] = {
+            this.store.vps[vp.name] = {
                 name: vp.name,
                 matches: false,
                 current: false
@@ -174,14 +175,15 @@
     }
 
     Viewport.prototype = {
-
         getMatches: function () {
 
-            return ( this.viewports || [] ).filter( function ( vp ) {
+            return ( this.viewports || [] )
+            .filter( function ( vp ) {
 
                 return vp.mql.matches;
 
-            } ).map( copyViewportObject );
+            } )
+            .map( copyViewportObject );
 
         },
 
@@ -196,7 +198,7 @@
         getChanges: function ( viewport, current ) {
 
             var name = viewport.name;
-            var state = this.store.vps[ name ];
+            var state = this.store.vps[name];
             var props = {
                 matches: viewport.mql.matches,
                 current: current.name === name
@@ -204,11 +206,11 @@
 
             return Object.keys( props ).reduce( function ( accum, label ) {
 
-                if ( state[ label ] !== props[ label ] ) {
+                if ( state[label] !== props[label] ) {
 
                     accum.push( {
                         key: label,
-                        value: props[ label ]
+                        value: props[label]
                     } );
 
                 }
@@ -226,12 +228,12 @@
 
             this.viewports.forEach( function ( viewport ) {
 
-                var vp = this.store.vps[ viewport.name ];
+                var vp = this.store.vps[viewport.name];
                 var changes = this.getChanges( viewport, current );
 
                 changes.forEach( function ( change ) {
 
-                    vp[ change.key ] = change.value;
+                    vp[change.key] = change.value;
 
                 } );
 
@@ -252,7 +254,7 @@
 
         addSubscriber: function ( opts ) {
 
-            var token = this.store.tokenUid = this.store.tokenUid + 1;
+            var token = ( this.store.tokenUid = this.store.tokenUid + 1 );
 
             opts.channel.push( {
                 token: token,
@@ -269,8 +271,8 @@
 
             return this.addSubscriber( {
                 handler: handler,
-                channel: this.store.channels[ name ],
-                vp: this.store.vps[ name ]
+                channel: this.store.channels[name],
+                vp: this.store.vps[name]
             } );
 
         },
@@ -287,15 +289,15 @@
 
         publish: function ( name ) {
 
-            this.store.channels[ name ].forEach( function ( subscriber ) {
+            this.store.channels[name].forEach( function ( subscriber ) {
 
-                subscriber.handler( this.store.vps[ name ], this.api );
+                subscriber.handler( this.store.vps[name], this.api );
 
             }, this );
 
             this.store.channelAll.forEach( function ( subscriber ) {
 
-                subscriber.handler( this.store.vps[ name ], this.api );
+                subscriber.handler( this.store.vps[name], this.api );
 
             }, this );
 
@@ -339,7 +341,10 @@
 
         previous: function ( name ) {
 
-            console.assert( this.viewports, getLogMessage( 'queryNoConfig', 'previous' ) );
+            console.assert(
+                this.viewports,
+                getLogMessage( 'queryNoConfig', 'previous' )
+            );
 
             if ( name ) return this.store.previous === name;
 
@@ -357,10 +362,9 @@
 
             } );
 
-            return this.viewports = this.store.vps = this.store.current = this.store.previous = null;
+            return ( this.viewports = this.store.vps = this.store.current = this.store.previous = null );
 
         }
-
     };
 
     function module( config, handler ) {
@@ -377,7 +381,10 @@
             // Subscribe to a single configured viewport
             if ( typeof first === 'string' ) {
 
-                console.assert( instance.store.vps[ first ], getLogMessage( 'subNoName', first ) );
+                console.assert(
+                    instance.store.vps[first],
+                    getLogMessage( 'subNoName', first )
+                );
 
                 return instance.subscribe.call( instance, first, second );
 
@@ -390,7 +397,7 @@
 
         return exposedAPI.reduce( function ( accum, method ) {
 
-            accum[ method ] = instance[ method ].bind( instance );
+            accum[method] = instance[method].bind( instance );
 
             return accum;
 
@@ -398,8 +405,11 @@
 
     }
 
-    // Create noop API for use in Node
-    if ( typeof window === 'undefined' || typeof window.matchMedia === 'undefined' ) {
+    // Create API for use in Node
+    if (
+        typeof window === 'undefined' ||
+        typeof window.matchMedia === 'undefined'
+    ) {
 
         return function ( config ) {
 
@@ -418,6 +428,27 @@
 
             }
 
+            var fakeThis = {
+                viewports: config,
+                store: {
+                    vps: config.reduce( function ( accum, vp, index ) {
+
+                        var isDefault = !index;
+
+                        accum[vp.name] = {
+                            name: vp.name,
+                            matches: isDefault,
+                            current: isDefault
+                        };
+
+                        return accum;
+
+                    }, {} ),
+                    current: config[0].name,
+                    previous: undefined
+                }
+            };
+
             var instance = function () {
 
                 console.error( getLogMessage( 'subNoSupport' ) );
@@ -426,22 +457,28 @@
 
             return exposedAPI.reduce( function ( api, method ) {
 
-                if ( /remove/.test( method ) ) {
+                switch ( method ) {
 
-                    api[ method ] = function () {};
+                    case 'state':
+                    case 'current':
+                    case 'previous':
+                        api[method] = Viewport.prototype[method].bind( fakeThis );
+                        break;
+                    case 'matches':
+                        api[method] = function ( name ) {
 
-                }
-                else {
+                            if ( name === config[0].name ) return true;
 
-                    api[ method ] = function ( arg ) {
+                            return [ fakeThis.store.vps[config[0].name] ];
 
-                        if ( typeof arg === 'string' ) return false;
+                        };
+                        break;
+                    default:
+                        api[method] = function () {
 
-                        if ( /state|matches/.test( method ) ) return [];
+                            return null;
 
-                        return undefinedVP;
-
-                    };
+                        };
 
                 }
 
@@ -455,4 +492,4 @@
 
     return module;
 
-} ) );
+} );
