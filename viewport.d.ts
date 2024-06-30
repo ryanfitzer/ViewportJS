@@ -12,7 +12,7 @@ declare function viewport(query: string, handler?: SubscriptionHandler): Pick<Vi
 declare function viewport(config: ViewportConfig): ViewportApi;
 
 declare namespace viewport {
-    export { ViewportApi, SubscriptionHandler, ViewportConfig, ViewportName, ViewportState, SubscribeFunction, ViewportInstance };
+    export { ViewportApi, SubscriptionHandler, ViewportConfig, ViewportName, ViewportState, SubscribeFunction, UnSubscribeFunction, ViewportInstance };
 }
 
 type ViewportApi = SubscribeFunction & ViewportInstance;
@@ -20,7 +20,12 @@ type ViewportApi = SubscribeFunction & ViewportInstance;
 /**
  * A function that subscribes to state changes on the configured viewports.
  */
-type SubscribeFunction = (name: ViewportName | SubscriptionHandler, handler?: SubscriptionHandler) => () => void;
+type SubscribeFunction = (name: ViewportName | SubscriptionHandler, handler?: SubscriptionHandler) => UnSubscribeFunction;
+
+/**
+ * A function that unsubscribes `SubscriptionHandler`.
+ */
+type UnSubscribeFunction = () => void;
 
 /**
  * The viewport's unique nickname.
@@ -32,14 +37,9 @@ type ViewportName = string;
  */
 type SubscriptionHandler = (state: ViewportState, instance: ViewportInstance) => void;
 
-/**
- * A valid `MediaQueryList#media` string.
- */
-type MediaQuery = string;
-
 type ViewportConfig = Array<{
     /**
-     * The viewport's nickname. Must be unique.
+     * The viewport's name. Must be unique.
      */
     name: ViewportName;
     /**
@@ -88,6 +88,6 @@ type ViewportInstance = {
     /**
      * Removes all the `ViewportInstance`'s configured viewports and subscribers at once.
      */
-    remove: () => null;
+    remove: UnSubscribeFunction;
 
 }

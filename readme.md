@@ -20,22 +20,21 @@ If you are upgrading from [v5](../../tree/v5.0.0), please see the [v6 migration 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [ViewportJS](#viewportjs)
-  - [Installation](#installation)
-    - [CommonJS](#commonjs)
-    - [AMD](#amd)
-    - [Browser Global](#browser-global)
-  - [Usage](#usage)
-  - [Configuration](#configuration)
-  - [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
-    - [Subscribing Directly to a `mediaQueryString`](#subscribing-directly-to-a-mediaquerystring)
-  - [Instance Methods](#instance-methods)
-    - [`current( [name] )`](#current-name-)
-    - [`matches( [name] )`](#matches-name-)
-    - [`previous( [name] )`](#previous-name-)
-    - [`remove()`](#remove)
-    - [`state( [name] )`](#state-name-)
-  - [Server-Side Rendering](#server-side-rendering)
+- [Installation](#installation)
+  - [CommonJS](#commonjs)
+  - [AMD](#amd)
+  - [Browser Global](#browser-global)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Subscribing to Viewport Changes](#subscribing-to-viewport-changes)
+  - [Subscribing Directly to a `mediaQueryString`](#subscribing-directly-to-a-mediaquerystring)
+- [Instance Methods](#instance-methods)
+  - [`current( [name] )`](#current-name-)
+  - [`matches( [name] )`](#matches-name-)
+  - [`previous( [name] )`](#previous-name-)
+  - [`remove()`](#remove)
+  - [`state( [name] )`](#state-name-)
+- [Server-Side Rendering](#server-side-rendering)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
